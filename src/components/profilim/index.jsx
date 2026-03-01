@@ -5,21 +5,29 @@ import {
   IdcardOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-
-const number = localStorage.getItem("phone");
-const balance = localStorage.getItem("balance");
+import { useData } from "../../datacontect";
 
 const Profilim = () => {
+  const { user } = useData();
+  console.log(user);
+  
+  const phone = user?.phone || "N/A";
+  const firstName = user?.first_name || "N/A";
+  const lastName = user?.last_name || "N/A";
+  const username = user?.username || "N/A";
+  const balance = user?.balance ?? 0;
+
   return (
-    <div className="w-[90%] m-auto mt-[50px] bg-white rounded-2xl shadow-lg overflow-hidden p-8  text-gray-800 border border-gray-200">
+    <div className="w-[90%] m-auto mt-[50px] bg-white rounded-2xl shadow-lg overflow-hidden p-8 text-gray-800 border border-gray-200">
       <div className="flex justify-between items-start mb-8">
         <div className="flex items-center">
           <div className="bg-gray-100 p-6 rounded-full mr-4">
             <UserOutlined className="text-gray-600 text-3xl" />
           </div>
           <div>
-            <h3 className="font-bold text-2xl text-gray-900">{number}</h3>
-            <p className="text-gray-500">Foydalanuvchi</p>
+            <h3 className="font-bold text-2xl text-gray-900">{phone}</h3>
+            <p className="text-gray-500">{firstName} {lastName}</p>
+            <p className="text-gray-500">Username: {username}</p>
           </div>
         </div>
       </div>

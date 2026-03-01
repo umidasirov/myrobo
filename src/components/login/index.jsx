@@ -32,7 +32,7 @@ const LoginPage = () => {
     }
   }, [access, navigate]);
 
-  const telegramLink = `https://t.me/robologinbot?start=${uuid}`;
+  const telegramLink = `https://t.me/developer4o4_bot?start=${uuid}`;
 
   const handleDigitChange = (e, index) => {
     const value = e.target.value.replace(/\D/, "").slice(0, 1);
@@ -64,34 +64,51 @@ const LoginPage = () => {
     }
   };
 
-  const handleCodeSubmit = async () => {
-    const code = codeDigits.join("");
-    if (!code || code.length !== 6) {
-      setError("Iltimos, 6 xonali kodni to‘liq kiriting.");
+ const handleCodeSubmit = async () => {
+  const code = codeDigits.join("");
+
+  if (!code || code.length !== 6) {
+    setError("Iltimos, 6 xonali kodni to‘liq kiriting.");
+    return;
+  }
+
+  try {
+    const response = await fetch("https://api.myrobo.uz/user/auth/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const errorMsg = data?.detail || data?.message || "Kod yuborishda xatolik yuz berdi.";
+      setError(errorMsg);
       return;
     }
 
-    axios({
-      url: "/verify_code/",
-      method: "POST",
-      data: {
-        code,
-        uuid,
-      },
-    })
-      .then((data) => {
-        console.log(data);
-        if (data?.status === "success") {
-          notify({ type: "loginSuccses" });
-        }
-        localStorage.setItem("token", data?.token);
-        localStorage.setItem("balance", data?.user_balance);
-        localStorage.setItem("phone", data?.phone);
-        navigate("/");
-      })
-      .catch((error) => console.log(error));
-  };
+    console.log("Javob:", data);
 
+    if (data.access) localStorage.setItem("token", data.access);
+    if (data.refresh) localStorage.setItem("refresh", data.refresh);
+
+    if (data.user) {
+      localStorage.setItem("user_id", data.user.id || "nmadr");
+      localStorage.setItem("phone", data.user.phone || "nmadr");
+      localStorage.setItem("username", data.user.username || "nmadr");
+    }
+
+    notify({ type: "loginSuccess" }); 
+
+    navigate("/");
+  } catch (err) {
+    console.error("Xatolik:", err);
+    const errorMsg = err?.response?.data?.detail || err.message || "Server bilan bog‘lanishda xatolik yuz berdi.";
+    setError(errorMsg);
+  }
+};
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">

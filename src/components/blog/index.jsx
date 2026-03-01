@@ -17,7 +17,7 @@ function BlogComponents() {
       .then((data) => setBlogData(data))
       .catch((error) => console.log(error));
   }, []);
-
+  blogData
   const truncateDescription = (text, limit = 15) => {
     const words = text.split(" ");
     return (
