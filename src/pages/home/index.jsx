@@ -11,36 +11,8 @@ import IshtirockComponents from "../../components/ishtirok-etish";
 import { useData } from "../../datacontect";
 
 function Home() {
-  const { UserData } = useData();
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");;
 
-  const handleGetData = async () => {
-    if (!token) return; // token bo'lmasa request yubormaslik
-
-    try {
-      const response = await axios.get(
-        "https://api.myrobo.uz/user/auth/me/",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      UserData(response.data);
-      console.log("Baza:", response.data);
-    } catch (error) {
-      console.error(
-        "Login xatolik:",
-        error.response?.data || error.message
-      );
-    }
-  };
-
-  useEffect(() => {
-    handleGetData();
-  }, []);
 
   return (
     <div className="w-full max-w-[1880px] mx-auto px-4 sm:px-6 md:px-8">

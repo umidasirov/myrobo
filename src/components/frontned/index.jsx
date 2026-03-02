@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import { useData } from "../../datacontect";
 import CodeEditor from "../codeEditor";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL = "https://api.myrobo.uz";
 function Skeleton({ className = "" }) {
@@ -83,7 +84,7 @@ const FrontendCourse = () => {
 
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("py");
-
+  const navigate = useNavigate()
   useEffect(() => {
     const init = async () => {
       setPageLoading(true);
@@ -231,9 +232,17 @@ const FrontendCourse = () => {
   console.log(sections);
   console.log(topicDetail);
   console.log(topicsMap);
+  if (topicDetail?.detail === "Kurs yopiq. To'lov qiling.") {
+    navigate('/kirish2')
+  }
   
-  
-  
+function getVimeoEmbedUrl(url) {
+  if (!url) return null;
+  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (!match) return null;
+  return `https://player.vimeo.com/video/${match[1]}`;
+}
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
@@ -312,6 +321,9 @@ const FrontendCourse = () => {
           </div>
 
           <div className="w-full lg:w-3/4">
+          {
+            
+          }
             {!selectedTopic ? (
               <Card title="Darsni tanlang" className="mb-6 shadow">
                 <div className="text-center py-8 text-gray-500">
@@ -320,15 +332,15 @@ const FrontendCourse = () => {
               </Card>
             ) : topicLoading ? (
               <ContentSkeleton />
-            ) : topicDetail ? (
+            ) : topicDetail?.detail!=="Kurs yopiq. To'lov qiling." ? (
               <>
                 <Card title={topicDetail.title} className="mb-6 shadow">
                   <div className="aspect-w-16 aspect-h-9 mb-4">
-                    {topicDetail.video_url ? (
-                      <VimeoIframe url={topicDetail.video_url} />
+                    {getVimeoEmbedUrl(topicDetail?.video_url) ? (
+                      <VimeoIframe url={getVimeoEmbedUrl(topicDetail.video_url)} />
                     ) : null}
                   </div>
-
+                  
                   <div className="prose max-w-none">
                     {topicDetail.about && <p>{topicDetail.about}</p>}
                   </div>
@@ -388,23 +400,13 @@ const FrontendCourse = () => {
                       </div>
                     )}
 
-                    <div className="px-4 pb-4">
-                      <button
-                        onClick={handleSubmit}
-                        disabled={submitLoading || !code.trim()}
-                        className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-medium px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2"
-                      >
-                        {submitLoading ? <LoadingOutlined /> : <CheckCircleFilled />}
-                        Topshirish
-                      </button>
-                    </div>
                   </div>
                 )}
               </>
             ) : (
               <Card className="mb-6 shadow">
                 <div className="text-center py-8 text-red-400">
-                  Mavzu yuklanmadi. Qaytadan urinib ko'ring.
+                  Ko'zda tutilmagan muammo, iltimos kursni xarid qilganingizga ishonch xosil qiling !!!
                 </div>
               </Card>
             )}

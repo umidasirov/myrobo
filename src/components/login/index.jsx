@@ -100,7 +100,7 @@ const LoginPage = () => {
       localStorage.setItem("username", data.user.username || "nmadr");
     }
 
-    notify({ type: "loginSuccess" }); 
+    notify({ type: "loginSuccses" }); 
 
     navigate("/");
   } catch (err) {

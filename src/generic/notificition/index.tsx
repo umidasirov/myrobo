@@ -7,19 +7,22 @@ const notificationApi = () => {
         return notification.error({
           message: "You have already purchased this course!",
         });
+        break
       case "success":
         return notification.success({
           message: "Course purchased successfully!",
         });
-
+        break
       case "token":
         return notification.error({
           message: "Ro'yhatdan o'ting",
         });
+        break
       case "loginSuccses":
         return notification.success({
           message: "Tizimga kirdingiz",
         });
+        break
       default:
         return notification.info({
           message: "Noma’lum holat yuz berdi!",

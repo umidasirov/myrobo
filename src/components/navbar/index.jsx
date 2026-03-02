@@ -218,6 +218,10 @@ function Navbar() {
     localStorage.removeItem("token");
     localStorage.removeItem("balance");
     localStorage.removeItem("phone");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("username");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("locate");
     navigate("/");
   };
 
@@ -256,7 +260,6 @@ function Navbar() {
             />
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden sm:flex items-center gap-[60px] text-[17px] font-medium text-gray-600">
             <Link
               to="/"

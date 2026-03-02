@@ -72,6 +72,7 @@ function KirishComponentsID() {
   const buyCourse = async (courseId) => {
     if (!token) {
       notify({ type: "token" });
+      navigate('/login/')
       return;
     }
 
@@ -105,7 +106,10 @@ function KirishComponentsID() {
       setBuyLoading(false);
     }
   };
-
+  console.log(sections);
+  console.log(topicsMap);
+  console.log(findData);
+  
   if (pageLoading || !findData) {
     return (
       <div className="bg-gray-100 min-h-screen font-sans">
@@ -246,7 +250,7 @@ function KirishComponentsID() {
                   <p className="text-sm text-gray-500">Kurs narxi:</p>
                   <div className="flex items-center mt-1">
                     <span className="text-xl font-bold">
-                      {findData?.is_active
+                      {findData?.is_bought
                         ? <span className="text-blue-500">Sotib olingan <CheckCircleFilled /></span>
                         : `${findData?.price} so'm`
                       }
@@ -254,12 +258,12 @@ function KirishComponentsID() {
                   </div>
                 </div>
 
-                {findData?.is_active ? <button
+                {findData?.is_bought ? <button
                   onClick={() => navigate('/frontned/')}
                   className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md w-full py-3 font-medium transition duration-300 shadow-md flex items-center justify-center gap-2"
                 >
                   {buyLoading ? <LoadingOutlined /> : null}
-                  {findData?.is_active ? "Kursga o'tish" : "Sotib olish"}
+                  {findData?.is_bought ? "Kursga o'tish" : "Sotib olish"}
                 </button>
                 : 
                 <button
@@ -267,7 +271,7 @@ function KirishComponentsID() {
                   className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md w-full py-3 font-medium transition duration-300 shadow-md flex items-center justify-center gap-2"
                 >
                   {buyLoading ? <LoadingOutlined /> : null}
-                  {findData?.is_active ? "Kursga o'tish" : "Sotib olish"}
+                  {findData?.is_bought ? "Kursga o'tish" : "Sotib olish"}
                 </button>}
 
                 <div className="flex justify-around mt-4">

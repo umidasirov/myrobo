@@ -1,30 +1,104 @@
 import axios from "axios";
 import { createContext, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const DataContext = createContext();
+
+const api = axios.create({
+  baseURL: "https://api.myrobo.uz",
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export const DataProvider = ({ children }) => {
   const [data, setData] = useState([]);
   const [blogData, setBlogData] = useState([]);
   const [teacherData, setTeacherData] = useState([]);
+  const [loading, setLoad] = useState(false);
+  const [user, setUser] = useState(null);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("balance");
+    localStorage.removeItem("phone");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("username");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("locate");
+    setUser(null);
+  };
 
-  const [user,UserData] = useState([])
+  api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const originalRequest = error.config;
 
-  const fetchCourse = async () =>{
-    try {
-      const response = await fetch("https://api.myrobo.uz/courses/courses/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
 
-      const result = await response.json();
-      setData(result);
-    } catch (err) {
-      console.error("Xatolik:", err);
+        const refresh = localStorage.getItem("refresh");
+        if (!refresh) {
+          handleLogout();
+          return Promise.reject(error);
+        }
+
+        try {
+          const res = await axios.post(
+            "https://api.myrobo.uz/user/auth/token/refresh/",
+            { refresh }
+          );
+
+          const newAccess = res.data.access;
+          localStorage.setItem("token", newAccess);
+          originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+          return api(originalRequest);
+        } catch {
+          handleLogout();
+          return Promise.reject(error);
+        }
+      }
+
+      return Promise.reject(error);
     }
-  }
+  );
+
+  const fetchCourse = async () => {
+    try {
+      const response = await api.get("/courses/courses/");
+      setData(response.data);
+    } catch (err) {
+      console.error("Kurslar xatolik:", err);
+    }
+  };
+
+  const fetchUserData = async () => {
+    try {
+      setLoad(true);
+      const response = await api.get("/user/auth/me/");
+      setUser(response.data);
+    } catch (error) {
+      console.error("Foydalanuvchi xatolik:", error.response?.data || error.message);
+    } finally {
+      setLoad(false);
+    }
+  };
+
+  const updateUser = async (fields) => {
+    try {
+      const response = await api.patch("/user/auth/me/", fields);
+      setUser(response.data);
+      return { ok: true };
+    } catch (error) {
+      console.error("Update xatolik:", error.response?.data || error.message);
+      return { ok: false };
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -36,7 +110,11 @@ export const DataProvider = ({ children }) => {
         setTeacherData,
         fetchCourse,
         user,
-        UserData
+        setUser,
+        fetchUserData,
+        updateUser,
+        handleLogout,
+        loading,
       }}
     >
       {children}

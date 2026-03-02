@@ -50,17 +50,17 @@ function KirishComponents() {
 
   const postId = (id) => {
     const chioseData = data.find((item) => item?.id === id);
+    
     localStorage.setItem("locate", id);
-
     if (!token) {
       navigate(`/kirish2/`);
-    // } else if (token && chioseData?.is_active === true) {
-    //   navigate(`/frontned/`);
+    } else if (chioseData?.is_bought == true) {
+      navigate(`/frontned/`);
     } else {
       navigate(`/kirish2/`);
     }
   };
-
+  
   const truncateDescription = (text = "", limit = 27) => {
     if (!text) return "";
     const words = text.split(" ");

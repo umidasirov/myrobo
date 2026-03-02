@@ -379,15 +379,3 @@ const CodeEditor = ({ topicId, isCode = true }) => {
 };
 
 export default CodeEditor;
-
-// ─────────────────────────────────────────────
-// ISHLATISH MISOLI:
-//
-// import CodeEditor from "./CodeEditor";
-//
-// // Topic detail sahifasida:
-// <CodeEditor
-//   topicId="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
-//   isCode={topic.is_code}
-// />
-// ─────────────────────────────────────────────
