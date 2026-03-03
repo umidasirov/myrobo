@@ -228,10 +228,7 @@ const FrontendCourse = () => {
       setSubmitLoading(false);
     }
   };
-  console.log(courseData);
-  console.log(sections);
-  console.log(topicDetail);
-  console.log(topicsMap);
+
   if (topicDetail?.detail === "Kurs yopiq. To'lov qiling.") {
     navigate('/kirish2')
   }

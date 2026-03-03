@@ -13,7 +13,6 @@ export function VimeoPlayer({ url }) {
     });
 
     player.on("play", () => {
-      console.log("Play bo‘ldi");
     });
 
     return () => player.destroy();

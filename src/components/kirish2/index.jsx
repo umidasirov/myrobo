@@ -100,21 +100,24 @@ function KirishComponentsID() {
       });
 
       const result = await response.json();
-
+      
       if (response.status === 402) {
-        notify({ type: "error", message: result?.detail || "Balans yetarli emas." });
+        notify({ type: "noMoney", message: result?.detail || "Balans yetarli emas." });
         return;
       }
 
       if (result?.ok === true) {
         notify({ type: "success" });
-        setIsBought(true); // ← local state yangilanadi, sahifa qayta yuklanmaydi
+        setIsBought(true); 
         navigate("/my-courses");
       } else {
         notify({ type: "error" });
       }
     } catch (err) {
-      console.error("Sotib olish xatoligi:", err);
+      console.error("Sotib olish xatoligi:", err.data);
+      if (err.data.detail) {
+        notify({type:'noMoney'})
+      }
     } finally {
       setBuyLoading(false);
     }

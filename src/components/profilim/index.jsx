@@ -55,7 +55,6 @@ const Profilim = () => {
   };
 
   const balance = user?.balance ?? 0;
-  console.log(user);
   
   if (loading || !user) {
     return (

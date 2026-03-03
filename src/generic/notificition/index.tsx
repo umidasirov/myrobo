@@ -23,6 +23,11 @@ const notificationApi = () => {
           message: "Tizimga kirdingiz",
         });
         break
+       case "noMoney":
+        return notification.error({
+          message: "Mablag' yetarli emas",
+        });
+        break
       default:
         return notification.info({
           message: "Noma’lum holat yuz berdi!",

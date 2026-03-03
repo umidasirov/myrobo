@@ -67,12 +67,36 @@ export const DataProvider = ({ children }) => {
     }
   );
 
+  const fetchTeam = async () => {
+    setLoad(true);
+    try {
+      const response = await fetch("https://api.myrobo.uz/teacher/teachers/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+      setTeacherData(result)      
+    } catch (err) {
+      console.error("Error fetching blogs:", err);
+    } finally {
+      setLoad(false);
+    }
+    []
+  };
+
   const fetchCourse = async () => {
+    setLoad(true)
     try {
       const response = await api.get("/courses/courses/");
       setData(response.data);
     } catch (err) {
       console.error("Kurslar xatolik:", err);
+    }
+    finally{
+      setLoad(false)
     }
   };
 
@@ -115,6 +139,7 @@ export const DataProvider = ({ children }) => {
         updateUser,
         handleLogout,
         loading,
+        fetchTeam
       }}
     >
       {children}

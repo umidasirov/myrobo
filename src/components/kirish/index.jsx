@@ -38,7 +38,7 @@ function KirishComponents() {
     const load = async () => {
       setIsLoading(true);
       try {
-        await fetchCourse(); // fetchCourse Promise qaytarishi kerak
+        await fetchCourse();
       } finally {
         setIsLoading(false);
       }
