@@ -1,36 +1,35 @@
-import { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import { LoadingOutlined, SendOutlined, MessageOutlined } from "@ant-design/icons";
+import { useEffect, useState, useRef } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
 import notificationApi from "../../generic/notificition";
 
-const modules = {
-  toolbar: [
-    ["bold", "italic", "underline"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["link"],
-    ["clean"],
-  ],
-};
-
-const formats = ["bold", "italic", "underline", "list", "bullet", "link"];
-
 const avatarColors = [
-  "bg-blue-100 text-blue-600",
-  "bg-violet-100 text-violet-600",
-  "bg-emerald-100 text-emerald-600",
-  "bg-orange-100 text-orange-600",
-  "bg-pink-100 text-pink-600",
-  "bg-teal-100 text-teal-600",
+  "bg-blue-800",
+  "bg-purple-800",
+  "bg-green-800",
+  "bg-pink-700",
+  "bg-teal-700",
+  "bg-orange-700",
+  "bg-indigo-800",
+  "bg-blue-900",
 ];
 
-const getColor = (name) => avatarColors[(name?.charCodeAt(0) || 0) % avatarColors.length];
-const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "?");
+const getAvatarColor = (name) =>
+  avatarColors[(name?.charCodeAt(0) || 0) % avatarColors.length];
+
+const getInitial = (name) =>
+  name ? name.charAt(0).toUpperCase() : "?";
 
 const formatDate = (iso) => {
   if (!iso) return "";
+  const now = new Date();
   const d = new Date(iso);
-  return d.toLocaleDateString("uz-UZ", { year: "numeric", month: "short", day: "numeric" });
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60) return `${diff} soniya oldin`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} daqiqa oldin`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} soat oldin`;
+  if (diff < 2592000) return `${Math.floor(diff / 86400)} kun oldin`;
+  if (diff < 31536000) return `${Math.floor(diff / 2592000)} oy oldin`;
+  return `${Math.floor(diff / 31536000)} yil oldin`;
 };
 
 const maskUser = (user) => {
@@ -43,8 +42,10 @@ function CommentSection({ slug }) {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [content, setContent] = useState("");
+  const [focused, setFocused] = useState(false);
   const [success, setSuccess] = useState(false);
-
+  const textareaRef = useRef(null);
+  const user = localStorage.getItem('username')
   const token = localStorage.getItem("token");
   const notify = notificationApi();
 
@@ -66,14 +67,20 @@ function CommentSection({ slug }) {
     }
   };
 
-  useEffect(() => {
-    fetchComments();
-  }, [slug]);
+  useEffect(() => { fetchComments(); }, [slug]);
+
+  const handleCancel = () => {
+    setContent("");
+    setFocused(false);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.blur();
+    }
+  };
 
   const handleSubmit = async () => {
-    const plainText = content.replace(/<[^>]+>/g, "").trim();
+    const plainText = content.trim();
     if (!plainText || !token) return;
-
     setSubmitting(true);
     try {
       const res = await fetch(`https://api.myrobo.uz/blog/blogs/${slug}/comments/`, {
@@ -86,9 +93,11 @@ function CommentSection({ slug }) {
       });
       if (res.ok) {
         setContent("");
+        setFocused(false);
+        if (textareaRef.current) textareaRef.current.style.height = "auto";
         setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
-        notify({type:"Yuborildi"});
+        setTimeout(() => setSuccess(false), 4000);
+        notify({ type: "Yuborildi" });
         fetchComments();
       }
     } catch (err) {
@@ -97,161 +106,118 @@ function CommentSection({ slug }) {
       setSubmitting(false);
     }
   };
-  console.log(content);
-  console.log(comments);
-  
-  
 
   return (
-    <section className="w-full mt-16 mb-16">
+    <section className="w-full py-6 pb-12 font-sans text-[#0f0f0f]">
 
-      <style>{`
-        .comment-quill .ql-toolbar.ql-snow {
-          border-radius: 12px 12px 0 0;
-          border-color: #e0e7ff;
-          background: #f5f7ff;
-          padding: 8px 14px;
-        }
-        .comment-quill .ql-container.ql-snow {
-          border-radius: 0 0 12px 12px;
-          border-color: #e0e7ff;
-          font-size: 15px;
-          font-family: inherit;
-        }
-        .comment-quill .ql-editor {
-          min-height: 120px;
-          color: #374151;
-          padding: 14px 16px;
-        }
-        .comment-quill .ql-editor.ql-blank::before {
-          color: #a5b4fc;
-          font-style: normal;
-        }
-        .comment-quill .ql-snow .ql-stroke { stroke: #6366f1; }
-        .comment-quill .ql-snow .ql-fill { fill: #6366f1; }
-        .comment-quill .ql-snow .ql-picker { color: #6366f1; }
-        .comment-quill:focus-within .ql-toolbar.ql-snow,
-        .comment-quill:focus-within .ql-container.ql-snow {
-          border-color: #818cf8;
-          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-        /* Comment render stillari */
-        .comment-body a { color: #2563eb; text-decoration: underline; }
-        .comment-body ul { list-style: disc; padding-left: 1.25rem; }
-        .comment-body ol { list-style: decimal; padding-left: 1.25rem; }
-        .comment-body strong { font-weight: 600; }
-        .comment-body em { font-style: italic; }
-      `}</style>
-
-      <div className="flex items-center gap-3 mb-8 flex-wrap">
-        <div className="w-0.5 h-8 bg-gradient-to-r from-blue-600 to-indigo-400 rounded-full" />
-        <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-          Izohlar
-        </h2>
-        {!loading && comments.length > 0 && (
-          <span className="bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-100">
-            {comments.length}
-          </span>
-        )}
-        {!token && (
-          <span className="ml-auto text-xs text-yellow-700 px-3 py-1.5 bg-yellow-50 border border-yellow-200 rounded-full">
-            Izoh qoldirish uchun tizimga kiring
+      <div className="flex items-center gap-6 mb-6">
+        {!loading && (
+          <span className="text-base font-medium text-[#0f0f0f]">
+            {comments.length} ta izoh
           </span>
         )}
       </div>
 
-      {token && (
-        <div className="bg-white rounded-2xl border border-blue-50 p-5 mb-8 shadow-sm">
-          <p className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-widest">
-            Fikringizni qoldiring
-          </p>
+      {success && (
+        <div className="inline-flex items-center gap-2 bg-[#323232] text-white text-[13px] px-4 py-2.5 rounded mb-5">
+          ✓ Izohingiz joylashtirildi
+        </div>
+      )}
 
-          <div className="comment-quill mb-4">
-            <ReactQuill
-              theme="snow"
-              value={content}
-              onChange={setContent}
-              modules={modules}
-              formats={formats}
-              placeholder="Fikringizni yozing..."
-            />
+      {token ? (
+        <div className="flex gap-4 items-start mb-10">
+          <div className="w-10 h-10 rounded-full bg-[#606060] flex items-center justify-center text-white font-bold text-[15px] flex-shrink-0 select-none">
+            {user.length>0 ? user[0] : 'u'}
           </div>
 
-          <div className="flex items-center justify-between mt-3">
-            {success ? (
-              <span className="text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                ✓ Izohingiz yuborildi!
-              </span>
-            ) : <span />}
+          <div className="flex-1 min-w-0">
+            <div className={`border-b transition-all duration-150 ${focused ? "border-b-2 border-gray-300" : "border-b border-gray-300"}`}>
+              <textarea
+                ref={textareaRef}
+                className="w-full border-none outline-none bg-transparent text-sm text-[#0f0f0f] placeholder-[#717171] py-1 pb-2 resize-none leading-5 overflow-hidden box-border"
+                value={content}
+                placeholder="Izoh qo'shish..."
+                rows={1}
+                onFocus={() => setFocused(true)}
+                onChange={(e) => {
+                  setContent(e.target.value);
+                  e.target.style.height = "auto";
+                  e.target.style.height = e.target.scrollHeight + "px";
+                }}
+              />
+            </div>
 
-            <button
-              onClick={handleSubmit}
-              disabled={submitting}
-              className="ml-auto flex items-center gap-2 bg-blue-600 hover:bg-blue-700
-                         disabled:bg-blue-300 text-white font-semibold px-5 py-2.5
-                         rounded-xl text-sm transition-all duration-200 shadow-sm
-                         shadow-blue-200 hover:shadow-blue-300 cursor-pointer"
-            >
-              {submitting ? (
-                <><LoadingOutlined /> Yuborilmoqda...</>
-              ) : (
-                <><SendOutlined /> Yuborish</>
-              )}
-            </button>
+            {focused && (
+              <div className="flex items-center justify-end gap-2 mt-3">
+                <button
+                  onClick={handleCancel}
+                  className="text-sm font-medium text-[#0f0f0f] px-4 py-2 rounded-full hover:bg-[#f2f2f2] transition-colors cursor-pointer border-none bg-transparent"
+                >
+                  Bekor qilish
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting || !content.trim()}
+                  className="text-sm font-medium px-4 py-2 rounded-full transition-colors cursor-pointer border-none
+                    bg-[#065fd4] text-white hover:bg-[#0b57c0]
+                    disabled:bg-[#f2f2f2] disabled:text-[#aaaaaa] disabled:cursor-default"
+                >
+                  {submitting
+                    ? <span className="flex items-center gap-1.5"><LoadingOutlined />Yuborilmoqda</span>
+                    : "Izoh qoldirish"}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="flex gap-4 items-center mb-8 pb-3 border-b border-[#e5e5e5]">
+          <div className="w-10 h-10 rounded-full bg-[#e5e5e5] flex-shrink-0" />
+          <div className="text-sm text-[#717171] border-b border-[#d3d3d3] flex-1 pb-2">
+            Izoh qoldirish uchun tizimga kiring
           </div>
         </div>
       )}
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col">
         {loading ? (
-          Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-gray-100" />
-                <div className="flex flex-col gap-2">
-                  <div className="h-3 w-28 bg-gray-200 rounded-full" />
-                  <div className="h-2.5 w-16 bg-gray-100 rounded-full" />
-                </div>
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex gap-4 py-4">
+              <div className="w-10 h-10 rounded-full flex-shrink-0 bg-gradient-to-r from-[#f0f0f0] via-[#e0e0e0] to-[#f0f0f0] bg-[length:200%_100%] animate-pulse" />
+              <div className="flex-1 flex flex-col gap-2 pt-1">
+                <div className="h-3 w-[28%] rounded bg-gradient-to-r from-[#f0f0f0] via-[#e0e0e0] to-[#f0f0f0] bg-[length:200%_100%] animate-pulse" />
+                <div className="h-3 w-[88%] rounded bg-gradient-to-r from-[#f0f0f0] via-[#e0e0e0] to-[#f0f0f0] bg-[length:200%_100%] animate-pulse" />
+                <div className="h-3 w-[60%] rounded bg-gradient-to-r from-[#f0f0f0] via-[#e0e0e0] to-[#f0f0f0] bg-[length:200%_100%] animate-pulse" />
               </div>
-              <div className="h-3 w-full bg-gray-100 rounded-full mb-2" />
-              <div className="h-3 w-3/4 bg-gray-100 rounded-full" />
             </div>
           ))
         ) : comments.length === 0 ? (
-          <div className="flex flex-col items-center py-16 gap-3">
-            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
-              <MessageOutlined className="text-blue-300 text-3xl" />
+          <div className="py-12 text-center">
+            <div className="text-5xl mb-3 opacity-35">💬</div>
+            <div className="text-sm text-[#717171]">
+              Hali izoh qoldirilmagan. Birinchi bo'ling!
             </div>
-            <p className="text-sm font-medium text-gray-500">Hali izoh qoldirilmagan</p>
-            <p className="text-xs text-gray-400">Birinchi bo'lib fikr bildiring!</p>
           </div>
         ) : (
           comments.map((comment, index) => (
-            <div
-              key={comment.id || index}
-              className="bg-white rounded-2xl border border-gray-100 p-5
-                         hover:border-blue-100 hover:shadow-md hover:shadow-blue-50
-                         transition-all duration-200"
-            >
-              <div className="flex items-start gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center
-                                 font-bold text-[15px] flex-shrink-0 ${getColor(comment.user)}`}>
-                  {getInitial(comment.user)}
+            <div key={comment.id || index} className="flex gap-4 py-4">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[15px] flex-shrink-0 select-none ${getAvatarColor(comment.user)}`}>
+                {getInitial(comment.user)}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline gap-2 mb-1 flex-wrap">
+                  <span className="text-[13px] font-medium text-[#0f0f0f]">
+                    {maskUser(comment.user)}
+                  </span>
+                  <span className="text-xs text-[#717171]">
+                    {formatDate(comment.created_at)}
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <p className="font-semibold text-gray-800 text-sm">
-                      {maskUser(comment.user)}
-                    </p>
-                    <span className="text-[11px] text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100 flex-shrink-0">
-                      {formatDate(comment.created_at)}
-                    </span>
-                  </div>
-                  <div
-                    className="comment-body text-gray-600 text-sm leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: comment.text }}
-                  />
-                </div>
+                <div
+                  className="text-sm text-[#0f0f0f] leading-5 break-words [&_p]:mb-1 [&_p:last-child]:mb-0"
+                  dangerouslySetInnerHTML={{ __html: comment.text }}
+                />
               </div>
             </div>
           ))
