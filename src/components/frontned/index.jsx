@@ -19,14 +19,14 @@ function VimeoIframe({ url }) {
   const videoId = url.split("/").pop().split("?")[0];
 
   return (
-    <iframe
-      src={`https://player.vimeo.com/video/${videoId}`}
-      width="100%"
-      height="400"
-      frameBorder="0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowFullScreen
-    ></iframe>
+   <iframe
+  src={`https://player.vimeo.com/video/${videoId}?h=SECRET&title=0&byline=0&portrait=0&controls=1&dnt=1`}
+  width="100%"
+  height="400"
+  frameBorder="0"
+  allow="autoplay; fullscreen; picture-in-picture"
+  allowFullScreen
+></iframe>
   );
 }
 
@@ -232,14 +232,20 @@ const FrontendCourse = () => {
   if (topicDetail?.detail === "Kurs yopiq. To'lov qiling.") {
     navigate('/kirish2')
   }
-  
+
 function getVimeoEmbedUrl(url) {
   if (!url) return null;
   const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   if (!match) return null;
   return `https://player.vimeo.com/video/${match[1]}`;
 }
-
+  console.log(selectedSection);
+  console.log(selectedTopic);
+  console.log(topicDetail);
+  
+  
+  
+  
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
@@ -366,7 +372,37 @@ function getVimeoEmbedUrl(url) {
 
                 {topicDetail.topic_type === "code" && (
                   <div className="bg-white rounded-lg shadow overflow-hidden">
+                    {topicDetail.problem && (
+                      <div className="mx-4 mt-4 mb-2 p-4 rounded-lg border bg-gray-50">
+                        <h2 className="text-lg font-semibold mb-2">
+                          {topicDetail.problem.title}
+                        </h2>
 
+                        <p className="text-gray-700 mb-3">
+                          {topicDetail.problem.statement}
+                        </p>
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="bg-white p-3 rounded border">
+                            <p className="text-sm font-semibold text-gray-500 mb-1">
+                              Input:
+                            </p>
+                            <pre className="text-sm font-mono whitespace-pre-wrap">
+                              {topicDetail.problem.sample_input}
+                            </pre>
+                          </div>
+
+                          <div className="bg-white p-3 rounded border">
+                            <p className="text-sm font-semibold text-gray-500 mb-1">
+                              Output:
+                            </p>
+                            <pre className="text-sm font-mono whitespace-pre-wrap">
+                              {topicDetail.problem.sample_output}
+                            </pre>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <div className="p-4">
                       <CodeEditor onChange={setCode} onRun={code} topicId={topicDetail.id} />
                     </div>

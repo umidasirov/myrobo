@@ -1,141 +1,197 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { EyeOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
-function BlogComponents() {
+const truncate = (text = "", limit) => {
+  const words = text.split(" ");
+  return words.length > limit ? words.slice(0, limit).join(" ") + "…" : text;
+};
+
+const formatDate = (iso) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleDateString("uz-UZ", { year: "numeric", month: "short", day: "numeric" });
+};
+
+const getCategoryTitle = (cat) => {
+  if (!cat) return "";
+  if (typeof cat === "object") return cat.title ?? "";
+  return cat;
+};
+
+export default function BlogComponents() {
   const navigate = useNavigate();
-  const [blogData, setBlogData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [allBlogs, setAllBlogs] = useState([]);        // barcha bloglar cache
+  const [blogData, setBlogData] = useState([]);         // ko'rsatiladigan bloglar
+  const [categories, setCategories] = useState([]);
+  const [selected, setSelected] = useState(new Set()); // multiselect Set
+  const [blogsLoading, setBlogsLoading] = useState(false);
+  const [catsLoading, setCatsLoading] = useState(false);
 
-  const fetchBlogs = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("https://api.myrobo.uz/blog/blogs/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const result = await response.json();
-      setBlogData(result);
-    } catch (err) {
-      console.error("Error fetching blogs:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Kategoriyalarni bir marta olish
   useEffect(() => {
-    fetchBlogs();
+    const fetchCategories = async () => {
+      setCatsLoading(true);
+      try {
+        const res = await fetch("https://api.myrobo.uz/blog/categories/", {
+          headers: { "Content-Type": "application/json" },
+        });
+        setCategories(await res.json());
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setCatsLoading(false);
+      }
+    };
+    fetchCategories();
   }, []);
 
-  const truncateDescription = (text, limit = 15) => {
-    const words = text.split(" ");
-    return words.slice(0, limit).join(" ") + (words.length > limit ? "..." : "");
+  // Barcha bloglarni bir marta yuklab cache qilish
+  useEffect(() => {
+    const fetchAll = async () => {
+      setBlogsLoading(true);
+      try {
+        const res = await fetch("https://api.myrobo.uz/blog/blogs/", {
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+        setAllBlogs(data);
+        setBlogData(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setBlogsLoading(false);
+      }
+    };
+    fetchAll();
+  }, []);
+
+  // Tanlangan har bir category uchun parallel fetch, natijalarni birlashtirish
+  const fetchBySelected = useCallback(async (slugSet) => {
+    if (slugSet.size === 0) {
+      setBlogData(allBlogs);
+      return;
+    }
+    setBlogsLoading(true);
+    try {
+      const results = await Promise.all(
+        [...slugSet].map((slug) =>
+          fetch(`https://api.myrobo.uz/blog/blogs/?category=${slug}`, {
+            headers: { "Content-Type": "application/json" },
+          }).then((r) => r.json())
+        )
+      );
+      // Takrorlarni id bo'yicha olib tashlash
+      const merged = Object.values(
+        results.flat().reduce((acc, b) => ({ ...acc, [b.id]: b }), {})
+      );
+      setBlogData(merged);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setBlogsLoading(false);
+    }
+  }, [allBlogs]);
+
+  const handleSelect = (slug) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(slug) ? next.delete(slug) : next.add(slug);
+      fetchBySelected(next);
+      return next;
+    });
   };
 
-  const truncateDescription2 = (text, limit = 8) => {
-    const words = text.split(" ");
-    return words.slice(0, limit).join(" ") + (words.length > limit ? "..." : "");
+  const clearAll = () => {
+    setSelected(new Set());
+    setBlogData(allBlogs);
   };
 
-  const formatDate = (isoDate) => {
-    const date = new Date(isoDate);
-    const month = date.getMonth() + 1; // 0-based
-    const day = date.getDate();
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
-
-  const postId = (slug) => {
-    navigate(`/blog/${slug}`, { state: { name: slug } });
-  };
-
-  const url = "https://api.myrobo.uz";
+  const goTo = (slug) => navigate(`/blog/${slug}`, { state: { name: slug } });
 
   return (
-    <section className="w-[90%] m-auto mt-[40px]">
-      {loading ? (
-        <div className="grid grid-cols-2 gap-[25px] w-full max-[1081px]:grid-cols-1">
-          {[...Array(6)].map((_, index) => (
-            <div className="w-full animate-pulse" key={index}>
-              <div className="bg-[#f1f2f7] flex items-center justify-between gap-[20px] p-5 rounded-lg w-full max-[540px]:flex-col">
-                <div className="w-full h-[270px] bg-gray-300 rounded-lg"></div>
-                <div className="flex flex-col gap-4 w-full">
-                  <div className="h-6 bg-gray-300 rounded-md"></div>
-                  <div className="h-4 bg-gray-300 rounded-md w-[80%]"></div>
-                  <div className="h-4 bg-gray-300 rounded-md w-[90%]"></div>
-                  <div className="flex flex-col gap-5">
-                    <div className="border border-gray-400"></div>
-                    <div className="flex gap-[40px]">
-                      <div className="flex items-center gap-2">
-                        <div className="w-[25px] h-[25px] bg-[#525254] rounded-full flex items-center justify-center text-[#fff]">
-                          <EyeOutlined />
-                        </div>
-                        <div className="h-4 w-12 bg-gray-300 rounded-md"></div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-[25px] h-[25px] bg-[#525254] rounded-full flex items-center justify-center text-[#fff]">
-                          <CalendarOutlined />
-                        </div>
-                        <div className="h-4 w-16 bg-gray-300 rounded-md"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <section className="w-[90%] max-w-[1400px] mx-auto mt-10 pb-20">
+
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-8 h-[2px] bg-gradient-to-r from-blue-600 to-blue-400 rounded-full" />
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+          Barcha maqolalar
+        </span>
+        {!blogsLoading && (
+          <span className="ml-auto text-xs text-gray-400">
+            {blogData.length} ta natija
+          </span>
+        )}
+      </div>
+
+      {catsLoading ? (
+        <div className="flex flex-wrap gap-2 mb-8">
+          {[80, 100, 70, 90, 75].map((w, i) => (
+            <div key={i} className="h-8 rounded-full bg-blue-50 animate-pulse" style={{ width: w }} />
           ))}
         </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-[25px] w-full max-[1081px]:grid-cols-1">
-          {blogData?.map((value) => (
-            <div
-              className="w-full"
-              onClick={() => postId(value?.slug)}
-              key={value?.id}
+      ) : categories.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-8">
+
+          <button
+            onClick={clearAll}
+            className={`px-4 py-1.5 rounded-full text-[13px] font-medium border-[1.5px] transition-all duration-200
+              ${selected.size === 0
+                ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200"
+                : "bg-white text-gray-500 border-gray-200 hover:border-blue-400 hover:text-blue-600"
+              }`}
+          >
+            Barchasi
+          </button>
+
+          {/* Kategoriyalar */}
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => handleSelect(cat.slug)}
+              className={`px-4 py-1.5 rounded-full text-[13px] font-medium border-[1.5px] transition-all duration-200
+                ${selected.has(cat.slug)
+                  ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200"
+                  : "bg-white text-gray-500 border-gray-200 hover:border-blue-400 hover:text-blue-600"
+                }`}
             >
-              <div className="bg-[#f1f2f7] flex items-center justify-between gap-[20px] p-5 rounded-lg w-full max-[540px]:flex-col hover:shadow-xl transition-shadow duration-800 cursor-pointer">
-                <div className="w-full h-[270px]">
-                  <img
-                    className="rounded-lg w-full h-full object-cover"
-                    src={value?.img}
-                    alt="This is image"
-                  />
-                </div>
-                <div className="flex flex-col gap-4">
-                  <h3 className="text-[19px] font-bold">
-                    {truncateDescription2(value?.title)}
-                  </h3>
-                  <p className="text-[15px] text-gray-500">Blog</p>
-                  <p className="text-[15px] text-gray-500">
-                    {truncateDescription(value?.description)}
-                  </p>
-                  <div className="flex flex-col gap-5">
-                    <div className="border border-gray-400"></div>
-                    <div className="flex gap-[40px]">
-                      <div className="flex items-center gap-2">
-                        <div className="w-[25px] h-[25px] bg-[#525254] rounded-full flex items-center justify-center text-[#fff]">
-                          <EyeOutlined />
-                        </div>
-                        <p className="text-[17px] text-gray-500">
-                          {value?.views}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-[25px] h-[25px] bg-[#525254] rounded-full flex items-center justify-center text-[#fff]">
-                          <CalendarOutlined />
-                        </div>
-                        <p className="text-[17px] text-gray-500">
-                          {formatDate(value?.created_at)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              {cat.title}
+            </button>
+          ))}
+
+          {selected.size > 0 && (
+            <button
+              onClick={clearAll}
+              className="px-3 py-1.5 rounded-full text-[12px] font-medium text-red-400
+                         border-[1.5px] border-red-100 bg-red-50 hover:bg-red-100
+                         transition-all duration-200 flex items-center gap-1"
+            >
+              <span>×</span>
+              <span>Tozalash {selected.size}</span>
+            </button>
+          )}
+        </div>
+      )}
+
+      {blogsLoading ? (
+        <SkeletonGrid />
+      ) : blogData.length === 0 ? (
+        <div className="flex flex-col items-center py-24 gap-3 text-gray-400">
+          <span className="text-5xl">📭</span>
+          <p className="text-[15px] font-semibold text-gray-700 mt-1">
+            Bu kategoriyada hech narsa topilmadi
+          </p>
+          <button
+            onClick={clearAll}
+            className="text-sm text-blue-500 underline underline-offset-4 hover:text-blue-700 transition-colors"
+          >
+            Filtrni tozalash
+          </button>
+        </div>
+      ) : (
+        <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {blogData.map((b) => (
+            <BlogCard key={b.id} blog={b} onClick={() => goTo(b.slug)} />
           ))}
         </div>
       )}
@@ -143,4 +199,72 @@ function BlogComponents() {
   );
 }
 
-export default BlogComponents;
+function BlogCard({ blog: b, onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 cursor-pointer
+                 flex flex-col hover:-translate-y-1.5 hover:shadow-xl hover:shadow-blue-100
+                 hover:border-blue-100 transition-all duration-300"
+    >
+      <div className="relative h-48 overflow-hidden bg-blue-50">
+        <img
+          src={b.img}
+          alt={b.title}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        {getCategoryTitle(b.category) && (
+          <span className="absolute top-3 left-3 bg-blue-600/90 backdrop-blur-sm text-white
+                           text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-full">
+            {getCategoryTitle(b.category)}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2 p-4 flex-1">
+        <h3 className="text-[14.5px] font-bold text-gray-900 leading-snug line-clamp-2">
+          {b.title}
+        </h3>
+        <p className="text-[12px] text-gray-400 line-clamp-2 flex-1 leading-relaxed">
+          {truncate(b.description, 15)}
+        </p>
+        <div className="flex items-center gap-4 pt-3 mt-auto border-t border-gray-100">
+          <MetaItem icon={<EyeOutlined />} label={b.views ?? 0} />
+          <MetaItem icon={<CalendarOutlined />} label={formatDate(b.created_at)} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MetaItem({ icon, label }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <div className="w-5 h-5 rounded-full flex items-center justify-center text-blue-500 text-[14px] flex-shrink-0">
+        {icon}
+      </div>
+      <span className="text-[11.5px] text-gray-400">{label}</span>
+    </div>
+  );
+}
+
+function SkeletonGrid() {
+  return (
+    <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="rounded-2xl bg-white border border-gray-100 overflow-hidden animate-pulse">
+          <div className="h-48 bg-blue-50" />
+          <div className="p-4 flex flex-col gap-3">
+            <div className="h-3 w-2/5 bg-blue-50 rounded-full" />
+            <div className="h-4 w-full bg-gray-100 rounded-full" />
+            <div className="h-4 w-3/4 bg-gray-100 rounded-full" />
+            <div className="flex gap-3 pt-2 border-t border-gray-100 mt-1">
+              <div className="h-3 w-14 bg-blue-50 rounded-full" />
+              <div className="h-3 w-20 bg-blue-50 rounded-full" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}

@@ -43,7 +43,7 @@ function KirishComponents() {
         setIsLoading(false);
       }
     };
-    load();
+    load()
   }, []);
 
   const token = localStorage.getItem("token");

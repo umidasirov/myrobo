@@ -28,6 +28,11 @@ const notificationApi = () => {
           message: "Mablag' yetarli emas",
         });
         break
+        case "Yuborildi":
+        return notification.success({
+          message: "Izoh qoshildi",
+        });
+        break
       default:
         return notification.info({
           message: "Noma’lum holat yuz berdi!",
