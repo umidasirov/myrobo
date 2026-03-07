@@ -32,10 +32,6 @@ const formatDate = (iso) => {
   return `${Math.floor(diff / 31536000)} yil oldin`;
 };
 
-const maskUser = (user) => {
-  if (!user) return "Foydalanuvchi";
-  return user.slice(0, 4) + "***" + user.slice(-2);
-};
 
 function CommentSection({ slug }) {
   const [comments, setComments] = useState([]);
@@ -158,7 +154,7 @@ function CommentSection({ slug }) {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting || !content.trim()}
-                  className="text-sm font-medium px-4 py-2 rounded-full transition-colors cursor-pointer border-none
+                  className="text-sm font-medium px-4 py-2 rounded transition-colors cursor-pointer border-none
                     bg-[#065fd4] text-white hover:bg-[#0b57c0]
                     disabled:bg-[#f2f2f2] disabled:text-[#aaaaaa] disabled:cursor-default"
                 >
@@ -208,7 +204,7 @@ function CommentSection({ slug }) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 mb-1 flex-wrap">
                   <span className="text-[13px] font-medium text-[#0f0f0f]">
-                    {maskUser(comment.user)}
+                    {comment.user}
                   </span>
                   <span className="text-xs text-[#717171]">
                     {formatDate(comment.created_at)}

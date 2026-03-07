@@ -121,8 +121,8 @@ const LoginPage = () => {
             <p className="text-gray-500 mt-2">Tasdiqlash kodingizni kiriting</p>
           </div>
 
-          <div className="w-full max-w-xs">
-            <div className="flex justify-between gap-2 mb-6">
+          <div className="w-full max-w-md">
+            <div className="flex justify-between gap-1 mb-6">
               {codeDigits.map((digit, idx) => (
                 <input
                   key={idx}
@@ -133,7 +133,7 @@ const LoginPage = () => {
                   onChange={(e) => handleDigitChange(e, idx)}
                   onKeyDown={(e) => handleKeyDown(e, idx)}
                   onPaste={idx === 0 ? handlePaste : undefined}
-                  className="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
+                  className="w-8 h-10 sm:w-12 sm:h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
                 />
               ))}
             </div>
