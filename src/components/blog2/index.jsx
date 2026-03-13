@@ -115,9 +115,10 @@ function BlogComponentsId() {
             {loading ? (
               <div className="h-6 w-[90%] bg-gray-300 rounded-md animate-pulse" />
             ) : (
-              <p className="text-[17px] text-gray-600 max-[590px]:text-[15px] max-[490px]:text-[13px]">
-                {blog?.description}
-              </p>
+              <div
+                className="text-[17px] text-gray-600 max-[590px]:text-[15px] max-[490px]:text-[13px] prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: blog?.description }}
+              />
             )}
 
             <div className="flex items-center gap-[20px] max-[524px]:justify-center">

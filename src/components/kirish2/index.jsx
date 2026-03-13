@@ -18,14 +18,12 @@ function KirishComponentsID() {
   const [pageLoading, setPageLoading] = useState(true);
   const [isBought, setIsBought] = useState(false);
 
-  // Sahifa yuklanganda kurslar + sotib olinganlarni tekshir
   useEffect(() => {
     const load = async () => {
       setPageLoading(true);
       try {
         await fetchCourse();
 
-        // Faqat token bo'lsa my-courses ni tekshir
         if (token) {
           const res = await fetch("https://api.myrobo.uz/courses/my-courses/", {
             headers: {

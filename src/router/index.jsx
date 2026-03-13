@@ -13,6 +13,7 @@ import Profilim from "../components/profilim";
 import MeningKurslarim from "../components/my-courses";
 import Sertificatlarim from "../components/sertificatlarim";
 import NotFound from "../components/not-found";
+import BlogEditor from "../components/BlogEditor";
 
 const root = createBrowserRouter([
   {
@@ -67,6 +68,10 @@ const root = createBrowserRouter([
       {
         path: "sertificatlarim",
         element: <Sertificatlarim />,
+      },
+      {
+        path:"blog-qosh",
+        element:<BlogEditor/>
       },
     ],
   },

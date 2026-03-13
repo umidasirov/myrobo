@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { EyeOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { BiPencil } from "react-icons/bi";
+import notificationApi from "../../generic/notificition";
 
 const truncate = (text = "", limit) => {
   const words = text.split(" ");
@@ -21,14 +23,13 @@ const getCategoryTitle = (cat) => {
 
 export default function BlogComponents() {
   const navigate = useNavigate();
-  const [allBlogs, setAllBlogs] = useState([]);        // barcha bloglar cache
-  const [blogData, setBlogData] = useState([]);         // ko'rsatiladigan bloglar
+  const [allBlogs, setAllBlogs] = useState([]);   
+  const [blogData, setBlogData] = useState([]);        
   const [categories, setCategories] = useState([]);
-  const [selected, setSelected] = useState(new Set()); // multiselect Set
+  const [selected, setSelected] = useState(new Set()); 
   const [blogsLoading, setBlogsLoading] = useState(false);
   const [catsLoading, setCatsLoading] = useState(false);
-
-  // Kategoriyalarni bir marta olish
+  const [showEditor, setShowEditor] = useState(false);
   useEffect(() => {
     const fetchCategories = async () => {
       setCatsLoading(true);
@@ -45,8 +46,17 @@ export default function BlogComponents() {
     };
     fetchCategories();
   }, []);
+  const notif = notificationApi();
+  const token = localStorage.getItem('token')
+  const handleBlogAdd = () =>{
+    if(!token){
+      notif({type:'token'})
+    }
+    else{
+      navigate('/blog-qosh')
+    }
 
-  // Barcha bloglarni bir marta yuklab cache qilish
+  }
   useEffect(() => {
     const fetchAll = async () => {
       setBlogsLoading(true);
@@ -66,7 +76,6 @@ export default function BlogComponents() {
     fetchAll();
   }, []);
 
-  // Tanlangan har bir category uchun parallel fetch, natijalarni birlashtirish
   const fetchBySelected = useCallback(async (slugSet) => {
     if (slugSet.size === 0) {
       setBlogData(allBlogs);
@@ -111,17 +120,23 @@ export default function BlogComponents() {
 
   return (
     <section className="w-[90%] max-w-[1400px] mx-auto mt-10 pb-20">
-
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-8 h-[2px] bg-gradient-to-r from-blue-600 to-blue-400 rounded-full" />
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-[2px] bg-gradient-to-r from-blue-600 to-blue-400 rounded-full" />
+          <div className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+        </div>
           Barcha maqolalar
-        </span>
-        {!blogsLoading && (
-          <span className="ml-auto text-xs text-gray-400">
-            {blogData.length} ta natija
-          </span>
-        )}
+        </div>
+        <div className="flex items-center gap-2">
+          {!blogsLoading && (
+            <span className="ml-auto text-xs text-gray-400">
+              {blogData.length} ta natija
+            </span>
+          )}
+          <button onClick={() =>handleBlogAdd()} className="text-sm flex items-center p-2 rounded-md bg-blue-500 text-gray-100 hover:bg-blue-400">
+            maqola qo'shish <BiPencil/>
+          </button>
+        </div>
       </div>
 
       {catsLoading ? (
@@ -144,7 +159,6 @@ export default function BlogComponents() {
             Barchasi
           </button>
 
-          {/* Kategoriyalar */}
           {categories.map((cat) => (
             <button
               key={cat.id}
@@ -205,7 +219,7 @@ function BlogCard({ blog: b, onClick }) {
       onClick={onClick}
       className="group bg-white rounded-2xl overflow-hidden border border-gray-100 cursor-pointer
                  flex flex-col hover:-translate-y-1.5 hover:shadow-xl hover:shadow-blue-100
-                 hover:border-blue-100 transition-all duration-300"
+                 hover:border-blue-100 hover:rounded-2xl transition-all duration-300"
     >
       <div className="relative h-48 overflow-hidden bg-blue-50">
         <img
