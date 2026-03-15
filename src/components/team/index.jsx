@@ -52,7 +52,7 @@ function TeamComponents() {
                 <SkeletonCard key={i} />
               ))}
             </div>
-          ) : cardCount <= 2 ? (
+          ) :
             <div className={`flex justify-center gap-6 flex-wrap`}>
               {teacherData?.map((value) => (
                 <div
@@ -88,50 +88,7 @@ function TeamComponents() {
                   </div>
                 </div>
               ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {teacherData?.map((value) => (
-                <div
-                  key={value.slug}
-                  onClick={() => postID(value?.slug)}
-                  className={`border border-gray-200 w-full max-w-[310px] p-6 rounded-lg hover:shadow-lg transition-shadow cursor-pointer ${
-                    cardCount % 4 !== 0 &&
-                    teacherData.indexOf(value) >= Math.floor(cardCount / 4) * 4
-                      ? "sm:mx-auto lg:col-span-1 lg:col-start-2"
-                      : "mx-auto"
-                  }`}
-                >
-                  <div className="overflow-hidden rounded-lg">
-                    <img
-                      className="w-full h-[280px] object-cover hover:scale-105 transition-transform"
-                      src={value?.img}
-                      alt={value?.username}
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="flex flex-col items-center gap-4 pt-5">
-                    <h2 className="text-[22px] font-bold text-center max-[568px]:text-[19px]">
-                      {value?.username}
-                    </h2>
-                    <div className="w-full flex flex-col gap-4">
-                      <div className="flex justify-between gap-3">
-                        <p className="text-gray-500">
-                          Course
-                          <span className="font-medium text-black">{value.courses.length}</span>{" "}
-                        </p>
-                        {/* <p className="text-gray-500">
-                          <span className="font-medium text-black">17</span>{" "}
-                          Student
-                        </p> */}
-                      </div>
-                      <Button className="w-full">Batafsil ko'rish</Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+            </div> }
         </div>
       </div>
     </section>
