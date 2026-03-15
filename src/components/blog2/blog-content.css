@@ -48,7 +48,21 @@
   border: 1px solid #bfdbfe;
   box-shadow: 0 2px 16px rgba(59, 130, 246, 0.12);
 }
+.blog-content .ql-align-center {
+  text-align: center;
+}
 
+.blog-content .ql-align-right {
+  text-align: right;
+}
+
+.blog-content .ql-align-left {
+  text-align: left;
+}
+
+.blog-content .ql-align-justify {
+  text-align: justify;
+}
 .blog-content iframe,
 .blog-content video {
   display: block;
