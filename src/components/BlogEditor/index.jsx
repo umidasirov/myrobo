@@ -183,8 +183,8 @@ export default function BlogEditor({ onClose }) {
               />
             ) : (
               <div
-                className="mt-2 rounded-2xl px-5 py-4 min-h-[220px] prose prose-invert prose-sm max-w-none text-sm leading-relaxed"
-                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(160,180,255,0.22)", color: "#c0cbdf" }}
+                className="mt-2 rounded-2xl px-5 py-4 min-h-[220px] yaxshi prose prose-invert prose-sm max-w-none text-sm leading-relaxed"
+                style={{ background: "rgba(255,255,255,0.02)" , border: "1px solid rgba(160,180,255,0.22)", color: "#c0cbdf" }}
                 dangerouslySetInnerHTML={{ __html: editorData || '<p style="color:#3d4d6a">Kontent hali yo\'q…</p>' }}
               />
             )}
