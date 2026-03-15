@@ -167,3 +167,22 @@
     margin: 4px 20px 12px 0;
     max-width: 260px;
 }
+
+.ql-editor .ql-video {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 16 / 9;
+  margin: 12px auto;
+  border-radius: 12px;
+}
+
+.ql-editor iframe,
+.ql-editor video {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 16 / 9;
+  margin: 12px auto;
+  border-radius: 12px;
+}

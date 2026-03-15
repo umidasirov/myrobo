@@ -5,6 +5,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./quill.css"
+import "../blog2/blog-content.css"
 const modules = {
   toolbar: [
     [{ header: [1, 2, 3, 4, false] }],
@@ -201,7 +202,10 @@ export default function BlogEditor({ onClose }) {
               {load ? <><LoadingOutlined /> Jonatilmoqda...</> : "Nashrga jonatish"}
             </button>
           </div>
-
+                <div
+                className="blog-content text-[17px] text-gray-600 max-[590px]:text-[15px] max-[490px]:text-[13px] prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: editorData }}
+              />
         </div>
       </div>
     </div>
