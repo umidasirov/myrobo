@@ -75,7 +75,7 @@ export default function BlogComponents() {
     };
     fetchAll();
   }, []);
-
+  console.log(allBlogs);
   const fetchBySelected = useCallback(async (slugSet) => {
     if (slugSet.size === 0) {
       setBlogData(allBlogs);
@@ -214,6 +214,14 @@ export default function BlogComponents() {
 }
 
 function BlogCard({ blog: b, onClick }) {
+   const stripHtml = (html = "") => {
+        const div = document.createElement("div");
+        div.innerHTML = html;
+        
+        div.querySelectorAll("img, video, iframe, figure").forEach((el) => el.remove());
+        
+        return (div.textContent || div.innerText || "").trim();
+      };
   return (
     <div
       onClick={onClick}
@@ -240,8 +248,7 @@ function BlogCard({ blog: b, onClick }) {
           {b.title}
         </h3>
         <p className="text-[12px] text-gray-400 line-clamp-2 flex-1 leading-relaxed">
-          {truncate(b.description, 15)}
-        </p>
+            {truncate(stripHtml(b.description), 15)}</p>
         <div className="flex items-center gap-4 pt-3 mt-auto border-t border-gray-100">
           <MetaItem icon={<EyeOutlined />} label={b.views ?? 0} />
           <MetaItem icon={<CalendarOutlined />} label={formatDate(b.created_at)} />

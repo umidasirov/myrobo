@@ -61,8 +61,11 @@ export default function BlogEditor({ onClose }) {
     formData.append("title", title);
     formData.append("description", editorData);
     formData.append("img", banner.file);
-
+    
     setLoad(true);
+      for (let [key, val] of formData.entries()) {
+    console.log(val);
+  }
     try {
       const res = await fetch("https://api.myrobo.uz/blog/blog-create/", {
         method: "POST",
@@ -84,7 +87,6 @@ export default function BlogEditor({ onClose }) {
 
       <div className="relative rounded-3xl flex flex-col w-full max-w-3xl gap-2">
 
-        {/* Header */}
         <div className="flex items-center justify-between px-7 p-4 pt-6 pb-4 border-b" style={{ borderColor: "rgba(160,180,255,0.25)" }}>
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg,#4f6ef7,#7c3aed)" }}>
@@ -114,7 +116,6 @@ export default function BlogEditor({ onClose }) {
 
         <div className="flex flex-col gap-5 px-4 sm:px-7 py-6">
 
-          {/* Banner */}
           <div>
             <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase mb-2" style={{ color: "#4d5e7a" }}>
               <span style={{ color: "#4f6ef7" }}><Upload size={13} /></span>
@@ -151,7 +152,6 @@ export default function BlogEditor({ onClose }) {
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onBanner} />
           </div>
 
-          {/* Title */}
           <div>
             <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase mb-2" style={{ color: "#4d5e7a" }}>
               <span style={{ color: "#4f6ef7" }}><Edit3 size={13} /></span>
@@ -182,15 +182,14 @@ export default function BlogEditor({ onClose }) {
                 formats={formats}
               />
             ) : (
-              <div
-                className="mt-2 rounded-2xl px-5 py-4 min-h-[220px] yaxshi prose prose-invert prose-sm max-w-none text-sm leading-relaxed"
-                style={{ background: "rgba(255,255,255,0.02)" , border: "1px solid rgba(160,180,255,0.22)", color: "#c0cbdf" }}
+             <div
+                className="ql-editor mt-2 rounded-2xl min-h-[220px]"
+                style={{ border: "1px solid rgba(160,180,255,0.22)" }}
                 dangerouslySetInnerHTML={{ __html: editorData || '<p style="color:#3d4d6a">Kontent hali yo\'q…</p>' }}
-              />
+             />
             )}
           </div>
 
-          {/* Actions */}
           <div className="flex items-center justify-end gap-3 pt-2">
             {onClose && (
               <button onClick={onClose} className="px-5 py-2.5 rounded-2xl text-sm font-medium transition-all"

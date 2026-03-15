@@ -8,7 +8,7 @@ import {
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CommentSection from "../comments";
-
+import "./blog-content.css";
 const formatDate = (iso) => {
   if (!iso) return "";
   const d = new Date(iso);
@@ -116,7 +116,7 @@ function BlogComponentsId() {
               <div className="h-6 w-[90%] bg-gray-300 rounded-md animate-pulse" />
             ) : (
               <div
-                className="text-[17px] text-gray-600 max-[590px]:text-[15px] max-[490px]:text-[13px] prose max-w-none"
+                className="blog-content text-[17px] text-gray-600 max-[590px]:text-[15px] max-[490px]:text-[13px] prose max-w-none"
                 dangerouslySetInnerHTML={{ __html: blog?.description }}
               />
             )}
