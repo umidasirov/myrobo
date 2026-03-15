@@ -202,10 +202,6 @@ export default function BlogEditor({ onClose }) {
               {load ? <><LoadingOutlined /> Jonatilmoqda...</> : "Nashrga jonatish"}
             </button>
           </div>
-                <div
-                className="blog-content text-[17px] text-gray-600 max-[590px]:text-[15px] max-[490px]:text-[13px] prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: editorData }}
-              />
         </div>
       </div>
     </div>
