@@ -42,7 +42,7 @@ const root = createBrowserRouter([
         element: <Team2 />,
       },
       {
-        path: "kirish2",
+        path: "kirish2/:slug",
         element: <KirishComponentsID />,
       },
       {

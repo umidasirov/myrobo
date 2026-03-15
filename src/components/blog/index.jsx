@@ -23,10 +23,10 @@ const getCategoryTitle = (cat) => {
 
 export default function BlogComponents() {
   const navigate = useNavigate();
-  const [allBlogs, setAllBlogs] = useState([]);   
-  const [blogData, setBlogData] = useState([]);        
+  const [allBlogs, setAllBlogs] = useState([]);
+  const [blogData, setBlogData] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selected, setSelected] = useState(new Set()); 
+  const [selected, setSelected] = useState(new Set());
   const [blogsLoading, setBlogsLoading] = useState(false);
   const [catsLoading, setCatsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -48,11 +48,11 @@ export default function BlogComponents() {
   }, []);
   const notif = notificationApi();
   const token = localStorage.getItem('token')
-  const handleBlogAdd = () =>{
-    if(!token){
-      notif({type:'token'})
+  const handleBlogAdd = () => {
+    if (!token) {
+      notif({ type: 'token' })
     }
-    else{
+    else {
       navigate('/blog-qosh')
     }
 
@@ -124,7 +124,7 @@ export default function BlogComponents() {
         <div className="flex items-center gap-2">
           <div className="w-8 h-[2px] bg-gradient-to-r from-blue-600 to-blue-400 rounded-full" />
           <div className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
-        </div>
+          </div>
           Barcha maqolalar
         </div>
         <div className="flex items-center gap-2">
@@ -133,8 +133,8 @@ export default function BlogComponents() {
               {blogData.length} ta natija
             </span>
           )}
-          <button onClick={() =>handleBlogAdd()} className="text-sm flex items-center p-2 rounded-md bg-blue-500 text-gray-100 hover:bg-blue-400">
-            maqola qo'shish <BiPencil/>
+          <button onClick={() => handleBlogAdd()} className="text-sm flex items-center p-2 rounded-md bg-blue-500 text-gray-100 hover:bg-blue-400">
+            maqola qo'shish <BiPencil />
           </button>
         </div>
       </div>
@@ -214,14 +214,14 @@ export default function BlogComponents() {
 }
 
 function BlogCard({ blog: b, onClick }) {
-   const stripHtml = (html = "") => {
-        const div = document.createElement("div");
-        div.innerHTML = html;
-        
-        div.querySelectorAll("img, video, iframe, figure").forEach((el) => el.remove());
-        
-        return (div.textContent || div.innerText || "").trim();
-      };
+  const stripHtml = (html = "") => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+
+    div.querySelectorAll("img, video, iframe, figure").forEach((el) => el.remove());
+
+    return (div.textContent || div.innerText || "").trim();
+  };
   return (
     <div
       onClick={onClick}
@@ -248,7 +248,7 @@ function BlogCard({ blog: b, onClick }) {
           {b.title}
         </h3>
         <p className="text-[12px] text-gray-400 line-clamp-2 flex-1 leading-relaxed">
-            {truncate(stripHtml(b.description), 15)}</p>
+          {truncate(stripHtml(b.description), 15)}</p>
         <div className="flex items-center gap-4 pt-3 mt-auto border-t border-gray-100">
           <MetaItem icon={<EyeOutlined />} label={b.views ?? 0} />
           <MetaItem icon={<CalendarOutlined />} label={formatDate(b.created_at)} />
