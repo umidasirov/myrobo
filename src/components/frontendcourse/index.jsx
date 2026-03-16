@@ -47,12 +47,6 @@ function EmptySections({ courseTitle }) {
           Kurs tayyorlanmoqda.<br />Tez orada darslar joylashtiriladi!
         </p>
       </div>
-      <div className="w-full bg-blue-50 rounded-xl px-4 py-3 text-left">
-        <p className="text-blue-500 text-xs font-medium mb-1">📌 Eslatma</p>
-        <p className="text-blue-400 text-xs leading-relaxed">
-          Yangi darslar qo'shilganda sizga xabar beriladi. Sahifani vaqti-vaqti bilan yangilang.
-        </p>
-      </div>
     </div>
   );
 }
