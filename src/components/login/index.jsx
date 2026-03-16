@@ -20,9 +20,7 @@ const LoginPage = () => {
     if (!uuid) {
       const newUUID = uuidv4();
       Cookies.set("my_uuid", newUUID, { expires: 365 });
-      console.log("Yangi UUID:", newUUID);
     } else {
-      console.log("Mavjud UUID:", uuid);
     }
   }, []);
 
@@ -89,7 +87,6 @@ const LoginPage = () => {
       return;
     }
 
-    console.log("Javob:", data);
 
     if (data.access) localStorage.setItem("token", data.access);
     if (data.refresh) localStorage.setItem("refresh", data.refresh);

@@ -95,12 +95,10 @@ const FrontendCourse = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // --- Access tekshiruvi — darhol, topicDetail kutilmaydi ---
   const { isBought, loading: accessLoading } = useCourseAccess(id);
 
   useEffect(() => {
     if (!accessLoading && !isBought && id) {
-      // Kurs topilsa slug sahifasiga, topilmasa bosh sahifaga
       const course = data?.find((c) => String(c.id) === String(id));
       if (course) {
         navigate(`/kirish2/${toSlug(course.title)}`, { replace: true });

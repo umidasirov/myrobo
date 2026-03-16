@@ -22,7 +22,6 @@ function MeningKurslarim() {
         return response.json();
       })
       .then((data) => setData(data))
-      .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   }, []);
 

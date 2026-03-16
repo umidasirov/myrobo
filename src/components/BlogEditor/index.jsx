@@ -65,7 +65,6 @@ export default function BlogEditor({ onClose }) {
     
     setLoad(true);
       for (let [key, val] of formData.entries()) {
-    console.log(val);
   }
     try {
       const res = await fetch("https://api.myrobo.uz/blog/blog-create/", {

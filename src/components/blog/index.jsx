@@ -75,7 +75,6 @@ export default function BlogComponents() {
     };
     fetchAll();
   }, []);
-  console.log(allBlogs);
   const fetchBySelected = useCallback(async (slugSet) => {
     if (slugSet.size === 0) {
       setBlogData(allBlogs);
