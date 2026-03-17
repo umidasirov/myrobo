@@ -45,7 +45,7 @@ function TeamComponents() {
     localStorage.setItem("location", slug);
     navigate("/team2/");
   };
-
+  
   return (
     <section className="w-[90%] mx-auto mt-[140px] mb-11 max-w-[1200px] max-[768px]:mt-[80px] max-[568px]:mt-[40px]">
       <div className="flex flex-col gap-[60px] items-center max-[768px]:gap-[35px]">
@@ -84,7 +84,7 @@ function TeamComponents() {
                     </h2>
 
                     <p className="text-gray-500 text-sm leading-relaxed text-center line-clamp-3">
-                      {value?.description || getDescription(index)}
+                      {value?.about || getDescription(index)}
                     </p>
 
                     <div className="flex justify-center mt-1">
