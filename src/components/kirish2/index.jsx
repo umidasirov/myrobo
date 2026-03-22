@@ -38,7 +38,6 @@ function KirishComponentsID() {
   );
   const courseId = findData?.id;
 
-  // useCourseAccess hook — markazlashtirilgan tekshiruv
   const { isBought, loading: accessLoading, token: tkn } = useCourseAccess(courseId);
 
   useEffect(() => {
@@ -195,7 +194,7 @@ function KirishComponentsID() {
               Kurs haqida:
               <span className="text-blue-600">{findData?.title}</span>
             </h1>
-            <div className="bg-orange-200 rounded-lg overflow-hidden p-6 md:p-10 shadow-lg">
+            <div className="bg-gray-100 backdrop-blur-sm rounded-lg overflow-hidden p-6 md:p-10 shadow-lg">
               <img
                 src={findData?.image}
                 className="w-full object-contain mx-auto"

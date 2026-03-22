@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useData } from "../../datacontect";
 
 export function toSlug(text) {
+
   return text
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/[^a-z0-9\s-+]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 }

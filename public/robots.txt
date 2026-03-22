@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Allow: /kurslar
+Allow: /blog
+Allow: /blog/
+
+# Shaxsiy sahifalar — indekslanmasin
+Disallow: /profilim
+Disallow: /my-courses
+Disallow: /sertificatlarim
+Disallow: /login
+Disallow: /check
+Disallow: /blog-qosh
+
+# Sitemap
+Sitemap: https://myrobo.uz/sitemap.xml

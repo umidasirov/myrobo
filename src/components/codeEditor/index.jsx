@@ -259,7 +259,7 @@ const CodeEditor = ({ topicId, isCode = true }) => {
   const canSubmit = isCode && !!langConfig?.apiLang && !load;
 
   return (
-    <div className="w-full border border-gray-600 rounded-lg overflow-hidden font-mono">
+    <div className="w-full border border-gray-200 rounded-lg overflow-hidden font-mono">
       <div className={`flex flex-wrap items-center gap-3 px-3 py-2 border-b ${theme.toolbar}`}>
         <div className="flex items-center gap-2">
           <label className={`text-sm ${theme.label}`}>Til:</label>
@@ -356,9 +356,7 @@ const CodeEditor = ({ topicId, isCode = true }) => {
                 </div>
               )}
 
-              <div className="text-xs text-gray-500 mt-2">
-                Submission ID: <code>{response.submission_id}</code>
-              </div>
+           
             </div>
           )}
         </>

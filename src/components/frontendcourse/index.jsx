@@ -338,7 +338,6 @@ const FrontendCourse = () => {
             )}
           </div>
 
-          {/* Main content */}
           <div className="w-full lg:w-3/4">
             {!sectionsLoading && sections.length === 0 ? (
               <Card className="mb-6 shadow">
@@ -422,7 +421,7 @@ const FrontendCourse = () => {
                 {topicDetail?.topic_type === "code" && (
                   <div className="bg-white rounded-lg shadow overflow-hidden">
                     {topicDetail.problem && (
-                      <div className="mx-4 mt-4 mb-2 p-4 rounded-lg border bg-gray-50">
+                      <div className=" mb-2 p-4 border-b">
                         <h2 className="text-lg font-semibold mb-2">
                           {topicDetail.problem.title}
                         </h2>
