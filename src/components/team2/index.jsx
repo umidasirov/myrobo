@@ -141,7 +141,7 @@ export default function Team2() {
           <span className=''>
             Mentor <span className="text-blue-600">kurslari</span>
           </span>
-          <div className='mx-2 flex-1 h-1 backdrop-blur-sm bg-gray-200'>
+          <div className='mx-2 flex-1 h-1 backdrop-blur-sm bg-blue-100'>
           </div>
         </h3>
 

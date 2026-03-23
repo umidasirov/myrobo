@@ -29,7 +29,7 @@ const Footer = () => {
                   Bizga to'g'ridan-to'g'ri qo'ng'iroq qilingmi?
                 </p>
                 <p className="hover:text-blue-500 cursor-pointer">
-                  +1 234 567 8910
+                  +998 77 498 29 11
                 </p>
               </div>
             </div>
@@ -49,7 +49,7 @@ const Footer = () => {
               <div>
                 <p className="text-gray-500">Manzil</p>
                 <p className="hover:text-blue-500 cursor-pointer">
-                  Xovard ko'chasi, San-Fransisko
+                  Toshkent viloyati mirobop tumani, 1-mavze, 2-uy
                 </p>
               </div>
             </div>
@@ -69,7 +69,7 @@ const Footer = () => {
               <div>
                 <p className="text-gray-500">Elektron pochta</p>
                 <p className="hover:text-blue-500 cursor-pointer">
-                  contact@eduma.com
+                  contact@myrobo.com
                 </p>
               </div>
             </div>

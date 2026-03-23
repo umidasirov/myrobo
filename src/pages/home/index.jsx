@@ -17,19 +17,28 @@ function Home() {
 
   return (
     <>
-      <Helmet>
-        <title>MyRobo - Bosh sahifa</title>
-        <meta name="description" content="MyRobo platformasida kurslar, sertifikatlar va ta'lim resurslariga kirish. Dasturlash va texnologiya bo'yicha eng yaxshi kurslarni toping." />
-        <meta name="keywords" content="kurslar, ta'lim, dasturlash, sertifikatlar, MyRobo" />
-        <meta property="og:title" content="MyRobo - Bosh sahifa" />
-        <meta property="og:description" content="MyRobo platformasida kurslar, sertifikatlar va ta'lim resurslariga kirish." />
-        <meta property="og:type" content="website" />
-      </Helmet>
+    <Helmet>
+      <title>MyRobo.uz – IT kurslar, dasturlash darslari va robototexnika platformasi</title>
+      <meta
+        name="description"
+        content="MyRobo.uz platformasida IT kurslar, dasturlash darslari, robototexnika, Arduino, React va Python bo'yicha zamonaviy ta'lim resurslarini o'rganing."
+      />
+      <meta
+        name="keywords"
+        content="MyRobo, myrobo uz, myrobo, robo ,robouz,uzrobo, myro uz,uzro, robot, uz robot,pro kurslar,Myrobo.uz,myrobo.uz,frontend kurslari,kurslar,frontend,backend, it kurslar, dasturlash darslari, robototexnika, arduino kurs, react kurs, python kurs, uzbekcha it darslar, online ta'lim platformasi"
+      />
+      <meta property="og:title" content="MyRobo.uz – IT kurslar va dasturlash platformasi" />
+      <meta
+        property="og:description"
+        content="MyRobo.uz platformasida dasturlash, robototexnika va zamonaviy IT yo'nalishlarini o'rganing."
+      />
+      <meta property="og:type" content="website" />
+    </Helmet>
       <div className="w-full max-w-[1880px] mx-auto px-4 sm:px-6 md:px-8">
         <SwiperComponent />
         <SertificateComponents />
         <KirishComponents />
-        <KursToifalariComponents />
+        {/* <KursToifalariComponents /> */}
         <PremiumEducation />
         <AnimatedStats />
         <TeamComponents />
