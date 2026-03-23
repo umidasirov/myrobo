@@ -2,14 +2,27 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useData } from "../../datacontect";
 
-export function toSlug(text) {
+// ✅ O'ZGARTIRILDI: endi 2 ta argument oladi — id va text
+// SABABI: Oldin faqat title dan slug yasalardi masalan "python-asoslari"
+// Muammo: kurs nomi o'zgarsa URL o'zgaradi → Google dan tushadi
+// Endi: "python-asoslari--b2b9f1c3" → ID bo'lsa har doim topiladi
+export function toSlug(id, text) {
+  if (!text) return String(id);
 
-  return text
+  const slug = text
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-+]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
+    .replace(/[^a-z0-9\s-]/g, "")   // harflar, raqamlar, tire qoladi
+    .replace(/\s+/g, "-")            // bo'shliqlar → tire
+    .replace(/-+/g, "-");            // ko'p tire → bitta tire
+
+  // UUID ning faqat birinchi qismini olamiz
+  // Masalan: "b2b9f1c3-3b3a-4aa1-9c4a-6b2d9c0f1b11" → "b2b9f1c3"
+  // Bu yetarli, chunki u ham unique
+  const shortId = String(id).split("-")[0];
+
+  return `${slug}--${shortId}`;
+  // Natija: "python-asoslari--b2b9f1c3"
 }
 
 function SkeletonCard() {
@@ -53,9 +66,13 @@ function KirishComponents() {
   };
 
   const postId = (title, id) => {
-    const slug = toSlug(title);
+    // ✅ O'ZGARTIRILDI: endi id ham berildi toSlug ga
+    // OLDIN: toSlug(title)        → "python-asoslari"
+    // ENDI:  toSlug(id, title)    → "python-asoslari--b2b9f1c3"
+    const slug = toSlug(id, title);
     navigate(`/kurslar/${slug}`);
   };
+
   return (
     <section className="w-[90%] m-auto mt-[60px] max-[768px]:mt-[30px]">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 justify-items-center md:justify-items-start">

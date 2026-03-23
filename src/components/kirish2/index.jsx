@@ -3,7 +3,6 @@ import {
   CodeOutlined,
   PlayCircleOutlined,
   LoadingOutlined,
-  CheckCircleFilled,
   BarsOutlined,
   BookOutlined,
   UserSwitchOutlined,
@@ -12,12 +11,22 @@ import { useData } from "../../datacontect";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import notificationApi from "../../generic/notificition";
 import { useCourseAccess } from "../../hooks/useCourseAccess";
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from "react-helmet-async";
+import { toSlug } from "../kirish";
 
-function fromSlug(slug) {
-  if (!slug || typeof slug !== "string") return "";
-  return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+// ✅ YANGI FUNKSIYA: slugdan shortId ajratib oladi
+// SABABI: URL da "python-asoslari--b2b9f1c3" bo'ladi
+// Bizga kerak: "b2b9f1c3" — shu orqali kursni topamiz
+// "--" dan keyin kelgan qism = shortId
+function getShortIdFromSlug(slug) {
+  if (!slug) return null;
+  const parts = slug.split("--");
+  return parts[parts.length - 1]; // oxirgi qism = shortId
 }
+
+// ❌ O'CHIRILDI: fromSlug funksiyasi
+// SABABI: U title orqali qidirardi — ishonchsiz usul
+// title o'zgarsa yoki 2 ta kurs bir xil nomda bo'lsa xato bo'lardi
 
 function KirishComponentsID() {
   const { data, fetchCourse } = useData();
@@ -32,14 +41,14 @@ function KirishComponentsID() {
   const [buyLoading, setBuyLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
 
-  const titleFromSlug = fromSlug(slug);
-  const findData = data?.find(
-    (item) =>
-      item?.title?.trim().toLowerCase() === titleFromSlug?.trim().toLowerCase()
-  );
+  // ✅ O'ZGARTIRILDI: endi shortId orqali kurs topiladi
+  // OLDIN: title text orqali qidirardi (fromSlug ishlatardi)
+  // ENDI: UUID ning birinchi qismi orqali qidiradi — ishonchli!
+  const shortId = getShortIdFromSlug(slug);
+  const findData = data?.find((item) => item?.id?.startsWith(shortId));
   const courseId = findData?.id;
 
-  const { isBought, loading: accessLoading, token: tkn } = useCourseAccess(courseId);
+  const { isBought, loading: accessLoading } = useCourseAccess(courseId);
 
   useEffect(() => {
     const load = async () => {
@@ -57,20 +66,19 @@ function KirishComponentsID() {
 
   const location = useLocation();
   useEffect(() => {
-    if (
-      location.pathname === "/kirish2/" ||
-      location.pathname === "kirish2" ||
-      !slug
-    ) {
+    if (location.pathname === "/kurslar/" || !slug) {
       navigate("/", { replace: true });
     }
   }, [location.pathname]);
 
+  // ✅ O'ZGARTIRILDI: redirect URL to'g'irlandi
+  // OLDIN: navigate(`/frontend/${courseId}`) — faqat UUID, SEO yo'q
+  // ENDI:  navigate(`/kurslar/${slug}/${courseId}`) — slug + UUID, SEO bor
   useEffect(() => {
-    if (!accessLoading && isBought && courseId) {
-      navigate(`/frontend/${courseId}`, { replace: true });
+    if (!accessLoading && isBought && courseId && findData) {
+      navigate(`/kurslar/${slug}/${courseId}`, { replace: true });
     }
-  }, [isBought, accessLoading, courseId]);
+  }, [isBought, accessLoading, courseId, findData]);
 
   useEffect(() => {
     if (!courseId) return;
@@ -113,22 +121,29 @@ function KirishComponentsID() {
     }
     setBuyLoading(true);
     try {
-      const response = await fetch("https://api.myrobo.uz/courses/courses/buy/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ course_id: courseId }),
-      });
+      const response = await fetch(
+        "https://api.myrobo.uz/courses/courses/buy/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ course_id: courseId }),
+        }
+      );
       const result = await response.json();
       if (response.status === 402) {
-        notify({ type: "noMoney", message: result?.detail || "Balans yetarli emas." });
+        notify({
+          type: "noMoney",
+          message: result?.detail || "Balans yetarli emas.",
+        });
         return;
       }
       if (result?.ok === true) {
         notify({ type: "success" });
-        navigate("/frontned/");
+        // ✅ O'ZGARTIRILDI: sotib olgandan keyin slug+id li sahifaga o'tadi
+        navigate(`/kurslar/${slug}/${courseId}`);
       } else {
         notify({ type: "error" });
       }
@@ -185,150 +200,186 @@ function KirishComponentsID() {
     );
   }
 
+  // ✅ SEO uchun to'liq URL yasaymiz — canonical va og:url uchun kerak
+  const fullUrl = `https://myrobo.uz/kurslar/${slug}`;
+
   return (
     <>
       <Helmet>
-        <title>{findData?.title ? `${findData.title} - MyRobo` : 'Kurs - MyRobo'}</title>
-        <meta name="description" content={findData?.description || "MyRobo platformasidagi kurs haqida ma'lumot."} />
-        <meta name="keywords" content={`kurs, ${findData?.title || ''}, ta'lim, MyRobo`} />
-        <meta property="og:title" content={findData?.title || 'Kurs - MyRobo'} />
-        <meta property="og:description" content={findData?.description || "MyRobo platformasidagi kurs haqida ma'lumot."} />
+        {/* Sahifa title — Google qidiruv natijasida koʻrinadigan sarlavha */}
+        <title>{findData?.title} | MyRobo.uz</title>
+
+        {/* ✅ O'ZGARTIRILDI: description → about
+            SABABI: API da "description" field yo'q, "about" bor!
+            .slice(0,155) — Google max 155 belgi ko'rsatadi */}
+        <meta
+          name="description"
+          content={
+            findData?.about?.slice(0, 155) ||
+            "MyRobo platformasidagi kurs haqida ma'lumot."
+          }
+        />
+
+        {/* ✅ YANGI: canonical — Google ga "bu sahifaning asosiy URLi shu" deydi
+            Duplicate content muammosini oldini oladi */}
+        <link rel="canonical" href={fullUrl} />
+
+        {/* Open Graph — Telegram, Facebook, WhatsApp da ulashganda chiqadi */}
+        <meta property="og:title" content={findData?.title} />
+        <meta
+          property="og:description"
+          content={
+            findData?.about?.slice(0, 155) ||
+            "MyRobo platformasidagi kurs haqida ma'lumot."
+          }
+        />
         <meta property="og:image" content={findData?.image} />
+        {/* ✅ YANGI: og:url — to'g'ri URL ko'rsatildi */}
+        <meta property="og:url" content={fullUrl} />
         <meta property="og:type" content="website" />
       </Helmet>
+
       <div className="bg-gray-100 min-h-screen font-sans">
-      <div className="w-[90%] m-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <h1 className="text-2xl md:text-3xl font-semibold flex gap-2">
-              Kurs haqida:
-              <span className="text-blue-600">{findData?.title}</span>
-            </h1>
-            <div className="bg-gray-100 backdrop-blur-sm rounded-lg overflow-hidden p-6 md:p-10 shadow-lg">
-              <img
-                src={findData?.image}
-                className="w-full object-contain mx-auto"
-                alt={findData?.title}
-              />
-            </div>
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Tavsif</h2>
-              <p className="text-gray-700">{findData?.about}</p>
-            </div>
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Kurs statistikasi</h2>
-              <div className="flex gap-6 text-gray-600 text-sm">
-                <span>
-                  <BarsOutlined /> Bo'limlar:{" "}
-                  <strong>{findData?.sections_count}</strong>
-                </span>
-                <span>
-                  <BookOutlined /> Mavzular:{" "}
-                  <strong>{findData?.topics_count}</strong>
-                </span>
-                <span>
-                  <UserSwitchOutlined /> O'quvchilar:{" "}
-                  <strong>{findData?.buyers_total}</strong>
-                </span>
+        <div className="w-[90%] m-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <h1 className="text-2xl md:text-3xl font-semibold flex gap-2">
+                Kurs haqida:
+                <span className="text-blue-600">{findData?.title}</span>
+              </h1>
+              <div className="bg-gray-100 backdrop-blur-sm rounded-lg overflow-hidden p-6 md:p-10 shadow-lg">
+                <img
+                  src={findData?.image}
+                  className="w-full object-contain mx-auto"
+                  alt={findData?.title}
+                />
               </div>
-            </div>
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Kurs bo'limlari</h2>
-              {loadingSections ? (
-                <div className="flex items-center gap-2 text-blue-500">
-                  <LoadingOutlined /> Yuklanmoqda...
+              <div className="bg-white rounded-lg p-6 shadow-md">
+                <h2 className="text-xl font-semibold mb-4">Tavsif</h2>
+                <p className="text-gray-700">{findData?.about}</p>
+              </div>
+              <div className="bg-white rounded-lg p-6 shadow-md">
+                <h2 className="text-xl font-semibold mb-4">Kurs statistikasi</h2>
+                <div className="flex gap-6 text-gray-600 text-sm">
+                  <span>
+                    <BarsOutlined /> Bo'limlar:{" "}
+                    <strong>{findData?.sections_count}</strong>
+                  </span>
+                  <span>
+                    <BookOutlined /> Mavzular:{" "}
+                    <strong>{findData?.topics_count}</strong>
+                  </span>
+                  <span>
+                    <UserSwitchOutlined /> O'quvchilar:{" "}
+                    <strong>{findData?.buyers_total}</strong>
+                  </span>
                 </div>
-              ) : sections.length === 0 ? (
-                <p className="text-gray-500">Bo'limlar mavjud emas.</p>
-              ) : (
-                sections.map((section) => (
-                  <div key={section.id}>
-                    <div className="bg-blue-900 text-white p-4 rounded-t-lg">
-                      <h3 className="font-medium">{section.title}</h3>
-                    </div>
-                    <div className="bg-white shadow-md rounded-b-lg divide-y">
-                      {topicsMap[section.id] ? (
-                        topicsMap[section.id].map((topic) => (
-                          <div
-                            key={topic.id}
-                            className="p-4 flex items-center justify-between hover:bg-gray-50"
-                          >
-                            <div className="flex items-center gap-2">
-                              {topic.topic_type === "video" ? (
-                                <PlayCircleOutlined className="text-blue-500" />
-                              ) : (
-                                <CodeOutlined className="text-green-500" />
-                              )}
-                              <span className="text-gray-700 text-sm">
-                                {topic.title}
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold">Kurs bo'limlari</h2>
+                {loadingSections ? (
+                  <div className="flex items-center gap-2 text-blue-500">
+                    <LoadingOutlined /> Yuklanmoqda...
+                  </div>
+                ) : sections.length === 0 ? (
+                  <p className="text-gray-500">Bo'limlar mavjud emas.</p>
+                ) : (
+                  sections.map((section) => (
+                    <div key={section.id}>
+                      <div className="bg-blue-900 text-white p-4 rounded-t-lg">
+                        <h3 className="font-medium">{section.title}</h3>
+                      </div>
+                      <div className="bg-white shadow-md rounded-b-lg divide-y">
+                        {topicsMap[section.id] ? (
+                          topicsMap[section.id].map((topic) => (
+                            <div
+                              key={topic.id}
+                              className="p-4 flex items-center justify-between hover:bg-gray-50"
+                            >
+                              <div className="flex items-center gap-2">
+                                {topic.topic_type === "video" ? (
+                                  <PlayCircleOutlined className="text-blue-500" />
+                                ) : (
+                                  <CodeOutlined className="text-green-500" />
+                                )}
+                                <span className="text-gray-700 text-sm">
+                                  {topic.title}
+                                </span>
+                              </div>
+                              <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
+                                {topic.topic_type === "video" ? "Video" : "Kod"}
                               </span>
                             </div>
-                            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
-                              {topic.topic_type === "video" ? "Video" : "Kod"}
-                            </span>
+                          ))
+                        ) : (
+                          <div className="p-4 text-gray-400 text-sm">
+                            <LoadingOutlined className="mr-2" /> Mavzular
+                            yuklanmoqda...
                           </div>
-                        ))
-                      ) : (
-                        <div className="p-4 text-gray-400 text-sm">
-                          <LoadingOutlined className="mr-2" /> Mavzular
-                          yuklanmoqda...
-                        </div>
-                      )}
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-md overflow-hidden sticky top-4">
+                <img
+                  src={findData?.image}
+                  className="w-full h-64 object-cover"
+                  alt={findData?.title}
+                />
+                <div className="p-6">
+                  <h2 className="text-xl font-semibold mb-2">
+                    {findData?.title}
+                  </h2>
+                  <div className="border-t border-b py-4 my-4">
+                    <p className="text-sm text-gray-500">Kurs narxi:</p>
+                    <div className="flex items-center mt-1">
+                      <span className="text-xl font-bold">
+                        {findData?.price === 0 ||
+                        findData?.price === "0" ||
+                        !findData?.price
+                          ? "Bepul"
+                          : `${Number(findData?.price).toLocaleString(
+                              "uz-UZ"
+                            )} so'm`}
+                      </span>
                     </div>
                   </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden sticky top-4">
-              <img
-                src={findData?.image}
-                className="w-full h-64 object-cover"
-                alt={findData?.title}
-              />
-              <div className="p-6">
-                <h2 className="text-xl font-semibold mb-2">{findData?.title}</h2>
-                <div className="border-t border-b py-4 my-4">
-                  <p className="text-sm text-gray-500">Kurs narxi:</p>
-                  <div className="flex items-center mt-1">
-                    <span className="text-xl font-bold">
-                      {`${findData?.price} so'm`}
-                    </span>
+                  <button
+                    onClick={buyCourse}
+                    disabled={buyLoading}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md w-full py-3 font-medium transition duration-300 shadow-md flex items-center justify-center gap-2"
+                  >
+                    {buyLoading ? <LoadingOutlined /> : null}
+                    Sotib olish
+                  </button>
+                  <div className="flex justify-around mt-4">
+                    <img
+                      src="https://api.logobank.uz/media/logos_png/Uzcard-01.png"
+                      alt="Uzcard"
+                      className="h-12 w-12 rounded-md object-contain"
+                    />
+                    <img
+                      src="https://humocard.uz/upload/medialibrary/8cf/ia2yatyqt4l0p0d5523erhmx6y0fssxw/HumoPay-Final-002.png"
+                      alt="Humo"
+                      className="h-12 w-12 rounded-md object-contain"
+                    />
+                    <img
+                      src="https://pr.uz/wp-content/uploads/2024/05/photo_2024-05-14_20-27-31.jpg"
+                      alt="Click"
+                      className="h-12 w-12 rounded-md object-contain"
+                    />
                   </div>
-                </div>
-                <button
-                  onClick={buyCourse}
-                  disabled={buyLoading}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md w-full py-3 font-medium transition duration-300 shadow-md flex items-center justify-center gap-2"
-                >
-                  {buyLoading ? <LoadingOutlined /> : null}
-                  Sotib olish
-                </button>
-                <div className="flex justify-around mt-4">
-                  <img
-                    src="https://api.logobank.uz/media/logos_png/Uzcard-01.png"
-                    alt="Uzcard"
-                    className="h-12 w-12 rounded-md object-contain"
-                  />
-                  <img
-                    src="https://humocard.uz/upload/medialibrary/8cf/ia2yatyqt4l0p0d5523erhmx6y0fssxw/HumoPay-Final-002.png"
-                    alt="Humo"
-                    className="h-12 w-12 rounded-md object-contain"
-                  />
-                  <img
-                    src="https://pr.uz/wp-content/uploads/2024/05/photo_2024-05-14_20-27-31.jpg"
-                    alt="Click"
-                    className="h-12 w-12 rounded-md object-contain"
-                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
