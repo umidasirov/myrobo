@@ -89,7 +89,6 @@ export default function BlogComponents() {
           }).then((r) => r.json())
         )
       );
-      // Takrorlarni id bo'yicha olib tashlash
       const merged = Object.values(
         results.flat().reduce((acc, b) => ({ ...acc, [b.id]: b }), {})
       );
@@ -133,7 +132,7 @@ export default function BlogComponents() {
             </span>
           )}
           <button onClick={() => handleBlogAdd()} className="text-sm flex items-center p-2 rounded-md bg-blue-500 text-gray-100 hover:bg-blue-400">
-            maqola qo'shish <BiPencil />
+            Maqola qo'shish <BiPencil />
           </button>
         </div>
       </div>

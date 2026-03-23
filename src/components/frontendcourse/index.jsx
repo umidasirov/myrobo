@@ -6,12 +6,15 @@ import {
   CheckCircleFilled,
   CodeOutlined,
   LoadingOutlined,
+  DownOutlined,
+  UpOutlined
 } from "@ant-design/icons";
 import { useData } from "../../datacontect";
 import CodeEditor from "../codeEditor";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCourseAccess } from "../../hooks/useCourseAccess";
 import { toSlug } from "../kirish";
+import { Helmet } from 'react-helmet-async';
 
 const BASE_URL = "https://api.myrobo.uz";
 
@@ -20,16 +23,24 @@ function Skeleton({ className = "" }) {
 }
 
 function VimeoIframe({ url }) {
-  const videoId = url.split("/").pop().split("?")[0];
+  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (!match) return null;
   return (
-    <iframe
-      src={`https://player.vimeo.com/video/${videoId}?title=0&byline=0&portrait=0&controls=1&dnt=1`}
-      width="100%"
-      height="400"
-      frameBorder="0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowFullScreen
-    />
+    <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
+      <iframe
+        style={{
+          position: "absolute",
+          top: 0, left: 0,
+          width: "100%",
+          height: "100%",
+          borderRadius: "8px",
+          border: "none",
+        }}
+        src={`https://player.vimeo.com/video/${match[1]}?title=0&byline=0&portrait=0&controls=1&dnt=1`}
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowFullScreen
+      />
+    </div>
   );
 }
 
@@ -85,7 +96,7 @@ function ContentSkeleton() {
 
 const FrontendCourse = () => {
   const { data, fetchCourse } = useData();
-  const id = localStorage.getItem("locate");
+  const { courseId: id } = useParams();
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -259,9 +270,20 @@ const FrontendCourse = () => {
 
   // isBought === false bo'lsa — useEffect yo'naltiradi, bu yerga kelmaydi
   if (!isBought) return null;
-
+  console.log(topicsMap);
+  
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <>
+      <Helmet>
+        <title>{courseData?.title ? `${courseData.title} - MyRobo` : 'Kurs - MyRobo'}</title>
+        <meta name="description" content={courseData?.description || "MyRobo platformasidagi kursni o'rganing."} />
+        <meta name="keywords" content={`kurs, ${courseData?.title || ''}, ta'lim, MyRobo`} />
+        <meta property="og:title" content={courseData?.title || 'Kurs - MyRobo'} />
+        <meta property="og:description" content={courseData?.description || "MyRobo platformasidagi kursni o'rganing."} />
+        <meta property="og:image" content={courseData?.image} />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-2">
           {!courseData ? (
@@ -320,11 +342,11 @@ const FrontendCourse = () => {
                                   : ""
                               }`}
                               onClick={() => handleTopicClick(topic)}
-                            >
-                              {topic.topic_type === "video" ? (
-                                <PlayCircleFilled className="text-blue-400 mr-2 text-xs" />
+                            > 
+                              {topic.topic_type != "code" ? (
+                                <PlayCircleFilled className="text-blue-400 mr-2 text-xl" />
                               ) : (
-                                <CodeOutlined className="text-blue-400 mr-2 text-xs" />
+                                <CodeOutlined className="text-blue-400 mr-2 text-xl" />
                               )}
                               <span className="text-sm">{topic.title}</span>
                             </div>
@@ -489,6 +511,7 @@ const FrontendCourse = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

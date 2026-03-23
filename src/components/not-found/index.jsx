@@ -1,9 +1,22 @@
 import { Button } from "antd";
 import { Link } from "react-router-dom";
 
+import { Button } from "antd";
+import { Link } from "react-router-dom";
+import { Helmet } from 'react-helmet-async';
+
 const NotFound = () => {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center px-4">
+    <>
+      <Helmet>
+        <title>404 - Sahifa topilmadi - MyRobo</title>
+        <meta name="description" content="Kechirasiz, siz qidirgan sahifa MyRobo platformasida mavjud emas." />
+        <meta name="keywords" content="404, sahifa topilmadi, xatolik, MyRobo" />
+        <meta property="og:title" content="404 - Sahifa topilmadi - MyRobo" />
+        <meta property="og:description" content="Kechirasiz, siz qidirgan sahifa MyRobo platformasida mavjud emas." />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center px-4">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md text-center">
         <div className="text-6xl font-bold text-error mb-4">404</div>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">
@@ -23,6 +36,7 @@ const NotFound = () => {
         </Link>
       </div>
     </div>
+    </>
   );
 };
 

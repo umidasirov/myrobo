@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Home from "../pages/home";
 import Kurslar from "../pages/kurslar";
 import Blog from "../pages/blog";
@@ -45,12 +45,15 @@ const root = createBrowserRouter([
         path: "kirish2/:slug",
         element: <KirishComponentsID />,
       },
+      { path: "frontend", 
+        element: <Navigate to="/" replace /> 
+      },
       {
         path: "login",
         element: <LoginPage />,
       },
       {
-        path: "frontned",
+        path: "frontend/:courseId",
         element: <FrontendProfile />,
       },
       {

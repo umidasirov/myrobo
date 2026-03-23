@@ -1,6 +1,3 @@
-// src/hooks/useSEO.js
-// Har bir sahifa uchun dinamik meta taglarni o'rnatadi
-
 import { useEffect } from "react";
 
 /**
@@ -17,7 +14,6 @@ export function useSEO({ title, description, image, url, type = "website" }) {
     const BASE_URL = "https://myrobo.uz";
     const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`;
 
-    // Title
     document.title = title
       ? `${title} | MyRobo.uz`
       : "MyRobo.uz — Online Dasturlash Kurslari";
@@ -47,7 +43,6 @@ export function useSEO({ title, description, image, url, type = "website" }) {
     setMeta('[name="twitter:description"]', description || "");
     setMeta('[name="twitter:image"]', image || DEFAULT_IMAGE);
 
-    // Canonical
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement("link");

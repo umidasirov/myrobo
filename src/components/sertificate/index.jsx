@@ -2,7 +2,6 @@ import React from "react";
 import { motion } from "framer-motion";
 
 function SertificateComponents() {
-  // Animatsiya variantlari
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Empty } from "antd";
 import { useNavigate } from "react-router-dom";
 import { toSlug } from "../kirish";
+import { Helmet } from 'react-helmet-async';
 
 function MeningKurslarim() {
   const [data, setData] = useState(null);
@@ -31,11 +32,8 @@ function MeningKurslarim() {
     return text.slice(0, limit).trim() + "...";
   };
 
-  // Sotib olingan kurslar — to'g'ridan-to'g'ri /frontned/ ga
-  const postId = (title, id) => {
-    const slug = toSlug(title);
-    localStorage.setItem("locate", id);
-    navigate("/frontned/");
+  const postId = ( id) => {
+    navigate(`/frontend/${id}`);
   };
 
   if (loading) {
@@ -67,7 +65,16 @@ function MeningKurslarim() {
   }
 
   return (
-    <section className="w-[90%] m-auto max-[768px]:mt-[30px]">
+    <>
+      <Helmet>
+        <title>Mening Kurslarim - MyRobo</title>
+        <meta name="description" content="MyRobo platformasida sotib olingan kurslaringizni ko'ring va davom ettiring." />
+        <meta name="keywords" content="mening kurslarim, sotib olingan kurslar, ta'lim, MyRobo" />
+        <meta property="og:title" content="Mening Kurslarim - MyRobo" />
+        <meta property="og:description" content="MyRobo platformasida sotib olingan kurslaringizni ko'ring va davom ettiring." />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <section className="w-[90%] m-auto max-[768px]:mt-[30px]">
       <h1 className="text-center py-[40px] font-bold text-[22px] max-[768px]:py-[20px]">
         Mening kurslarim
       </h1>
@@ -76,7 +83,7 @@ function MeningKurslarim() {
           data.map((value) => (
             <div
               key={value?.id}
-              onClick={() => postId(value?.title, value?.id)}
+              onClick={() => postId(value?.id)}
               className="w-[280px] bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col"
             >
               <div className="h-[180px] overflow-hidden flex-shrink-0 bg-gray-100">
@@ -134,6 +141,7 @@ function MeningKurslarim() {
         )}
       </div>
     </section>
+    </>
   );
 }
 

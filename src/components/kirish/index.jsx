@@ -52,7 +52,6 @@ function KirishComponents() {
     return text.slice(0, limit).trim() + "...";
   };
 
-  // Faqat slug sahifasiga yuboramiz — KirishComponentsID o'zi access tekshiradi
   const postId = (title, id) => {
     const slug = toSlug(title);
     localStorage.setItem("locate", id);
@@ -61,14 +60,14 @@ function KirishComponents() {
 
   return (
     <section className="w-[90%] m-auto mt-[60px] max-[768px]:mt-[30px]">
-      <div className="flex flex-wrap justify-center gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 justify-items-center md:justify-items-start">
         {isLoading
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           : data?.map((value) => (
               <div
                 key={value?.id}
                 onClick={() => postId(value?.title, value?.id)}
-                className="w-[280px] bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col"
+                className="w-full bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col"
               >
                 <div className="h-[180px] overflow-hidden flex-shrink-0 bg-gray-100">
                   <img

@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useData } from "../../datacontect";
+import { Helmet } from 'react-helmet-async';
 
 const Profilim = () => {
   const { user, loading, fetchUserData, updateUser } = useData();
@@ -90,6 +91,14 @@ const Profilim = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Profilim - MyRobo</title>
+        <meta name="description" content="MyRobo platformasidagi shaxsiy profilingizni ko'ring va tahrirlang." />
+        <meta name="keywords" content="profil, shaxsiy, tahrirlash, MyRobo" />
+        <meta property="og:title" content="Profilim - MyRobo" />
+        <meta property="og:description" content="MyRobo platformasidagi shaxsiy profilingizni ko'ring va tahrirlang." />
+        <meta property="og:type" content="profile" />
+      </Helmet>
       <div className="w-[90%] m-auto mt-[50px] bg-white rounded-2xl shadow-lg overflow-hidden p-8 text-gray-800 border border-gray-200">
 
         {/* Profil header */}

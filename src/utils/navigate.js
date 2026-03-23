@@ -5,6 +5,6 @@ export function goToCourse(navigate, title, id, isBought, token) {
   localStorage.setItem("locate", id);
 
   if (!token) return navigate(`/kirish2/${slug}`);
-  if (isBought) return navigate("/frontned/");
+  if (isBought) return navigate("/frontend/");
   return navigate(`/kirish2/${slug}`);
 }

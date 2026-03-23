@@ -8,6 +8,7 @@ import {
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CommentSection from "../comments";
+import { Helmet } from 'react-helmet-async';
 
 const formatDate = (iso) => {
   if (!iso) return "";
@@ -49,7 +50,17 @@ function BlogComponentsId() {
   }, [name]);
 
   return (
-    <section className="w-[90%] m-auto mt-[40px]">
+    <>
+      <Helmet>
+        <title>{blog?.title ? `${blog.title} - MyRobo` : 'Maqola - MyRobo'}</title>
+        <meta name="description" content={blog?.description || "MyRobo blogidagi maqolani o'qing."} />
+        <meta name="keywords" content={`maqola, ${blog?.category ? getCategoryTitle(blog.category) : ''}, MyRobo`} />
+        <meta property="og:title" content={blog?.title || 'Maqola - MyRobo'} />
+        <meta property="og:description" content={blog?.description || "MyRobo blogidagi maqolani o'qing."} />
+        <meta property="og:image" content={blog?.img} />
+        <meta property="og:type" content="article" />
+      </Helmet>
+      <section className="w-[95%] md:w-[70%] m-auto mt-[40px]">
       <div className="w-full flex flex-col gap-[40px] max-[500px]:gap-[25px]">
 
         <div className="w-full flex flex-col gap-[20px]">
@@ -57,7 +68,7 @@ function BlogComponentsId() {
             <div className="w-full h-[500px] bg-gray-300 animate-pulse rounded-2xl" />
           ) : (
             <img
-              className="w-full h-[500px] object-cover rounded-2xl"
+              className="w-full h-[550px] object-cover rounded-2xl"
               src={blog?.img}
               alt={blog?.title}
             />
@@ -143,6 +154,7 @@ function BlogComponentsId() {
         <CommentSection slug={name} />
       </div>
     </section>
+    </>
   );
 }
 

@@ -1,8 +1,6 @@
 import axios from "axios";
 
-// Custom hook: axios bilan request qilish uchun
 export const useAxios = () => {
-  // response funksiyasi barcha requestlarni qabul qiladi
   const response = async ({
     url,
     method = "GET",

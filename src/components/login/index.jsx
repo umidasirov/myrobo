@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { UserOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { useAxios } from "../../hooks";
 import notificationApi from "../../generic/notificition";
+import { Helmet } from 'react-helmet-async';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -107,7 +108,16 @@ const LoginPage = () => {
   }
 };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
+    <>
+      <Helmet>
+        <title>Kirish - MyRobo</title>
+        <meta name="description" content="MyRobo platformasiga kirish uchun tasdiqlash kodini kiriting." />
+        <meta name="keywords" content="kirish, login, tasdiqlash kodi, MyRobo" />
+        <meta property="og:title" content="Kirish - MyRobo" />
+        <meta property="og:description" content="MyRobo platformasiga kirish uchun tasdiqlash kodini kiriting." />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
         <div className="w-full md:w-1/2 p-8 flex flex-col items-center justify-center">
           <div className="mb-8 text-center">
@@ -180,6 +190,7 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

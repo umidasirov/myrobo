@@ -12,6 +12,7 @@ import { useData } from "../../datacontect";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import notificationApi from "../../generic/notificition";
 import { useCourseAccess } from "../../hooks/useCourseAccess";
+import { Helmet } from 'react-helmet-async';
 
 function fromSlug(slug) {
   if (!slug || typeof slug !== "string") return "";
@@ -65,10 +66,9 @@ function KirishComponentsID() {
     }
   }, [location.pathname]);
 
-  // Kurs sotib olingan bo'lsa — darhol yo'naltir
   useEffect(() => {
     if (!accessLoading && isBought && courseId) {
-      navigate("/frontned/", { replace: true });
+      navigate(`/frontend/${courseId}`, { replace: true });
     }
   }, [isBought, accessLoading, courseId]);
 
@@ -186,7 +186,17 @@ function KirishComponentsID() {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans">
+    <>
+      <Helmet>
+        <title>{findData?.title ? `${findData.title} - MyRobo` : 'Kurs - MyRobo'}</title>
+        <meta name="description" content={findData?.description || "MyRobo platformasidagi kurs haqida ma'lumot."} />
+        <meta name="keywords" content={`kurs, ${findData?.title || ''}, ta'lim, MyRobo`} />
+        <meta property="og:title" content={findData?.title || 'Kurs - MyRobo'} />
+        <meta property="og:description" content={findData?.description || "MyRobo platformasidagi kurs haqida ma'lumot."} />
+        <meta property="og:image" content={findData?.image} />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <div className="bg-gray-100 min-h-screen font-sans">
       <div className="w-[90%] m-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
@@ -319,6 +329,7 @@ function KirishComponentsID() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

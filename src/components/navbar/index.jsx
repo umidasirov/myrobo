@@ -116,7 +116,6 @@ function Navbar() {
           <div className="flex items-center gap-4">
             {token ? (
               <>
-                {/* Desktop - Dropdown */}
                 <Dropdown
                   overlay={userMenu}
                   trigger={["click"]}
@@ -130,7 +129,6 @@ function Navbar() {
                   </Button>
                 </Dropdown>
 
-                {/* Mobile - Only show menu button */}
                 <button
                   className="sm:hidden text-2xl text-gray-600 hover:text-blue-500 transition-colors"
                   onClick={showDrawer}
@@ -211,7 +209,7 @@ function Navbar() {
                 isActive("/blog") ? "text-blue-500 bg-blue-50" : "text-gray-600"
               } hover:text-blue-500 hover:bg-blue-50 transition-colors rounded`}
             >
-              Blog
+              Maqolalar
             </Link>
 
             {token && (
