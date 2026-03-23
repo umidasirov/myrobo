@@ -47,7 +47,7 @@ export default function Team2() {
 
   const postId = (title, id) => {
     localStorage.setItem("locate", id);
-    navigate(`/kirish2/${toSlug(title)}`);
+    navigate(`/kurslar/${toSlug(title)}`);
   };
   const truncateText = (text = "", limit = 90) => {
     if (!text) return "";

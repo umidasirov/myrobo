@@ -42,7 +42,7 @@ const root = createBrowserRouter([
         element: <Team2 />,
       },
       {
-        path: "kirish2/:slug",
+        path: "kurslar/:slug",
         element: <KirishComponentsID />,
       },
       { path: "frontend", 
@@ -53,7 +53,7 @@ const root = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: "frontend/:courseId",
+        path: "kurslar/:slug/:courseId",
         element: <FrontendProfile />,
       },
       {

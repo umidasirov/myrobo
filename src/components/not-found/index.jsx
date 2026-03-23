@@ -1,8 +1,6 @@
 import { Button } from "antd";
 import { Link } from "react-router-dom";
 
-import { Button } from "antd";
-import { Link } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 
 const NotFound = () => {

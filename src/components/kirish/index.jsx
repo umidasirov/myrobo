@@ -54,10 +54,8 @@ function KirishComponents() {
 
   const postId = (title, id) => {
     const slug = toSlug(title);
-    localStorage.setItem("locate", id);
-    navigate(`/kirish2/${slug}`);
+    navigate(`/kurslar/${slug}`);
   };
-
   return (
     <section className="w-[90%] m-auto mt-[60px] max-[768px]:mt-[30px]">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 justify-items-center md:justify-items-start">

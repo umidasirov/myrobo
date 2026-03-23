@@ -32,8 +32,8 @@ function MeningKurslarim() {
     return text.slice(0, limit).trim() + "...";
   };
 
-  const postId = ( id) => {
-    navigate(`/frontend/${id}`);
+  const postId = ( title,id) => {
+    navigate(`/kurslar/${toSlug(title)}/${id}`);
   };
 
   if (loading) {
@@ -83,7 +83,7 @@ function MeningKurslarim() {
           data.map((value) => (
             <div
               key={value?.id}
-              onClick={() => postId(value?.id)}
+              onClick={() => postId(value?.title, value?.id)}
               className="w-[280px] bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col"
             >
               <div className="h-[180px] overflow-hidden flex-shrink-0 bg-gray-100">
