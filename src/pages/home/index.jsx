@@ -34,7 +34,7 @@ function Home() {
       />
       <meta property="og:type" content="website" />
     </Helmet>
-      <div className="w-full max-w-[1880px] mx-auto px-4 sm:px-6 md:px-8">
+      <div className="w-full max-w-[1880px] mx-auto px-2 sm:px-6 md:px-8">
         <SwiperComponent />
         <SertificateComponents />
         <KirishComponents />

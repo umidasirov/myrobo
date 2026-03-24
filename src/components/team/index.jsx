@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useData } from "../../datacontect";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const SkeletonCard = () => (
   <div className="border border-gray-200 w-full max-w-[310px] p-6 rounded-lg animate-pulse">
@@ -37,6 +38,22 @@ function TeamComponents() {
   const navigate = useNavigate();
   const { teacherData, fetchTeam, loading } = useData();
 
+  // Animation variants
+  const itemVariants = {
+    hidden: { 
+      opacity: 0, 
+      x: -60 
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    },
+  };
+
   useEffect(() => {
     fetchTeam();
   }, []);
@@ -47,63 +64,61 @@ function TeamComponents() {
   };
   
   return (
-    <section className="w-[90%] mx-auto mt-[140px] mb-11 max-w-[1200px] max-[768px]:mt-[80px] max-[568px]:mt-[40px]">
-      <div className="flex flex-col gap-[60px] items-center max-[768px]:gap-[35px]">
-        <h1 className="text-[35px] font-bold text-center max-[768px]:text-[29px] max-[640px]:text-[24px] max-[480px]:text-[21px]">
-          Professional{" "}
-          <span className="text-blue-600">o'qituvchilar</span> jamoasi
+    <section className="w-full md:w-[90%] m-auto mt-8 md:mt-[140px] px-4 md:px-0 mb-16">
+      <div className="mb-8 md:mb-12 text-center">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+          Professional <span className="text-blue-600">o'qituvchilar</span> jamoasi
         </h1>
+        <p className="text-gray-600 text-sm md:text-base">
+          Tajribali va malakali o'qituvchilardan to'g'ridan-to'g'ri o'rganing
+        </p>
+      </div>
 
-        <div className="w-full">
-          {loading ? (
-            <div className="flex justify-center gap-6 flex-wrap">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
-            </div>
-          ) : (
-            <div className="flex justify-center gap-6 flex-wrap">
-              {teacherData?.map((value, index) => (
-                <div
-                  key={value.slug}
-                  onClick={() => postID(value?.slug)}
-                  className="border border-gray-200 w-full max-w-[310px] p-6 rounded-xl hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col"
-                >
-                  <div className="overflow-hidden rounded-lg">
-                    <img
-                      className="w-full h-[280px] object-cover hover:scale-105 transition-transform duration-300"
-                      src={value?.img}
-                      alt={value?.username}
-                      loading="lazy"
-                    />
-                  </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start">
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+          : teacherData?.map((value, index) => (
+            <motion.div
+              key={value.slug}
+              variants={itemVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              onClick={() => postID(value?.slug)}
+              className="w-full bg-white border border-gray-200 rounded-xl p-4 md:p-6 hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col hover:scale-105 transform duration-300"
+            >
+              <div className="overflow-hidden rounded-lg mb-4">
+                <img
+                  className="w-full h-[220px] md:h-[280px] object-cover hover:scale-105 transition-transform duration-300"
+                  src={value?.img}
+                  alt={value?.username}
+                  loading="lazy"
+                />
+              </div>
 
-                  <div className="flex flex-col gap-3 pt-5 flex-1">
-                    <h2 className="text-[20px] font-bold text-center max-[568px]:text-[18px]">
-                      {value?.username}
-                    </h2>
+              <div className="flex flex-col gap-3 flex-1">
+                <h2 className="text-[16px] md:text-[18px] lg:text-[20px] font-bold text-center">
+                  {value?.username}
+                </h2>
 
-                    <p className="text-gray-500 text-sm leading-relaxed text-center line-clamp-3">
-                      {value?.about || getDescription(index)}
-                    </p>
+                <p className="text-gray-500 text-xs md:text-sm leading-relaxed text-center line-clamp-3">
+                  {value?.about || getDescription(index)}
+                </p>
 
-                    <div className="flex justify-center mt-1">
-                      <span className="text-xs text-blue-400 bg-blue-100 px-3 py-1 rounded-full">
-                        {value.courses.length} ta kurs
-                      </span>
-                    </div>
-
-                    <button
-                      className="w-full mt-auto py-2 rounded-lg border border-blue-500 text-blue-500 text-sm font-medium hover:bg-blue-500 hover:text-white transition-colors duration-200"
-                    >
-                      Batafsil ko'rish
-                    </button>
-                  </div>
+                <div className="flex justify-center mt-1">
+                  <span className="text-xs text-blue-400 bg-blue-100 px-3 py-1 rounded-full">
+                    {value.courses.length} ta kurs
+                  </span>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+
+                <button
+                  className="w-full mt-auto py-2 rounded-lg border border-blue-500 text-blue-500 text-xs md:text-sm font-medium hover:bg-blue-500 hover:text-white transition-colors duration-200"
+                >
+                  Batafsil ko'rish
+                </button>
+              </div>
+            </motion.div>
+          ))}
       </div>
     </section>
   );
