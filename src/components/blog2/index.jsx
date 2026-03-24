@@ -60,7 +60,7 @@ function BlogComponentsId() {
         <meta property="og:image" content={blog?.img} />
         <meta property="og:type" content="article" />
       </Helmet>
-      <section className="w-[95%] md:w-[70%] m-auto mt-[40px]">
+      <section className="w-[95%] md:w-[70%] m-auto mt-4 md:mt-[40px]">
       <div className="w-full flex flex-col gap-[40px] max-[500px]:gap-[25px]">
 
         <div className="w-full flex flex-col gap-[20px]">
@@ -68,7 +68,7 @@ function BlogComponentsId() {
             <div className="w-full h-[500px] bg-gray-300 animate-pulse rounded-2xl" />
           ) : (
             <img
-              className="w-full h-[550px] object-cover rounded-2xl"
+              className="w-full h-[250px] sm:h-[350px] md:h-[450px] xl:h-[550px] object-cover rounded-2xl"
               src={blog?.img}
               alt={blog?.title}
             />

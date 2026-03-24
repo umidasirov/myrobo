@@ -20,25 +20,14 @@ const SkeletonCard = () => (
     </div>
   </div>
 );
-
-const PLACEHOLDER_DESCRIPTIONS = [
-  "Full-stack dasturchi va mentor. O'quvchilarga amaliy loyihalar orqali bilim beradi.",
-  "Frontend dasturlash bo'yicha 5 yillik tajribaga ega mutaxassis. React va modern veb texnologiyalarini o'rgatadi.",
-  "Python va backend texnologiyalari bo'yicha tajribali dasturchi. Murakkab tizimlarni sodda tushuntiradi.",
-  "UI/UX va frontend yo'nalishida faol ishlovchi dasturchi. Zamonaviy dizayn trendlarini o'rgatadi.",
-  "Mobile dasturlash va React Native bo'yicha mutaxassis. Ko'plab tayyor ilovalar muallifi.",
-  "DevOps va cloud texnologiyalari bo'yicha tajribali muhandis. CI/CD va deployment jarayonlarini o'rgatadi.",
-];
-
-function getDescription(index) {
-  return PLACEHOLDER_DESCRIPTIONS[index % PLACEHOLDER_DESCRIPTIONS.length];
-}
-
+const truncateText = (text = "", limit = 90) => {
+  if (!text) return "";
+  return text.length <= limit ? text : text.slice(0, limit).trim() + "...";
+};
 function TeamComponents() {
   const navigate = useNavigate();
   const { teacherData, fetchTeam, loading } = useData();
 
-  // Animation variants
   const itemVariants = {
     hidden: { 
       opacity: 0, 
@@ -59,10 +48,9 @@ function TeamComponents() {
   }, []);
 
   const postID = (slug) => {
-    localStorage.setItem("location", slug);
-    navigate("/team2/");
+    navigate(`/mentorlar/${slug}`);
   };
-  
+  const isSmall = teacherData?.length < 4;
   return (
     <section className="w-full md:w-[90%] m-auto mt-8 md:mt-[140px] px-4 md:px-0 mb-16">
       <div className="mb-8 md:mb-12 text-center">
@@ -74,7 +62,7 @@ function TeamComponents() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start">
+      <div className={`${isSmall ? "flex flex-wrap justify-center":"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start"} `}>
         {loading
           ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
           : teacherData?.map((value, index) => (
@@ -85,7 +73,7 @@ function TeamComponents() {
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               onClick={() => postID(value?.slug)}
-              className="w-full bg-white border border-gray-200 rounded-xl p-4 md:p-6 hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col hover:scale-105 transform duration-300"
+              className={isSmall? "w-80 shadow-lg p-4 rounded-xl": `w-full bg-white border border-gray-200 rounded-xl p-4 md:p-6 hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col hover:scale-105 transform duration-300`}
             >
               <div className="overflow-hidden rounded-lg mb-4">
                 <img
@@ -102,7 +90,7 @@ function TeamComponents() {
                 </h2>
 
                 <p className="text-gray-500 text-xs md:text-sm leading-relaxed text-center line-clamp-3">
-                  {value?.about || getDescription(index)}
+                 {truncateText(value?.about, 100)}
                 </p>
 
                 <div className="flex justify-center mt-1">

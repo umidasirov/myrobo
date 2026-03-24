@@ -102,7 +102,7 @@ const Profilim = () => {
       <div className="w-[90%] m-auto mt-[50px] bg-white rounded-2xl shadow-lg overflow-hidden p-8 text-gray-800 border border-gray-200">
 
         {/* Profil header */}
-        <div className="flex items-start justify-between mb-8">
+        <div className="flex items-start flex-col sm:flex-row justify-between mb-8">
           <div className="flex items-center">
             <div className="bg-gray-100 p-6 rounded-full mr-4">
               <UserOutlined className="text-gray-600 text-3xl" />
@@ -119,7 +119,7 @@ const Profilim = () => {
           {/* Tahrirlash tugmasi */}
           <button
             onClick={openModal}
-            className="flex items-center gap-2 border border-gray-200 hover:border-blue-400 hover:text-blue-600 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition"
+            className="flex w-full justify-center mt-5 sm:w-1/4 sm:mt-0 md:w-40 items-center gap-2 border border-gray-200 hover:border-blue-400 hover:text-blue-600 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition"
           >
             <EditOutlined />
             Tahrirlash

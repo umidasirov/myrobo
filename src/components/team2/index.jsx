@@ -1,6 +1,6 @@
 import { useData } from "../../datacontect";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toSlug } from "../kirish";
 import { motion } from "framer-motion";
 import { Briefcase, Calendar, GraduationCap, MapPin, Users } from "lucide-react";
@@ -22,7 +22,7 @@ const SkeletonProfile = () => (
 export default function Team2() {
   const { teacherData, fetchTeam, fetchCourse, loading, data } = useData();
   const navigate = useNavigate();
-  const slug = localStorage.getItem("location");
+  const {slug} = useParams();
   const [ready, setReady] = useState(false);
   const profileRef = useRef(null);
   const courseTeacherRef = useRef([]);
@@ -149,7 +149,7 @@ export default function Team2() {
         </div>
 
         {courseTeacher.length === 0 ? (
-          <div className="py-20 text-center bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border-2 border-dashed border-blue-200">
+          <div className="py-20 text-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-blue-200">
             <GraduationCap size={40} className="text-blue-300 mx-auto mb-4" />
             <p className="text-gray-500 text-lg font-medium">Hozircha kurslar mavjud emas</p>
           </div>

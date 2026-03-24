@@ -14,6 +14,7 @@ import MeningKurslarim from "../components/meningkurslarim";
 import Sertificatlarim from "../components/sertificatlarim";
 import NotFound from "../components/not-found";
 import BlogEditor from "../components/BlogEditor";
+import TeamComponents from "../components/team";
 
 const root = createBrowserRouter([
   {
@@ -38,8 +39,12 @@ const root = createBrowserRouter([
       },
 
       {
-        path: "team2",
+        path: "mentorlar/:slug",
         element: <Team2 />,
+      },
+      {
+        path: "mentorlar",
+        element: <TeamComponents />,
       },
       {
         path: "kurslar/:slug",

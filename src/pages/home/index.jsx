@@ -38,7 +38,6 @@ function Home() {
         <SwiperComponent />
         <SertificateComponents />
         <KirishComponents />
-        {/* <KursToifalariComponents /> */}
         <PremiumEducation />
         <AnimatedStats />
         <TeamComponents />

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useData } from "../../datacontect";
+import { Button } from "antd";
 export function toSlug(id, text) {
   if (!text) return String(id);
 
@@ -41,17 +42,6 @@ function KirishComponents() {
   const token = localStorage.getItem("token");
   const location = useLocation();
   
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
 
   const itemVariants = {
     hidden: { 
@@ -91,6 +81,10 @@ function KirishComponents() {
     navigate(`/kurslar/${slug}`);
   };
 
+  const displayedData = location.pathname !== '/kurslar' ? data?.slice(0, 4) : data;
+  const courseCount = displayedData?.length || 0;
+  const isSmallCount = courseCount < 3 && courseCount > 0;
+
   return (
     <section className="w-full md:w-[90%] m-auto mt-8 md:mt-[60px] px-4 md:px-0 mb-12">
       {location.pathname !== '/kurslar' &&
@@ -103,10 +97,10 @@ function KirishComponents() {
         </p>
       </div>
       }
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start mb-8">
-        {isLoading
+      <div className={isSmallCount ? "flex justify-center gap-4 md:gap-6 mb-8 flex-wrap" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start mb-8"}>
+              {isLoading
           ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
-          : (location.pathname !== '/kurslar' ? data?.slice(0, 4) : data)?.map((value, index) => (
+          : displayedData?.map((value, index) => (
             <motion.div
               key={value?.id}
               variants={itemVariants}
@@ -114,11 +108,11 @@ function KirishComponents() {
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               onClick={() => postId(value?.title, value?.id)}
-              className="w-full bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-shadow duration-200 cursor-pointer flex flex-col hover:scale-105 transform duration-300"
+              className={`${isSmallCount ? 'w-80' : 'w-full'} bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-shadow duration-200 cursor-pointer flex flex-col hover:scale-105 transform duration-300`}
             >
-              <div className="h-[180px] overflow-hidden flex-shrink-0 bg-gray-100">
+              <div className="h-[200px] overflow-hidden flex-shrink-0 bg-gray-100">
                 <img
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   src={value?.image}
                   alt={value?.title}
                 />
@@ -165,14 +159,11 @@ function KirishComponents() {
           ))}
       </div>
       {location.pathname !== '/kurslar' &&
-        <div className="flex justify-center md:justify-center">
-          <button
-            onClick={() => navigate("/kurslar")}
-            className="px-6 md:px-8 py-3 md:py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg transition-all  text-sm md:text-base"
-          >
-            Barcha kurslarni ko'rish →
-          </button>
-        </div>
+      <div className="flex justify-center">
+        <button className="border-none mx-auto py-2 px-4 bg-blue-600 rounded-md text-gray-100" onClick={()=>navigate('/kurslar')}>
+          Barcha kurslarga o'tish
+        </button>
+      </div>
       }
     </section>
   );

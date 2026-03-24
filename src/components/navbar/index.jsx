@@ -1,5 +1,5 @@
 import { Button, Drawer, Dropdown, Menu } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo3.png";
 import {
@@ -8,6 +8,7 @@ import {
   BookOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
+import { useData } from "../../datacontect";
 
 function Navbar() {
   const [visible, setVisible] = useState(false);
@@ -18,11 +19,12 @@ function Navbar() {
   const onClose = () => setVisible(false);
 
   const isActive = (path) => location.pathname === path;
-
+  const {user,fetchUserData} = useData()
   const token = localStorage.getItem("token");
-  const balance = localStorage.getItem("balance") || "0";
   const phone = localStorage.getItem("phone") || "+998";
-
+  useEffect(() => {
+    fetchUserData();
+  }, [token]);
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("balance");
@@ -60,16 +62,16 @@ function Navbar() {
   return (
     <>
       <header className="bg-white border-b border-gray-200 sticky top-0 z-[999]">
-        <div className="  w-[90%] m-auto h-[80px] flex items-center justify-between">
+        <div className="w-full md:w-[90%] m-auto h-16 md:h-20 flex items-center justify-between px-4 md:px-0">
           <Link to="/">
             <img
-              className="w-[200px] hover:opacity-90 transition-opacity"
+              className="w-40 md:w-52 hover:opacity-90 transition-opacity"
               src={logo}
               alt="Logo"
             />
           </Link>
 
-          <nav className="hidden sm:flex items-center gap-[60px] text-[17px] font-medium text-gray-600">
+          <nav className="hidden sm:flex items-center gap-8 md:gap-16 text-sm md:text-base lg:text-lg font-medium text-gray-600">
             <Link
               to="/"
               className={`relative group ${
@@ -160,12 +162,11 @@ function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Sidebar Drawer */}
       <Drawer
         title={
           <Link to="/" onClick={onClose}>
             <img
-              className="w-[180px] hover:opacity-90 transition-opacity"
+              className="w-44 md:w-52 hover:opacity-90 transition-opacity"
               src={logo}
               alt="Logo"
             />
@@ -175,7 +176,7 @@ function Navbar() {
         closable={true}
         onClose={onClose}
         open={visible}
-        width="70%"
+        width={window.innerWidth < 640 ? "80%" : "50%"}
         bodyStyle={{ padding: 0 }}
         headerStyle={{ padding: "16px 20px" }}
       >
@@ -184,7 +185,7 @@ function Navbar() {
             <Link
               to="/"
               onClick={onClose}
-              className={`p-3 text-[15px] font-medium ${
+              className={`p-3 text-sm md:text-base font-medium ${
                 isActive("/") ? "text-blue-500 bg-blue-50" : "text-gray-600"
               } hover:text-blue-500 hover:bg-blue-50 transition-colors rounded`}
             >
@@ -193,7 +194,7 @@ function Navbar() {
             <Link
               to="/kurslar"
               onClick={onClose}
-              className={`p-3 text-[15px] font-medium ${
+              className={`p-3 text-sm md:text-base font-medium ${
                 isActive("/kurslar")
                   ? "text-blue-500 bg-blue-50"
                   : "text-gray-600"
@@ -205,7 +206,7 @@ function Navbar() {
             <Link
               to="/blog"
               onClick={onClose}
-              className={`p-3 text-[15px] font-medium ${
+              className={`p-3 text-sm md:text-base font-medium ${
                 isActive("/blog") ? "text-blue-500 bg-blue-50" : "text-gray-600"
               } hover:text-blue-500 hover:bg-blue-50 transition-colors rounded`}
             >
@@ -214,23 +215,22 @@ function Navbar() {
 
             {token && (
               <>
-                {/* User Info Section */}
                 <div className="p-4 border-t border-b border-gray-200 my-2">
-                  <div className="text-sm font-medium text-gray-500">
+                  <div className="text-xs md:text-sm font-medium text-gray-500">
                     Balans:
                   </div>
-                  <div className="text-lg font-bold">{balance} so'm</div>
+                  <div className="text-base md:text-lg font-bold">{user?.balance?.toLocaleString() || 0} so'm</div>
 
-                  <div className="mt-2 text-sm font-medium text-gray-500">
+                  <div className="mt-2 text-xs md:text-sm font-medium text-gray-500">
                     Telefon:
                   </div>
-                  <div className="text-lg">{phone}</div>
+                  <div className="text-base md:text-lg">{phone}</div>
                 </div>
 
                 <Link
                   to="/profilim"
                   onClick={onClose}
-                  className={`flex items-center p-3 text-[15px] font-medium ${
+                  className={`flex items-center p-3 text-sm md:text-base font-medium ${
                     isActive("/profilim")
                       ? "text-blue-500 bg-blue-50"
                       : "text-gray-600"
@@ -243,7 +243,7 @@ function Navbar() {
                 <Link
                   to="/my-courses"
                   onClick={onClose}
-                  className={`flex items-center p-3 text-[15px] font-medium ${
+                  className={`flex items-center p-3 text-sm md:text-base font-medium ${
                     isActive("/my-courses")
                       ? "text-blue-500 bg-blue-50"
                       : "text-gray-600"
@@ -258,7 +258,7 @@ function Navbar() {
                     handleLogout();
                     onClose();
                   }}
-                  className="flex items-center p-3 text-[15px] font-medium text-gray-600 hover:text-blue-500 hover:bg-blue-50 transition-colors rounded w-full text-left"
+                  className="flex items-center p-3 text-sm md:text-base font-medium text-gray-600 hover:text-blue-500 hover:bg-blue-50 transition-colors rounded w-full text-left"
                 >
                   <LogoutOutlined className="mr-2" />
                   Chiqish

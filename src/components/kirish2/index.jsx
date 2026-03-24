@@ -158,23 +158,23 @@ function KirishComponentsID() {
   if (pageLoading || accessLoading) {
     return (
       <div className="bg-gray-100 min-h-screen font-sans">
-        <div className="w-[90%] m-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="h-10 w-2/3 bg-gray-200 rounded animate-pulse" />
-              <div className="h-64 bg-gray-200 rounded-lg animate-pulse" />
-              <div className="bg-white rounded-lg p-6 shadow-md space-y-3">
-                <div className="h-6 w-1/3 bg-gray-200 rounded animate-pulse" />
-                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
-                <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
+        <div className="w-full md:w-[90%] m-auto px-3 md:px-4 py-4 md:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+            <div className="lg:col-span-2 space-y-4 md:space-y-6">
+              <div className="h-8 md:h-10 w-2/3 bg-gray-200 rounded animate-pulse" />
+              <div className="h-48 md:h-64 bg-gray-200 rounded-lg animate-pulse" />
+              <div className="bg-white rounded-lg p-4 md:p-6 shadow-md space-y-3">
+                <div className="h-5 md:h-6 w-1/3 bg-gray-200 rounded animate-pulse" />
+                <div className="h-3 md:h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-3 md:h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
               </div>
             </div>
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="h-64 bg-gray-200 animate-pulse" />
-                <div className="p-6 space-y-4">
-                  <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-12 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-40 md:h-48 bg-gray-200 animate-pulse" />
+                <div className="p-4 md:p-6 space-y-4">
+                  <div className="h-5 md:h-6 w-3/4 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-10 md:h-12 w-full bg-gray-200 rounded animate-pulse" />
                 </div>
               </div>
             </div>
@@ -200,18 +200,12 @@ function KirishComponentsID() {
     );
   }
 
-  // ✅ SEO uchun to'liq URL yasaymiz — canonical va og:url uchun kerak
   const fullUrl = `https://myrobo.uz/kurslar/${slug}`;
 
   return (
     <>
       <Helmet>
-        {/* Sahifa title — Google qidiruv natijasida koʻrinadigan sarlavha */}
         <title>{findData?.title} | MyRobo.uz</title>
-
-        {/* ✅ O'ZGARTIRILDI: description → about
-            SABABI: API da "description" field yo'q, "about" bor!
-            .slice(0,155) — Google max 155 belgi ko'rsatadi */}
         <meta
           name="description"
           content={
@@ -220,11 +214,8 @@ function KirishComponentsID() {
           }
         />
 
-        {/* ✅ YANGI: canonical — Google ga "bu sahifaning asosiy URLi shu" deydi
-            Duplicate content muammosini oldini oladi */}
         <link rel="canonical" href={fullUrl} />
 
-        {/* Open Graph — Telegram, Facebook, WhatsApp da ulashganda chiqadi */}
         <meta property="og:title" content={findData?.title} />
         <meta
           property="og:description"
@@ -234,87 +225,83 @@ function KirishComponentsID() {
           }
         />
         <meta property="og:image" content={findData?.image} />
-        {/* ✅ YANGI: og:url — to'g'ri URL ko'rsatildi */}
         <meta property="og:url" content={fullUrl} />
         <meta property="og:type" content="website" />
       </Helmet>
 
       <div className="bg-gray-100 min-h-screen font-sans">
-        <div className="w-[90%] m-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <h1 className="text-2xl md:text-3xl font-semibold flex gap-2">
-                Kurs haqida:
-                <span className="text-blue-600">{findData?.title}</span>
+        <div className="w-full md:w-[90%] m-auto px-3 md:px-4 py-4 md:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+            <div className="lg:col-span-2 space-y-4 md:space-y-6">
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold flex flex-col sm:flex-row gap-1 sm:gap-2">
+                <span>Kurs haqida:</span>
+                <span className="text-blue-600 line-clamp-2">{findData?.title}</span>
               </h1>
-              <div className="bg-gray-100 backdrop-blur-sm rounded-lg overflow-hidden p-6 md:p-10 shadow-lg">
+              <div className="bg-gray-100 backdrop-blur-sm rounded-lg overflow-hidden p-2 md:p-4 shadow-lg">
                 <img
                   src={findData?.image}
-                  className="w-full object-contain mx-auto"
+                  className="w-full h-auto max-h-64 md:max-h-60 object-contain mx-auto rounded-md"
                   alt={findData?.title}
+                  loading="lazy"
                 />
               </div>
-              <div className="bg-white rounded-lg p-6 shadow-md">
-                <h2 className="text-xl font-semibold mb-4">Tavsif</h2>
-                <p className="text-gray-700">{findData?.about}</p>
+              <div className="bg-white rounded-lg p-4 md:p-6 shadow-md">
+                <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Tavsif</h2>
+                <p className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-wrap break-words">{findData?.about}</p>
               </div>
-              <div className="bg-white rounded-lg p-6 shadow-md">
-                <h2 className="text-xl font-semibold mb-4">Kurs statistikasi</h2>
-                <div className="flex gap-6 text-gray-600 text-sm">
-                  <span>
-                    <BarsOutlined /> Bo'limlar:{" "}
-                    <strong>{findData?.sections_count}</strong>
+              <div className="bg-white rounded-lg p-4 md:p-6 shadow-md">
+                <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Kurs statistikasi</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 text-gray-600 text-xs md:text-sm">
+                  <span className="flex items-center gap-2">
+                    <BarsOutlined /> <span>Bo'limlar: <strong>{findData?.sections_count}</strong></span>
                   </span>
-                  <span>
-                    <BookOutlined /> Mavzular:{" "}
-                    <strong>{findData?.topics_count}</strong>
+                  <span className="flex items-center gap-2">
+                    <BookOutlined /> <span>Mavzular: <strong>{findData?.topics_count}</strong></span>
                   </span>
-                  <span>
-                    <UserSwitchOutlined /> O'quvchilar:{" "}
-                    <strong>{findData?.buyers_total}</strong>
+                  <span className="flex items-center gap-2">
+                    <UserSwitchOutlined /> <span>O'quvchilar: <strong>{findData?.buyers_total}</strong></span>
                   </span>
                 </div>
               </div>
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Kurs bo'limlari</h2>
+              <div className="space-y-3 md:space-y-4">
+                <h2 className="text-lg md:text-xl font-semibold">Kurs bo'limlari</h2>
                 {loadingSections ? (
-                  <div className="flex items-center gap-2 text-blue-500">
+                  <div className="flex items-center gap-2 text-blue-500 text-sm md:text-base">
                     <LoadingOutlined /> Yuklanmoqda...
                   </div>
                 ) : sections.length === 0 ? (
-                  <p className="text-gray-500">Bo'limlar mavjud emas.</p>
+                  <p className="text-gray-500 text-sm md:text-base">Bo'limlar mavjud emas.</p>
                 ) : (
                   sections.map((section) => (
                     <div key={section.id}>
-                      <div className="bg-blue-900 text-white p-4 rounded-t-lg">
-                        <h3 className="font-medium">{section.title}</h3>
+                      <div className="bg-blue-900 text-white p-3 md:p-4 rounded-t-lg">
+                        <h3 className="font-medium text-sm md:text-base truncate">{section.title}</h3>
                       </div>
                       <div className="bg-white shadow-md rounded-b-lg divide-y">
                         {topicsMap[section.id] ? (
                           topicsMap[section.id].map((topic) => (
                             <div
                               key={topic.id}
-                              className="p-4 flex items-center justify-between hover:bg-gray-50"
+                              className="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between hover:bg-gray-50 gap-2 sm:gap-0"
                             >
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-start sm:items-center gap-2 min-w-0">
                                 {topic.topic_type === "video" ? (
-                                  <PlayCircleOutlined className="text-blue-500" />
+                                  <PlayCircleOutlined className="text-blue-500 flex-shrink-0 mt-1 sm:mt-0" />
                                 ) : (
-                                  <CodeOutlined className="text-green-500" />
+                                  <CodeOutlined className="text-green-500 flex-shrink-0 mt-1 sm:mt-0" />
                                 )}
-                                <span className="text-gray-700 text-sm">
+                                <span className="text-gray-700 text-xs md:text-sm truncate">
                                   {topic.title}
                                 </span>
                               </div>
-                              <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
+                              <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
                                 {topic.topic_type === "video" ? "Video" : "Kod"}
                               </span>
                             </div>
                           ))
                         ) : (
-                          <div className="p-4 text-gray-400 text-sm">
-                            <LoadingOutlined className="mr-2" /> Mavzular
-                            yuklanmoqda...
+                          <div className="p-3 md:p-4 text-gray-400 text-xs md:text-sm">
+                            <LoadingOutlined className="mr-2" /> Mavzular yuklanmoqda...
                           </div>
                         )}
                       </div>
@@ -325,20 +312,21 @@ function KirishComponentsID() {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden sticky top-4">
+              <div className="bg-white rounded-lg shadow-md overflow-hidden sticky top-4 lg:top-20">
                 <img
                   src={findData?.image}
-                  className="w-full h-64 object-cover"
+                  className="w-full h-40 md:h-48 lg:h-56 object-cover"
                   alt={findData?.title}
+                  loading="lazy"
                 />
-                <div className="p-6">
-                  <h2 className="text-xl font-semibold mb-2">
+                <div className="p-4 md:p-6">
+                  <h2 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 line-clamp-2">
                     {findData?.title}
                   </h2>
-                  <div className="border-t border-b py-4 my-4">
-                    <p className="text-sm text-gray-500">Kurs narxi:</p>
-                    <div className="flex items-center mt-1">
-                      <span className="text-xl font-bold">
+                  <div className="border-t border-b py-3 md:py-4 my-3 md:my-4">
+                    <p className="text-xs md:text-sm text-gray-500">Kurs narxi:</p>
+                    <div className="flex items-center mt-1 md:mt-2">
+                      <span className="text-lg md:text-xl font-bold text-gray-900">
                         {findData?.price === 0 ||
                         findData?.price === "0" ||
                         !findData?.price
@@ -352,26 +340,29 @@ function KirishComponentsID() {
                   <button
                     onClick={buyCourse}
                     disabled={buyLoading}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md w-full py-3 font-medium transition duration-300 shadow-md flex items-center justify-center gap-2"
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md w-full py-2.5 md:py-3 text-sm md:text-base font-medium transition duration-300 shadow-md flex items-center justify-center gap-2 active:scale-95"
                   >
                     {buyLoading ? <LoadingOutlined /> : null}
-                    Sotib olish
+                    {buyLoading ? "Yuklanmoqda..." : "Sotib olish"}
                   </button>
-                  <div className="flex justify-around mt-4">
+                  <div className="flex justify-around mt-4 gap-2">
                     <img
                       src="https://api.logobank.uz/media/logos_png/Uzcard-01.png"
                       alt="Uzcard"
-                      className="h-12 w-12 rounded-md object-contain"
+                      className="h-10 md:h-12 w-10 md:w-12 rounded-md object-contain"
+                      loading="lazy"
                     />
                     <img
                       src="https://humocard.uz/upload/medialibrary/8cf/ia2yatyqt4l0p0d5523erhmx6y0fssxw/HumoPay-Final-002.png"
                       alt="Humo"
-                      className="h-12 w-12 rounded-md object-contain"
+                      className="h-10 md:h-12 w-10 md:w-12 rounded-md object-contain"
+                      loading="lazy"
                     />
                     <img
                       src="https://pr.uz/wp-content/uploads/2024/05/photo_2024-05-14_20-27-31.jpg"
                       alt="Click"
-                      className="h-12 w-12 rounded-md object-contain"
+                      className="h-10 md:h-12 w-10 md:w-12 rounded-md object-contain"
+                      loading="lazy"
                     />
                   </div>
                 </div>
