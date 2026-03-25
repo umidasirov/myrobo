@@ -18,18 +18,37 @@ export function toSlug(id, text) {
 
   return `${slug}--${shortId}`;
 }
-
-function SkeletonCard() {
+function SkeletonCard({ isSmall = false }) {
   return (
-    <div className="w-[280px] bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-      <div className="h-[180px] bg-gray-200 animate-pulse" />
-      <div className="p-4 flex flex-col gap-3">
-        <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
-        <div className="h-5 w-full bg-gray-200 rounded animate-pulse" />
-        <div className="h-5 w-3/4 bg-gray-200 rounded animate-pulse" />
-        <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
-        <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
-        <div className="h-6 w-20 bg-gray-200 rounded animate-pulse mt-2" />
+    <div
+      className={`${
+        isSmall ? "w-80" : "w-full"
+      } group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm flex flex-col`}
+    >
+      <div className="h-[220px] overflow-hidden flex-shrink-0 bg-gray-100">
+        <div className="w-full h-full animate-pulse bg-gray-200" />
+      </div>
+
+      <div className="p-4 flex flex-col flex-1 gap-2">
+        <div className="flex items-center gap-1 text-[12px]">
+          <div className="w-4 h-4 rounded-full bg-gray-200 animate-pulse" />
+          <div className="h-3 w-20 rounded bg-gray-200 animate-pulse" />
+        </div>
+
+        <div className="space-y-2">
+          <div className="h-4 w-[90%] rounded bg-gray-200 animate-pulse" />
+          <div className="h-4 w-[65%] rounded bg-gray-200 animate-pulse" />
+        </div>
+
+        <div className="flex-1 space-y-2 pt-1">
+          <div className="h-3 w-full rounded bg-gray-100 animate-pulse" />
+          <div className="h-3 w-[92%] rounded bg-gray-100 animate-pulse" />
+          <div className="h-3 w-[72%] rounded bg-gray-100 animate-pulse" />
+        </div>
+
+        <div className="mt-2">
+          <div className="h-5 w-24 rounded bg-gray-200 animate-pulse" />
+        </div>
       </div>
     </div>
   );
@@ -42,21 +61,6 @@ function KirishComponents() {
   const token = localStorage.getItem("token");
   const location = useLocation();
   
-
-  const itemVariants = {
-    hidden: { 
-      opacity: 0, 
-      x: -60 
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
-  };
   
   useEffect(() => {
     const load = async () => {
@@ -97,22 +101,23 @@ function KirishComponents() {
         </p>
       </div>
       }
-      <div className={isSmallCount ? "flex justify-center gap-4 md:gap-6 mb-8 flex-wrap" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start mb-8"}>
+      <div className={isSmallCount ? "flex justify-center gap-4 md:gap-6 mb-8 flex-wrap" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start mb-8"}>
               {isLoading
-          ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+          ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} isSmall={isSmallCount} />)
           : displayedData?.map((value, index) => (
             <motion.div
               key={value?.id}
-              variants={itemVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: false }}
               onClick={() => postId(value?.title, value?.id)}
-              className={`${isSmallCount ? 'w-80' : 'w-full'} bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-shadow duration-200 cursor-pointer flex flex-col hover:scale-105 transform duration-300`}
+              className={`${isSmallCount ? 'w-80' : 'w-full'} group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg duration-200 cursor-pointer flex flex-col hover:-translate-y-1 md:hover:-translate-y-2 hover:shadow-lg md:hover:shadow-xl hover:shadow-blue-100
+                 hover:border-blue-100 transition-all duration-300`}
             >
-              <div className="h-[200px] overflow-hidden flex-shrink-0 bg-gray-100">
+              <div className="h-[220px] overflow-hidden flex-shrink-0 bg-gray-100">
                 <img
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   src={value?.image}
                   alt={value?.title}
                 />
@@ -157,6 +162,7 @@ function KirishComponents() {
               </div>
             </motion.div>
           ))}
+
       </div>
       {location.pathname !== '/kurslar' &&
       <div className="flex justify-center">

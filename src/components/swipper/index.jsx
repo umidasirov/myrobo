@@ -79,6 +79,7 @@ const slides = [
                   src={slide.image}
                   alt={slide.alt}
                   className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+                  loading="lazy"
                 />
                 <div
                   className={`absolute -bottom-4 right-4 w-1/2 bg-white p-3 rounded-lg shadow-md transition-all duration-500 ${

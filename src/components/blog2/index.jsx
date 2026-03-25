@@ -71,6 +71,7 @@ function BlogComponentsId() {
               className="w-full h-[250px] sm:h-[350px] md:h-[450px] xl:h-[550px] object-cover rounded-2xl"
               src={blog?.img}
               alt={blog?.title}
+              loading="lazy"
             />
           )}
 

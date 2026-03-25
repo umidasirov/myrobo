@@ -13,7 +13,6 @@ const PremiumEducation = () => {
   return (
     <section className="w-[90%] mx-auto py-10 overflow-x-hidden">
       <div className="flex flex-col md:flex-row gap-8 items-center">
-        {/* Text content - left side */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}

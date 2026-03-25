@@ -126,8 +126,6 @@ function SertificateComponents() {
           {servicesData.map((item, index) => (
             <motion.div
               key={index}
-              variants={itemVariants}
-              whileHover={{ y: -6, scale: 1.02 }}
               transition={{ duration: 0.25 }}
               className="group flex items-start gap-4 rounded-2xl bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-xl sm:p-5 lg:p-6"
             >
