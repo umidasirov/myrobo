@@ -16,7 +16,6 @@ function Layout() {
         <meta name="robots" content="index, follow" />
         <meta name="author" content="MyRobo" />
         <meta property="og:site_name" content="MyRobo" />
-        <link rel="canonical" href={`https://myrobo.uz${location.pathname}`} />
       </Helmet>
       {!hideLayout && <Navbar />}
       <main>

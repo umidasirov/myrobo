@@ -315,8 +315,6 @@ const FrontendCourse = () => {
           }
         />
 
-        {/* ✅ YANGI: canonical URL */}
-        <link rel="canonical" href={fullUrl} />
 
         <meta
           property="og:title"

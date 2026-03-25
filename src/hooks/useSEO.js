@@ -6,7 +6,6 @@ import { useEffect } from "react";
  * @param {string} options.title - Sahifa title
  * @param {string} options.description - Meta description (max 160 belgi)
  * @param {string} [options.image] - OG image URL
- * @param {string} [options.url] - Canonical URL
  * @param {string} [options.type] - OG type (website | article)
  */
 export function useSEO({ title, description, image, url, type = "website" }) {
@@ -43,12 +42,6 @@ export function useSEO({ title, description, image, url, type = "website" }) {
     setMeta('[name="twitter:description"]', description || "");
     setMeta('[name="twitter:image"]', image || DEFAULT_IMAGE);
 
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.setAttribute("rel", "canonical");
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute("href", url || BASE_URL);
+   
   }, [title, description, image, url, type]);
 }

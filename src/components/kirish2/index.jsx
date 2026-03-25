@@ -214,7 +214,6 @@ function KirishComponentsID() {
           }
         />
 
-        <link rel="canonical" href={fullUrl} />
 
         <meta property="og:title" content={findData?.title} />
         <meta
