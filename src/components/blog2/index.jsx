@@ -35,7 +35,7 @@ function BlogComponentsId() {
     const fetchBlog = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`https://api.myrobo.uz/blog/blogs/${name}/`, {
+        const res = await fetch(`https://myrobo.uz/api/blog/blogs/${name}/`, {
           headers: { "Content-Type": "application/json" },
         });
         const data = await res.json();

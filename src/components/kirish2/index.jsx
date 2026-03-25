@@ -86,7 +86,7 @@ function KirishComponentsID() {
       setLoadingSections(true);
       try {
         const response = await fetch(
-          `https://api.myrobo.uz/courses/courses/${courseId}/sections/`,
+          `https://myrobo.uz/api/courses/courses/${courseId}/sections/`,
           { headers: { "Content-Type": "application/json" } }
         );
         const result = await response.json();
@@ -95,7 +95,7 @@ function KirishComponentsID() {
         result.forEach(async (section) => {
           try {
             const topicsRes = await fetch(
-              `https://api.myrobo.uz/courses/sections/${section.id}/topics/`,
+              `https://myrobo.uz/api/courses/sections/${section.id}/topics/`,
               { headers: { "Content-Type": "application/json" } }
             );
             const topics = await topicsRes.json();
@@ -122,7 +122,7 @@ function KirishComponentsID() {
     setBuyLoading(true);
     try {
       const response = await fetch(
-        "https://api.myrobo.uz/courses/courses/buy/",
+        "https://myrobo.uz/api/courses/courses/buy/",
         {
           method: "POST",
           headers: {

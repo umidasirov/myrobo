@@ -34,7 +34,7 @@ export default function BlogComponents() {
     const fetchCategories = async () => {
       setCatsLoading(true);
       try {
-        const res = await fetch("https://api.myrobo.uz/blog/categories/", {
+        const res = await fetch("https://myrobo.uz/api/blog/categories/", {
           headers: { "Content-Type": "application/json" },
         });
         setCategories(await res.json());
@@ -61,7 +61,7 @@ export default function BlogComponents() {
     const fetchAll = async () => {
       setBlogsLoading(true);
       try {
-        const res = await fetch("https://api.myrobo.uz/blog/blogs/", {
+        const res = await fetch("https://myrobo.uz/api/blog/blogs/", {
           headers: { "Content-Type": "application/json" },
         });
         const data = await res.json();
@@ -84,7 +84,7 @@ export default function BlogComponents() {
     try {
       const results = await Promise.all(
         [...slugSet].map((slug) =>
-          fetch(`https://api.myrobo.uz/blog/blogs/?category=${slug}`, {
+          fetch(`https://myrobo.uz/api/blog/blogs/?category=${slug}`, {
             headers: { "Content-Type": "application/json" },
           }).then((r) => r.json())
         )

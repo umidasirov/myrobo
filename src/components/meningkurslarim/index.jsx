@@ -11,7 +11,7 @@ function MeningKurslarim() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("https://api.myrobo.uz/courses/my-courses/", {
+    fetch("https://myrobo.uz/api/courses/my-courses/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

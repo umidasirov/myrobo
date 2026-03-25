@@ -13,7 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCourseAccess } from "../../hooks/useCourseAccess";
 import { Helmet } from "react-helmet-async";
 
-const BASE_URL = "https://api.myrobo.uz";
+const BASE_URL = "https://myrobo.uz/api";
 
 function Skeleton({ className = "" }) {
   return <div className={`bg-gray-200 rounded animate-pulse ${className}`} />;

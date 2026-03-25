@@ -72,7 +72,7 @@ const LoginPage = () => {
   }
 
   try {
-    const response = await fetch("https://api.myrobo.uz/user/auth/login/", {
+    const response = await fetch("https://myrobo.uz/api/user/auth/login/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

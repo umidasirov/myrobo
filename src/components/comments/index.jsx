@@ -49,7 +49,7 @@ function CommentSection({ slug }) {
     if (!slug) return;
     setLoading(true);
     try {
-      const res = await fetch(`https://api.myrobo.uz/blog/blogs/${slug}/comments/`, {
+      const res = await fetch(`https://myrobo.uz/api/blog/blogs/${slug}/comments/`, {
         headers: { "Content-Type": "application/json" },
       });
       if (res.ok) {
@@ -79,7 +79,7 @@ function CommentSection({ slug }) {
     if (!plainText || !token) return;
     setSubmitting(true);
     try {
-      const res = await fetch(`https://api.myrobo.uz/blog/blogs/${slug}/comments/`, {
+      const res = await fetch(`https://myrobo.uz/api/blog/blogs/${slug}/comments/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

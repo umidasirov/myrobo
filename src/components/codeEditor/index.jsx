@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 
-const BASE_URL = "https://api.myrobo.uz";
+const BASE_URL = "https://myrobo.uz/api";
 
 const LANGUAGES = [
   { value: "javascript", label: "JavaScript", apiLang: null },

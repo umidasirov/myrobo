@@ -52,7 +52,7 @@ export default function BlogEditor({ onClose }) {
     const fetchCategories = async () => {
       setCatLoading(true);
       try {
-        const res = await fetch("https://api.myrobo.uz/blog/categories/");
+        const res = await fetch("https://myrobo.uz/api/blog/categories/");
         if (!res.ok) throw new Error();
         const data = await res.json();
         // data may be array or { results: [] }
@@ -93,7 +93,7 @@ export default function BlogEditor({ onClose }) {
 
     setLoad(true);
     try {
-      const res = await fetch("https://api.myrobo.uz/blog/blog-create/", {
+      const res = await fetch("https://myrobo.uz/api/blog/blog-create/", {
         method: "POST",
         body: formData,
         headers: { Authorization: `Bearer ${token}` },

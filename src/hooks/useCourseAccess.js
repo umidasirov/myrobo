@@ -10,7 +10,7 @@ export function useCourseAccess(courseId) {
       setLoading(false);
       return;
     }
-    fetch("https://api.myrobo.uz/courses/my-courses/", {
+    fetch("https://myrobo.uz/api/courses/my-courses/", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())

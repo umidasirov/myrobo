@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 const DataContext = createContext();
 
 const api = axios.create({
-  baseURL: "https://api.myrobo.uz",
+  baseURL: "https://myrobo.uz/api",
 });
 
 api.interceptors.request.use((config) => {
@@ -48,7 +48,7 @@ export const DataProvider = ({ children }) => {
 
         try {
           const res = await axios.post(
-            "https://api.myrobo.uz/user/auth/token/refresh/",
+            "https://myrobo.uz/api/user/auth/token/refresh/",
             { refresh }
           );
 
@@ -69,7 +69,7 @@ export const DataProvider = ({ children }) => {
   const fetchTeam = async () => {
     setLoad(true);
     try {
-      const response = await fetch("https://api.myrobo.uz/teacher/teachers/", {
+      const response = await fetch("https://myrobo.uz/api/teacher/teachers/", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
