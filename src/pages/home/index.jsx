@@ -10,6 +10,8 @@ import TeamComponents from "../../components/team";
 import IshtirockComponents from "../../components/ishtirok-etish";
 import { useData } from "../../datacontect";
 import { Helmet } from 'react-helmet-async';
+import AboutMyRobo from "../../components/about";
+import FAQ from "../../components/faq";
 
 function Home() {
   const token = localStorage.getItem("token");;
@@ -38,9 +40,12 @@ function Home() {
         <SwiperComponent />
         <SertificateComponents />
         <KirishComponents />
+        <KursToifalariComponents />
         <PremiumEducation />
         <AnimatedStats />
         <TeamComponents />
+        <AboutMyRobo/>
+        <FAQ/>
         <IshtirockComponents />
       </div>
     </>

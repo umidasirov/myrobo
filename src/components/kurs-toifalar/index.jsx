@@ -2,18 +2,28 @@ import { useEffect, useState } from "react";
 import { useAxios } from "../../hooks";
 
 function KursToifalariComponents() {
-  const axios = useAxios();
+  // const axios = useAxios();
 
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    axios({
-      url: "/api/categories/",
-      method: "GET",
-    })
-      .then((data) => setData(data))
-      .catch((error) => console.log(error));
-  }, []);
-
+  // const [data, setData] = useState([]);
+  // useEffect(() => {
+  //   axios({
+  //     url: "/api/categories/",
+  //     method: "GET",
+  //   })
+  //     .then((data) => setData(data))
+  //     .catch((error) => console.log(error));
+  // }, []);
+  const data = [
+    { id: 1, name: "Frontend" },
+    { id: 2, name: "Backend" },
+    { id: 3, name: "DevOps" },
+    { id: 4, name: "Tarmoq administratori" },
+    { id: 5, name: "Data Analyst" },
+    { id: 6, name: "Sun'iy intellekt" },
+    { id: 7, name: "Kiberxavfsizlik" },
+    { id: 8, name: "Full Stack" },
+    { id: 9, name: "Mobil dasturlash" },
+  ];
   return (
     <section className="bg-[#f1f2f7] py-[40px] mt-[60px] bgnone">
       <div className="w-[90%] m-auto">
@@ -29,7 +39,7 @@ function KursToifalariComponents() {
               <div
                 key={value?.id}
                 className="w-fit p-3 bg-[#fff] text-[17px] text-[#333] rounded-md shadow-md shadow-blue-300 
-                max-[440px]:w-full max-[440px]:text-center"
+                max-[440px]:w-full max-[440px]:text-center cursor-pointer hover:transform hover:scale-105 transition-all"
               >
                 <h4>{value?.name}</h4>
               </div>

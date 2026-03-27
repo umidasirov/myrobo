@@ -27,6 +27,8 @@ export default function BlogComponents() {
   const [blogData, setBlogData] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selected, setSelected] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [blogsLoading, setBlogsLoading] = useState(false);
   const [catsLoading, setCatsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -77,7 +79,17 @@ export default function BlogComponents() {
   }, []);
   const fetchBySelected = useCallback(async (slugSet) => {
     if (slugSet.size === 0) {
-      setBlogData(allBlogs);
+      // Apply search filter if query exists
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const filtered = allBlogs.filter((b) =>
+          b?.title?.toLowerCase().includes(query) ||
+          b?.description?.toLowerCase().includes(query)
+        );
+        setBlogData(filtered);
+      } else {
+        setBlogData(allBlogs);
+      }
       return;
     }
     setBlogsLoading(true);
@@ -92,13 +104,42 @@ export default function BlogComponents() {
       const merged = Object.values(
         results.flat().reduce((acc, b) => ({ ...acc, [b.id]: b }), {})
       );
-      setBlogData(merged);
+      
+      // Apply search filter to merged results
+      let filtered = merged;
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        filtered = merged.filter((b) =>
+          b?.title?.toLowerCase().includes(query) ||
+          b?.description?.toLowerCase().includes(query)
+        );
+      }
+      setBlogData(filtered);
     } catch (err) {
       console.error(err);
     } finally {
       setBlogsLoading(false);
     }
-  }, [allBlogs]);
+  }, [allBlogs, searchQuery]);
+
+  // Search effect
+  useEffect(() => {
+    if (selected.size === 0) {
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const filtered = allBlogs.filter((b) =>
+          b?.title?.toLowerCase().includes(query) ||
+          b?.description?.toLowerCase().includes(query)
+        );
+        setBlogData(filtered);
+      } else {
+        setBlogData(allBlogs);
+      }
+    } else {
+      // Re-fetch with current selected and search query
+      fetchBySelected(selected);
+    }
+  }, [searchQuery]);
 
   const handleSelect = (slug) => {
     setSelected((prev) => {
@@ -111,6 +152,7 @@ export default function BlogComponents() {
 
   const clearAll = () => {
     setSelected(new Set());
+    setSearchQuery("");
     setBlogData(allBlogs);
   };
 
@@ -119,6 +161,69 @@ export default function BlogComponents() {
   return (
     <section className="w-full md:w-[90%] max-w-[1400px] mx-auto mt-6 md:mt-10 px-4 md:px-0 pb-16 md:pb-20">
      <div className="mb-6 md:mb-8 flex flex-col gap-4 md:gap-6">
+  {/* Search Input - Mobile Icon / Desktop Full */}
+  <div className="flex flex-col gap-3">
+    {/* Desktop Search */}
+    <div className="hidden md:flex gap-3 md:gap-4">
+      <input
+        type="text"
+        placeholder="Maqola nomi yoki tavsifni izlang..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="flex-1 px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl border border-gray-200 text-sm md:text-base
+                   focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+      />
+      {(searchQuery || selected.size > 0) && (
+        <button
+          onClick={clearAll}
+          className="px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-medium text-red-400
+                     border-[1.5px] border-red-100 bg-red-50 hover:bg-red-100
+                     transition-all duration-200 whitespace-nowrap"
+        >
+          Tozalash
+        </button>
+      )}
+    </div>
+
+    {/* Mobile Search - Icon or Expanded Input */}
+    <div className="flex md:hidden gap-2">
+      {!isSearchOpen ? (
+        <button
+          onClick={() => setIsSearchOpen(true)}
+          className="w-full px-4 py-2.5 rounded-lg border border-gray-200 flex items-center justify-center gap-2
+                     hover:border-blue-400 hover:text-blue-600 transition-all"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <span className="text-sm">Izlash</span>
+        </button>
+      ) : (
+        <div className="flex gap-2 w-full">
+          <input
+            type="text"
+            autoFocus
+            placeholder="Maqola izlang..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm
+                       focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+          />
+          <button
+            onClick={() => {
+              setIsSearchOpen(false);
+              setSearchQuery("");
+            }}
+            className="px-3 py-2.5 rounded-lg border border-gray-200 flex items-center justify-center
+                       hover:border-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+
   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
     <div className="flex items-center gap-2">
       <div className="h-0.5 md:h-[2px] flex-1 rounded-full bg-gradient-to-r from-blue-500 to-blue-400" />
@@ -156,7 +261,7 @@ export default function BlogComponents() {
           <button
             onClick={clearAll}
             className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium border-[1.5px] transition-all duration-200 whitespace-nowrap
-              ${selected.size === 0
+              ${selected.size === 0 && searchQuery === ""
                 ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200"
                 : "bg-white text-gray-500 border-gray-200 hover:border-blue-400 hover:text-blue-600"
               }`}

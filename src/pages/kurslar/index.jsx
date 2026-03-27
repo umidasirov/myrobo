@@ -6,11 +6,11 @@ function Kurslar() {
   return (
     <>
       <Helmet>
-        <title>Kurslar - MyRobo</title>
-        <meta name="description" content="MyRobo platformasidagi barcha mavjud kurslarni ko'ring. Dasturlash, texnologiya va boshqa sohalardagi kurslarni toping." />
-        <meta name="keywords" content="kurslar, dasturlash kurslari, ta'lim kurslari, MyRobo" />
-        <meta property="og:title" content="Kurslar - MyRobo" />
-        <meta property="og:description" content="MyRobo platformasidagi barcha mavjud kurslarni ko'ring." />
+        <title>Kurslar - Myrobo</title>
+        <meta name="description" content="Myrobo platformasidagi barcha mavjud kurslarni ko'ring. Dasturlash, texnologiya va boshqa sohalardagi kurslarni toping." />
+        <meta name="keywords" content="kurslar, dasturlash kurslari, ta'lim kurslari, Myrobo" />
+        <meta property="og:title" content="Kurslar - Myrobo" />
+        <meta property="og:description" content="Myrobo platformasidagi barcha mavjud kurslarni ko'ring." />
         <meta property="og:type" content="website" />
       </Helmet>
       <section className="w-[90%] m-auto mt-[40px]">

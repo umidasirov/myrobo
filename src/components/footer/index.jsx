@@ -2,9 +2,9 @@ import React from "react";
 import youtube from "../../assets/youtube.png";
 import facebook from "../../assets/facebook.png";
 import instagram from "../../assets/instagram.png";
-import twitter from "../../assets/twitter.png";
+import telegram from "../../assets/telegram.png";
 import img from "../../assets/logo3.png";
-
+import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="text-center bg-gray-100 px-4 py-12 rounded-t-[40px] md:rounded-t-[60px] mt-20 border-t border-gray-200">
@@ -16,20 +16,43 @@ const Footer = () => {
             <p className="text-gray-600 hidden md:block text-sm leading-relaxed">
               Eduma — zamonaviy kasblarni o'rganish va professional mutaxassis bo'lish uchun qulay platforma.
             </p>
-              <ul className="space-y-3 md:hidden text-gray-600 font-medium">
-              <li className="hover:text-blue-600 transition-colors font-medium cursor-pointer">Dasturlash</li>
-              <li className="hover:text-blue-600 transition-colors font-medium cursor-pointer">Marketing</li>
-              <li className="hover:text-blue-600 transition-colors font-medium cursor-pointer">Biznes boshqaruvi</li>
-              <li className="hover:text-blue-600 transition-colors font-medium cursor-pointer">Grafik Dizayn</li>
+            <ul className="space-y-3 md:hidden text-gray-600 font-medium">
+              <li className="hover:text-blue-600 transition-colors font-medium cursor-pointer">
+              <Link to="/">
+                Bosh saxifa
+                </Link>
+                </li>
+              <li className="hover:text-blue-600 transition-colors font-medium cursor-pointer">
+              <Link to="/kurslar">
+                Kurslar
+                </Link>
+                </li>
+              <li className="hover:text-blue-600 transition-colors font-medium cursor-pointer">
+              <Link to="/blog">
+                Maqolalar
+                </Link>
+                </li>
             </ul>
+
           </div>
 
             <ul className="space-y-3 hidden md:block text-gray-600 text-sm">
               <h3 className="text-gray-900 font-medium mb-4 uppercase text-xs tracking-wider">Platforma</h3>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">Dasturlash</li>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">Marketing</li>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">Biznes boshqaruvi</li>
-              <li className="hover:text-blue-600 transition-colors cursor-pointer">Grafik Dizayn</li>
+                <li className="hover:text-blue-600 transition-colors cursor-pointer">
+                  <Link to="/">
+                    Bosh saxifa
+                  </Link>
+                  </li>
+              <li className="hover:text-blue-600 transition-colors cursor-pointer">
+              <Link to="/kurslar">
+                Kurslar
+                </Link>
+                </li>
+              <li className="hover:text-blue-600 transition-colors cursor-pointer">
+              <Link to="/blog">
+                Maqolalar
+                </Link>
+                </li>
             </ul>
 
           <div className="hidden md:block">
@@ -45,17 +68,17 @@ const Footer = () => {
           <div>
             <h3 className="text-gray-900 font-medium mb-4 uppercase text-xs tracking-wider">Bizni kuzating</h3>
             <div className="flex gap-4 justify-center">
-              <a href="#" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
+              <a href="https://www.instagram.com/myrobouz/" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
                 <img src={instagram} alt="Instagram" className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
+              <a href="https://facebook.com/myrobouz" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
                 <img src={facebook} alt="Facebook" className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
+              <a href="https://youtube.com/myrobouz" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
                 <img src={youtube} alt="YouTube" className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
-                <img src={twitter} alt="Twitter" className="w-5 h-5" />
+              <a href="https://t.me/myrobouz" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
+                <img src={telegram} alt="Telegram" className="w-5 h-5" />
               </a>
             </div>
             <p className="mt-4 text-gray-500 text-xs italic">
@@ -65,12 +88,11 @@ const Footer = () => {
 
         </div>
 
-        {/* Pastki qism: Copyright */}
         <div className="mt-12 pt-6 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-xs">
           <p>© {new Date().getFullYear()} MyRobo. Barcha huquqlar himoyalangan.</p>
           <div className="flex gap-6">
             <span>O'zbekiston, Toshkent</span>
-            <span className="font-medium text-gray-700">+998 90 123 45 67</span>
+            <a href="tel:+998999035333" className="font-medium text-gray-700">+998 99 903 53 33</a>
           </div>
         </div>
       </div>

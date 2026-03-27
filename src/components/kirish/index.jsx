@@ -58,9 +58,31 @@ function KirishComponents() {
   const { data, fetchCourse } = useData();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [allCourses, setAllCourses] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selected, setSelected] = useState(new Set());
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const token = localStorage.getItem("token");
   const location = useLocation();
   
+  // Get unique categories from courses
+  const getCategories = (courses) => {
+    const categoryMap = new Map();
+    courses?.forEach((course) => {
+      if (course?.category) {
+        const categoryName = typeof course.category === 'string' 
+          ? course.category 
+          : course.category?.title || course.category?.name || '';
+        if (categoryName && !categoryMap.has(categoryName)) {
+          categoryMap.set(categoryName, { title: categoryName, slug: categoryName.toLowerCase().replace(/\s+/g, '-') });
+        }
+      }
+    });
+    return Array.from(categoryMap.values());
+  };
+
+  const categories = getCategories(allCourses);
   
   useEffect(() => {
     const load = async () => {
@@ -74,6 +96,54 @@ function KirishComponents() {
     load();
   }, []);
 
+  // Update when data changes
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setAllCourses(data);
+      setFilteredCourses(data);
+    }
+  }, [data]);
+
+  // Filter by search and categories
+  useEffect(() => {
+    let result = allCourses;
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((course) =>
+        course?.title?.toLowerCase().includes(query) ||
+        course?.about?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by selected categories
+    if (selected.size > 0) {
+      result = result.filter((course) => {
+        const courseCategory = typeof course?.category === 'string'
+          ? course.category
+          : course?.category?.title || course?.category?.name || '';
+        return selected.has(courseCategory.toLowerCase().replace(/\s+/g, '-'));
+      });
+    }
+
+    setFilteredCourses(result);
+  }, [searchQuery, selected, allCourses]);
+
+  const handleSelect = (slug) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(slug) ? next.delete(slug) : next.add(slug);
+      return next;
+    });
+  };
+
+  const clearAll = () => {
+    setSelected(new Set());
+    setSearchQuery("");
+    setFilteredCourses(allCourses);
+  };
+
   const truncateText = (text = "", limit = 90) => {
     if (!text) return "";
     if (text.length <= limit) return text;
@@ -85,7 +155,7 @@ function KirishComponents() {
     navigate(`/kurslar/${slug}`);
   };
 
-  const displayedData = location.pathname !== '/kurslar' ? data?.slice(0, 4) : data;
+  const displayedData = location.pathname !== '/kurslar' ? filteredCourses?.slice(0, 4) : filteredCourses;
   const courseCount = displayedData?.length || 0;
   const isSmallCount = courseCount < 3 && courseCount > 0;
 
@@ -101,6 +171,133 @@ function KirishComponents() {
         </p>
       </div>
       }
+      
+      {location.pathname === '/kurslar' && (
+      <div className="mb-6 md:mb-8 flex flex-col gap-4 md:gap-6">
+        {/* Search Input - Mobile Icon / Desktop Full */}
+        <div className="flex flex-col gap-3">
+          {/* Desktop Search */}
+          <div className="hidden md:flex gap-3 md:gap-4">
+            <input
+              type="text"
+              placeholder="Kurs nomi yoki tavsifini izlang..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl border border-gray-200 text-sm md:text-base
+                         focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+            />
+            {(searchQuery || selected.size > 0) && (
+              <button
+                onClick={clearAll}
+                className="px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-medium text-red-400
+                           border-[1.5px] border-red-100 bg-red-50 hover:bg-red-100
+                           transition-all duration-200 whitespace-nowrap"
+              >
+                Tozalash
+              </button>
+            )}
+          </div>
+
+          {/* Mobile Search - Icon or Expanded Input */}
+          <div className="flex md:hidden gap-2">
+            {!isSearchOpen ? (
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 flex items-center justify-center gap-2
+                           hover:border-blue-400 hover:text-blue-600 transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="text-sm">Izlash</span>
+              </button>
+            ) : (
+              <div className="flex gap-2 w-full">
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder="Kurs izlang..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm
+                             focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                />
+                <button
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    setSearchQuery("");
+                  }}
+                  className="px-3 py-2.5 rounded-lg border border-gray-200 flex items-center justify-center
+                             hover:border-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Header with result count */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
+          <div className="flex items-center gap-2">
+            <div className="h-0.5 md:h-[2px] flex-1 rounded-full bg-gradient-to-r from-blue-500 to-blue-400" />
+            <span className="whitespace-nowrap text-sm md:text-base font-medium text-gray-800">
+              Barcha kurslar
+            </span>
+          </div>
+          <span className="text-xs md:text-sm text-gray-400">
+            {filteredCourses.length} ta natija
+          </span>
+        </div>
+
+        {/* Category Filters */}
+        {categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+            <button
+              onClick={clearAll}
+              className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium border-[1.5px] transition-all duration-200 whitespace-nowrap
+                ${selected.size === 0 && searchQuery === ""
+                  ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200"
+                  : "bg-white text-gray-500 border-gray-200 hover:border-blue-400 hover:text-blue-600"
+                }`}
+            >
+              Barchasi
+            </button>
+
+            {categories.map((cat) => (
+              <button
+                key={cat.slug}
+                onClick={() => handleSelect(cat.slug)}
+                className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium border-[1.5px] transition-all duration-200 whitespace-nowrap
+                  ${selected.has(cat.slug)
+                    ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-blue-400 hover:text-blue-600"
+                  }`}
+              >
+                {cat.title}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      )}
+      
+      {/* No results message */}
+      {location.pathname === '/kurslar' && !isLoading && filteredCourses.length === 0 && (
+        <div className="flex flex-col items-center py-24 gap-3 text-gray-400">
+          <span className="text-5xl">📭</span>
+          <p className="text-[15px] font-semibold text-gray-700 mt-1">
+            Bu kriteriygada hech narsa topilmadi
+          </p>
+          <button
+            onClick={clearAll}
+            className="text-sm text-blue-500 underline underline-offset-4 hover:text-blue-700 transition-colors"
+          >
+            Filtrni tozalash
+          </button>
+        </div>
+      )}
+
       <div className={isSmallCount ? "flex justify-center gap-4 md:gap-6 mb-8 flex-wrap" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start mb-8"}>
               {isLoading
           ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} isSmall={isSmallCount} />)
@@ -112,7 +309,7 @@ function KirishComponents() {
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: false }}
               onClick={() => postId(value?.title, value?.id)}
-              className={`${isSmallCount ? 'w-80' : 'w-full'} group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg duration-200 cursor-pointer flex flex-col hover:-translate-y-1 md:hover:-translate-y-2 hover:shadow-lg md:hover:shadow-xl hover:shadow-blue-100
+              className={`${isSmallCount ? 'w-80' : 'w-full'} group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm cursor-pointer flex flex-col hover:-translate-y-1 md:hover:-translate-y-2 hover:shadow-lg md:hover:shadow-xl hover:shadow-blue-100
                  hover:border-blue-100 transition-all duration-300`}
             >
               <div className="h-[220px] overflow-hidden flex-shrink-0 bg-gray-100">
