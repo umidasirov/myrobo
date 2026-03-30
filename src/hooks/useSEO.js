@@ -14,7 +14,7 @@ export function useSEO({ title, description, image, url, type = "website" }) {
     const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`;
 
     document.title = title
-      ? `${title} | MyRobo.uz`
+      ? `${title} | Myrobo.uz`
       : "MyRobo.uz — Online Dasturlash Kurslari";
 
     const setMeta = (selector, value) => {
@@ -32,13 +32,13 @@ export function useSEO({ title, description, image, url, type = "website" }) {
     setMeta('[name="description"]', description || "");
     setMeta('[name="robots"]', "index, follow");
 
-    setMeta('[property="og:title"]', title || "MyRobo.uz");
+    setMeta('[property="og:title"]', title || "Myrobo.uz");
     setMeta('[property="og:description"]', description || "");
     setMeta('[property="og:image"]', image || DEFAULT_IMAGE);
     setMeta('[property="og:url"]', url || BASE_URL);
     setMeta('[property="og:type"]', type);
 
-    setMeta('[name="twitter:title"]', title || "MyRobo.uz");
+    setMeta('[name="twitter:title"]', title || "Myrobo.uz");
     setMeta('[name="twitter:description"]', description || "");
     setMeta('[name="twitter:image"]', image || DEFAULT_IMAGE);
 

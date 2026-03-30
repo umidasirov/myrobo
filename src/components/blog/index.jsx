@@ -79,7 +79,6 @@ export default function BlogComponents() {
   }, []);
   const fetchBySelected = useCallback(async (slugSet) => {
     if (slugSet.size === 0) {
-      // Apply search filter if query exists
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const filtered = allBlogs.filter((b) =>

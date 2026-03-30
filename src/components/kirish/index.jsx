@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useData } from "../../datacontect";
@@ -63,26 +63,38 @@ function KirishComponents() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selected, setSelected] = useState(new Set());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [courseTypes, setCourseTypes] = useState([]);
+  const [typesLoading, setTypesLoading] = useState(false);
   const token = localStorage.getItem("token");
   const location = useLocation();
   
-  // Get unique categories from courses
-  const getCategories = (courses) => {
-    const categoryMap = new Map();
-    courses?.forEach((course) => {
-      if (course?.category) {
-        const categoryName = typeof course.category === 'string' 
-          ? course.category 
-          : course.category?.title || course.category?.name || '';
-        if (categoryName && !categoryMap.has(categoryName)) {
-          categoryMap.set(categoryName, { title: categoryName, slug: categoryName.toLowerCase().replace(/\s+/g, '-') });
+  // Fetch course types from API
+  useEffect(() => {
+    const fetchCourseTypes = async () => {
+      setTypesLoading(true);
+      try {
+        const res = await fetch("https://myrobo.uz/api/courses/course-types/", {
+          headers: { "Content-Type": "application/json" },
+        });
+        const types = await res.json();
+        setCourseTypes(types);
+        
+        // Check if selectedCourseType in sessionStorage and auto-select it
+        if (location.pathname === '/kurslar') {
+          const savedTypeId = sessionStorage.getItem('selectedCourseType');
+          if (savedTypeId) {
+            setSelected(new Set([savedTypeId]));
+            sessionStorage.removeItem('selectedCourseType');
+          }
         }
+      } catch (err) {
+        console.error("Error fetching course types:", err);
+      } finally {
+        setTypesLoading(false);
       }
-    });
-    return Array.from(categoryMap.values());
-  };
-
-  const categories = getCategories(allCourses);
+    };
+    fetchCourseTypes();
+  }, [location.pathname]);
   
   useEffect(() => {
     const load = async () => {
@@ -104,36 +116,84 @@ function KirishComponents() {
     }
   }, [data]);
 
-  // Filter by search and categories
-  useEffect(() => {
-    let result = allCourses;
-
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter((course) =>
-        course?.title?.toLowerCase().includes(query) ||
-        course?.about?.toLowerCase().includes(query)
+  // Fetch courses by selected course types from API
+  const fetchBySelectedTypes = useCallback(async (typeIdSet) => {
+    if (typeIdSet.size === 0) {
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const filtered = allCourses.filter((c) =>
+          c?.title?.toLowerCase().includes(query) ||
+          c?.about?.toLowerCase().includes(query)
+        );
+        setFilteredCourses(filtered);
+      } else {
+        setFilteredCourses(allCourses);
+      }
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const results = await Promise.all(
+        [...typeIdSet].map((typeId) =>
+          fetch(`https://myrobo.uz/api/courses/course-types/${typeId}/courses/`, {
+            headers: { "Content-Type": "application/json" },
+          }).then((r) => r.json())
+        )
       );
+      
+      const merged = Object.values(
+        results.flat().reduce((acc, c) => ({ ...acc, [c.id]: c }), {})
+      );
+      
+      // Apply search filter to merged results
+      let filtered = merged;
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        filtered = merged.filter((c) =>
+          c?.title?.toLowerCase().includes(query) ||
+          c?.about?.toLowerCase().includes(query)
+        );
+      }
+      setFilteredCourses(filtered);
+    } catch (err) {
+      console.error("Error fetching filtered courses:", err);
+    } finally {
+      setIsLoading(false);
     }
+  }, [allCourses, searchQuery]);
 
-    // Filter by selected categories
+  // Trigger filter when selected changes
+  useEffect(() => {
+    if (courseTypes.length > 0 && selected.size > 0) {
+      fetchBySelectedTypes(selected);
+    }
+  }, [selected, courseTypes, fetchBySelectedTypes]);
+
+  // Search effect - re-filter when search query changes
+  useEffect(() => {
     if (selected.size > 0) {
-      result = result.filter((course) => {
-        const courseCategory = typeof course?.category === 'string'
-          ? course.category
-          : course?.category?.title || course?.category?.name || '';
-        return selected.has(courseCategory.toLowerCase().replace(/\s+/g, '-'));
-      });
+      // Re-fetch with current search query if types are selected
+      fetchBySelectedTypes(selected);
+    } else {
+      // Just filter local data if no types selected
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const filtered = allCourses.filter((c) =>
+          c?.title?.toLowerCase().includes(query) ||
+          c?.about?.toLowerCase().includes(query)
+        );
+        setFilteredCourses(filtered);
+      } else {
+        setFilteredCourses(allCourses);
+      }
     }
+  }, [searchQuery]);
 
-    setFilteredCourses(result);
-  }, [searchQuery, selected, allCourses]);
-
-  const handleSelect = (slug) => {
+  const handleSelect = (typeId) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      next.has(slug) ? next.delete(slug) : next.add(slug);
+      next.has(typeId) ? next.delete(typeId) : next.add(typeId);
       return next;
     });
   };
@@ -250,9 +310,15 @@ function KirishComponents() {
           </span>
         </div>
 
-        {/* Category Filters */}
-        {categories.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+        {/* Course Type Filters */}
+        {typesLoading ? (
+          <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
+            {[80, 100, 70, 90, 75].map((w, i) => (
+              <div key={i} className="h-7 md:h-8 rounded-full bg-blue-50 animate-pulse" style={{ width: w }} />
+            ))}
+          </div>
+        ) : courseTypes.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
             <button
               onClick={clearAll}
               className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium border-[1.5px] transition-all duration-200 whitespace-nowrap
@@ -264,19 +330,31 @@ function KirishComponents() {
               Barchasi
             </button>
 
-            {categories.map((cat) => (
+            {courseTypes.map((type) => (
               <button
-                key={cat.slug}
-                onClick={() => handleSelect(cat.slug)}
+                key={type.id}
+                onClick={() => handleSelect(type.id)}
                 className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium border-[1.5px] transition-all duration-200 whitespace-nowrap
-                  ${selected.has(cat.slug)
+                  ${selected.has(type.id)
                     ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200"
                     : "bg-white text-gray-500 border-gray-200 hover:border-blue-400 hover:text-blue-600"
                   }`}
               >
-                {cat.title}
+                {type.title}
               </button>
             ))}
+
+            {selected.size > 0 && (
+              <button
+                onClick={clearAll}
+                className="px-2 md:px-3 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium text-red-400
+                           border-[1.5px] border-red-100 bg-red-50 hover:bg-red-100
+                           transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
+              >
+                <span>×</span>
+                <span>Tozalash {selected.size}</span>
+              </button>
+            )}
           </div>
         )}
       </div>

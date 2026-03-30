@@ -1,29 +1,34 @@
 import { useEffect, useState } from "react";
 import { useAxios } from "../../hooks";
+import { useNavigate } from "react-router-dom";
 
 function KursToifalariComponents() {
-  // const axios = useAxios();
+  const [data, setData] = useState([]);
+  const [load, setLoad] = useState(false);
+  const navigate = useNavigate();
 
-  // const [data, setData] = useState([]);
-  // useEffect(() => {
-  //   axios({
-  //     url: "/api/categories/",
-  //     method: "GET",
-  //   })
-  //     .then((data) => setData(data))
-  //     .catch((error) => console.log(error));
-  // }, []);
-  const data = [
-    { id: 1, name: "Frontend" },
-    { id: 2, name: "Backend" },
-    { id: 3, name: "DevOps" },
-    { id: 4, name: "Tarmoq administratori" },
-    { id: 5, name: "Data Analyst" },
-    { id: 6, name: "Sun'iy intellekt" },
-    { id: 7, name: "Kiberxavfsizlik" },
-    { id: 8, name: "Full Stack" },
-    { id: 9, name: "Mobil dasturlash" },
-  ];
+  const fetchCategories = async () => {
+    setLoad(true);
+    try {
+      const response = await fetch("https://myrobo.uz/api/courses/course-types/");
+      const data = await response.json();
+      setData(data);
+    } catch (error) {
+      console.log(error.error);
+    } finally {
+      setLoad(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const handleCategoryClick = (categoryId) => {
+    sessionStorage.setItem('selectedCourseType', categoryId);
+    navigate('/kurslar');
+  };
+
   return (
     <section className="bg-[#f1f2f7] py-[40px] mt-[60px] bgnone">
       <div className="w-[90%] m-auto">
@@ -35,15 +40,24 @@ function KursToifalariComponents() {
             Kurslar <span className="text-blue-600">Toifalari</span>
           </h2>
           <div className="flex items-center gap-5 flex-wrap max-[440px]:grid max-[440px]:grid-cols-2 max-[440px]:gap-3 max-[440px]:w-full">
-            {data?.map((value) => (
-              <div
-                key={value?.id}
-                className="w-fit p-3 bg-[#fff] text-[17px] text-[#333] rounded-md shadow-md shadow-blue-300 
-                max-[440px]:w-full max-[440px]:text-center cursor-pointer hover:transform hover:scale-105 transition-all"
-              >
-                <h4>{value?.name}</h4>
-              </div>
-            ))}
+            {load
+              ? Array.from({ length: 6 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="w-fit p-3 bg-[#fff] text-[17px] text-[#333] rounded-md shadow-md shadow-blue-300 max-[440px]:w-full max-[440px]:text-center cursor-pointer animate-pulse"
+                  >
+                    <div className="h-4 bg-gray-300 rounded w-24 mb-2"></div>
+                  </div>
+                ))
+              : data?.map((value) => (
+                  <div
+                    key={value?.id}
+                    className="w-fit p-3 bg-[#fff] text-[17px] text-[#333] rounded-md shadow-md shadow-blue-300 max-[440px]:w-full max-[440px]:text-center cursor-pointer hover:transform hover:scale-105 transition-all"
+                    onClick={() => handleCategoryClick(value?.id)}
+                  >
+                    <h4>{value?.title}</h4>
+                  </div>
+                ))}
           </div>
         </div>
       </div>
