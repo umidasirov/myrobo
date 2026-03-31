@@ -14,7 +14,7 @@ function KursToifalariComponents() {
       const data = await response.json();
       setData(data);
     } catch (error) {
-      console.log(error.error);
+      
     } finally {
       setLoad(false);
     }

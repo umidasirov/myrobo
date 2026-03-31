@@ -68,7 +68,6 @@ function KirishComponents() {
   const token = localStorage.getItem("token");
   const location = useLocation();
   
-  // Fetch course types from API
   useEffect(() => {
     const fetchCourseTypes = async () => {
       setTypesLoading(true);
@@ -88,7 +87,7 @@ function KirishComponents() {
           }
         }
       } catch (err) {
-        console.error("Error fetching course types:", err);
+        
       } finally {
         setTypesLoading(false);
       }
@@ -157,7 +156,7 @@ function KirishComponents() {
       }
       setFilteredCourses(filtered);
     } catch (err) {
-      console.error("Error fetching filtered courses:", err);
+      
     } finally {
       setIsLoading(false);
     }

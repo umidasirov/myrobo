@@ -41,7 +41,7 @@ function BlogComponentsId() {
         const data = await res.json();
         setBlog(data);
       } catch (err) {
-        console.error("Error fetching blog:", err);
+        
       } finally {
         setLoading(false);
       }

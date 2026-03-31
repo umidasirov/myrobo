@@ -41,7 +41,7 @@ export default function BlogComponents() {
         });
         setCategories(await res.json());
       } catch (err) {
-        console.error(err);
+        
       } finally {
         setCatsLoading(false);
       }
@@ -70,7 +70,7 @@ export default function BlogComponents() {
         setAllBlogs(data);
         setBlogData(data);
       } catch (err) {
-        console.error(err);
+        
       } finally {
         setBlogsLoading(false);
       }
@@ -115,7 +115,7 @@ export default function BlogComponents() {
       }
       setBlogData(filtered);
     } catch (err) {
-      console.error(err);
+      
     } finally {
       setBlogsLoading(false);
     }

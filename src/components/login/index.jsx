@@ -102,7 +102,7 @@ const LoginPage = () => {
 
     navigate("/");
   } catch (err) {
-    console.error("Xatolik:", err);
+
     const errorMsg = err?.response?.data?.detail || err.message || "Server bilan bog‘lanishda xatolik yuz berdi.";
     setError(errorMsg);
   }

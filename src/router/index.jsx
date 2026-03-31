@@ -15,6 +15,7 @@ import Sertificatlarim from "../components/sertificatlarim";
 import NotFound from "../components/not-found";
 import BlogEditor from "../components/BlogEditor";
 import TeamComponents from "../components/team";
+import SubscriptionPage from "../components/subscription";
 
 const root = createBrowserRouter([
   {
@@ -80,6 +81,10 @@ const root = createBrowserRouter([
       {
         path:"blog-qosh",
         element:<BlogEditor/>
+      },
+      {
+        path: "subscription",
+        element: <SubscriptionPage />,
       },
     ],
   },

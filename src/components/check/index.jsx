@@ -9,9 +9,7 @@ function Check() {
     axios({
       url: "/api/purchased-courses/",
       method: "GET",
-    })
-      .then((data) => console.log(data))
-      .catch((error) => console.log(error));
+    });
   }, []);
 
   return (

@@ -79,7 +79,7 @@ export const DataProvider = ({ children }) => {
       const result = await response.json();
       setTeacherData(result)      
     } catch (err) {
-      console.error("Error fetching blogs:", err);
+      
     } finally {
       setLoad(false);
     }
@@ -92,7 +92,7 @@ export const DataProvider = ({ children }) => {
       const response = await api.get("/courses/courses/");
       setData(response.data);
     } catch (err) {
-      console.error("Kurslar xatolik:", err);
+      
     }
     finally{
       setLoad(false)
@@ -105,7 +105,7 @@ export const DataProvider = ({ children }) => {
       const response = await api.get("/user/auth/me/");
       setUser(response.data);
     } catch (error) {
-      console.error("Foydalanuvchi xatolik:", error.response?.data || error.message);
+      
     } finally {
       setLoad(false);
     }
@@ -117,7 +117,6 @@ export const DataProvider = ({ children }) => {
       setUser(response.data);
       return { ok: true };
     } catch (error) {
-      console.error("Update xatolik:", error.response?.data || error.message);
       return { ok: false };
     }
   };

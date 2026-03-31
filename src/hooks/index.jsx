@@ -31,7 +31,6 @@ export const useAxios = () => {
 
       return res.data;
     } catch (error) {
-      console.error("Axios xatolik:", error);
       if (error.response) {
         throw error.response.data;
       }

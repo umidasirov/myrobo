@@ -184,7 +184,7 @@ const FrontendCourse = () => {
           fetchTopicsForSection(result[0].id, true);
         }
       } catch (err) {
-        console.error("Sections xatolik:", err);
+        
       } finally {
         setSectionsLoading(false);
       }
@@ -205,7 +205,7 @@ const FrontendCourse = () => {
           setTimeout(() => handleTopicClick(topics[0]), 50);
         }
       } catch (err) {
-        console.error("Topics xatolik:", err);
+        
       }
     },
     []
@@ -225,7 +225,7 @@ const FrontendCourse = () => {
       const detail = await res.json();
       setTopicDetail(detail);
     } catch (err) {
-      console.error("Topic detail xatolik:", err);
+      
     } finally {
       setTopicLoading(false);
     }

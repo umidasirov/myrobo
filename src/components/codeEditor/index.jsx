@@ -57,12 +57,11 @@ const THEMES = [
 
 const SNIPPETS = {
   javascript: [
-    { label: "console.log", code: 'console.log("Hello World");' },
     { label: "arrow function", code: "const fn = (param) => {\n  \n};" },
     { label: "for loop", code: "for (let i = 0; i < arr.length; i++) {\n  \n}" },
-    { label: "fetch", code: 'fetch("https://api.example.com")\n  .then(res => res.json())\n  .then(data => console.log(data));' },
-    { label: "try/catch", code: "try {\n  \n} catch (error) {\n  console.error(error);\n}" },
-    { label: "forEach", code: "arr.forEach((item) => {\n  console.log(item);\n});" },
+    { label: "fetch", code: 'fetch("https://api.example.com")\n  .then(res => res.json())\n  .then(data => data);' },
+    { label: "try/catch", code: "try {\n  \n} catch (error) {\n  \n}" },
+    { label: "forEach", code: "arr.forEach((item) => {\n  \n});" },
     { label: "map", code: "const result = arr.map((item) => item);" },
   ],
   python: [

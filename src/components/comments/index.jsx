@@ -57,7 +57,7 @@ function CommentSection({ slug }) {
         setComments(Array.isArray(data) ? data : (data.results ?? []));
       }
     } catch (err) {
-      console.error(err);
+      
     } finally {
       setLoading(false);
     }
@@ -97,7 +97,7 @@ function CommentSection({ slug }) {
         fetchComments();
       }
     } catch (err) {
-      console.error(err);
+      
     } finally {
       setSubmitting(false);
     }

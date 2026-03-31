@@ -24,10 +24,6 @@ function getShortIdFromSlug(slug) {
   return parts[parts.length - 1]; // oxirgi qism = shortId
 }
 
-// ❌ O'CHIRILDI: fromSlug funksiyasi
-// SABABI: U title orqali qidirardi — ishonchsiz usul
-// title o'zgarsa yoki 2 ta kurs bir xil nomda bo'lsa xato bo'lardi
-
 function KirishComponentsID() {
   const { data, fetchCourse } = useData();
   const { slug } = useParams();
@@ -38,12 +34,9 @@ function KirishComponentsID() {
   const [sections, setSections] = useState([]);
   const [topicsMap, setTopicsMap] = useState({});
   const [loadingSections, setLoadingSections] = useState(false);
-  const [buyLoading, setBuyLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-  // ✅ O'ZGARTIRILDI: endi shortId orqali kurs topiladi
-  // OLDIN: title text orqali qidirardi (fromSlug ishlatardi)
-  // ENDI: UUID ning birinchi qismi orqali qidiradi — ishonchli!
   const shortId = getShortIdFromSlug(slug);
   const findData = data?.find((item) => item?.id?.startsWith(shortId));
   const courseId = findData?.id;
@@ -56,14 +49,20 @@ function KirishComponentsID() {
       try {
         await fetchCourse();
       } catch (err) {
-        console.error("fetchCourse xatolik:", err);
+
       } finally {
         setPageLoading(false);
       }
     };
     load();
   }, [slug]);
-
+  const openSubscriptionWindow = () => {
+    window.open(
+      "/subscription",
+      "SubscriptionWindow",
+      "width=700,height=800,left=200,top=100,resizable=yes,scrollbars=yes"
+    );
+  };
   const location = useLocation();
   useEffect(() => {
     if (location.pathname === "/kurslar/" || !slug) {
@@ -71,9 +70,6 @@ function KirishComponentsID() {
     }
   }, [location.pathname]);
 
-  // ✅ O'ZGARTIRILDI: redirect URL to'g'irlandi
-  // OLDIN: navigate(`/frontend/${courseId}`) — faqat UUID, SEO yo'q
-  // ENDI:  navigate(`/kurslar/${slug}/${courseId}`) — slug + UUID, SEO bor
   useEffect(() => {
     if (!accessLoading && isBought && courseId && findData) {
       navigate(`/kurslar/${slug}/${courseId}`, { replace: true });
@@ -101,11 +97,11 @@ function KirishComponentsID() {
             const topics = await topicsRes.json();
             setTopicsMap((prev) => ({ ...prev, [section.id]: topics }));
           } catch (err) {
-            console.error("Topics xatolik:", err);
+
           }
         });
       } catch (err) {
-        console.error("Sections xatolik:", err);
+
       } finally {
         setLoadingSections(false);
       }
@@ -119,40 +115,9 @@ function KirishComponentsID() {
       navigate("/login/");
       return;
     }
-    setBuyLoading(true);
-    try {
-      const response = await fetch(
-        "https://myrobo.uz/api/courses/courses/buy/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ course_id: courseId }),
-        }
-      );
-      const result = await response.json();
-      if (response.status === 402) {
-        notify({
-          type: "noMoney",
-          message: result?.detail || "Balans yetarli emas.",
-        });
-        return;
-      }
-      if (result?.ok === true) {
-        notify({ type: "success" });
-        // ✅ O'ZGARTIRILDI: sotib olgandan keyin slug+id li sahifaga o'tadi
-        navigate(`/kurslar/${slug}/${courseId}`);
-      } else {
-        notify({ type: "error" });
-      }
-    } catch (err) {
-      console.error("Sotib olish xatoligi:", err);
-      notify({ type: "noMoney" });
-    } finally {
-      setBuyLoading(false);
-    }
+    navigate("/subscription", {
+      state: { courseData: findData },
+    });
   };
 
   if (pageLoading || accessLoading) {
@@ -236,7 +201,7 @@ function KirishComponentsID() {
                 <span>Kurs haqida:</span>
                 <span className="text-blue-600 line-clamp-2">{findData?.title}</span>
               </h1>
-              <div className="bg-gray-100 backdrop-blur-sm rounded-lg overflow-hidden p-2 md:p-4 shadow-lg">
+              <div className="bg-white backdrop-blur-sm rounded-lg overflow-hidden p-2 md:p-4 shadow-lg">
                 <img
                   src={findData?.image}
                   className="w-full h-auto max-h-64 md:max-h-60 object-contain mx-auto rounded-md"
@@ -327,22 +292,45 @@ function KirishComponentsID() {
                     <div className="flex items-center mt-1 md:mt-2">
                       <span className="text-lg md:text-xl font-bold text-gray-900">
                         {findData?.price === 0 ||
-                        findData?.price === "0" ||
-                        !findData?.price
+                          findData?.price === "0" ||
+                          !findData?.price
                           ? "Bepul"
                           : `${Number(findData?.price).toLocaleString(
-                              "uz-UZ"
-                            )} so'm`}
+                            "uz-UZ"
+                          )} so'm`}
                       </span>
                     </div>
                   </div>
+                  <label className="flex items-start gap-3 cursor-pointer group mb-4 p-3 rounded-lg hover:bg-blue-50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={agreeToTerms}
+                      onChange={(e) => setAgreeToTerms(e.target.checked)}
+                      className="w-5 h-5 mt-1 cursor-pointer accent-blue-600 flex-shrink-0 rounded border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                    />
+                    <span className="text-gray-700 text-xs md:text-sm leading-relaxed">
+                      Men{" "}
+                      <a
+                        onClick={(e) => {
+                          e.preventDefault();
+                          openSubscriptionWindow();
+                        }}
+                        className="text-blue-600 hover:underline font-semibold"
+                      >
+                        ommaviy oferta shartnomasi
+                      </a>
+                      {" "}bilan tanishib chiqdim va rozilik beraman
+                    </span>
+                  </label>
                   <button
                     onClick={buyCourse}
-                    disabled={buyLoading}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md w-full py-2.5 md:py-3 text-sm md:text-base font-medium transition duration-300 shadow-md flex items-center justify-center gap-2 active:scale-95"
+                    disabled={!agreeToTerms}
+                    className={`text-white rounded-md w-full py-2.5 md:py-3 text-sm md:text-base font-medium transition duration-300 shadow-md flex items-center justify-center gap-2 active:scale-95 ${agreeToTerms
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "bg-gray-400 cursor-not-allowed"
+                      }`}
                   >
-                    {buyLoading ? <LoadingOutlined /> : null}
-                    {buyLoading ? "Yuklanmoqda..." : "Sotib olish"}
+                    Obunaga obuna bo'lish
                   </button>
                   <div className="flex justify-around mt-4 gap-2">
                     <img

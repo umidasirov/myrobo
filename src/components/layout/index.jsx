@@ -7,8 +7,7 @@ import { Helmet } from 'react-helmet-async';
 function Layout() {
   const location = useLocation();
 
-  const hideLayout = location.pathname === "/login";
-
+  const hideLayout = location.pathname === '/subscription' || location.pathname === '/login';
   return (
     <>
       <Helmet>
