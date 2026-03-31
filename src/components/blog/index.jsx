@@ -155,7 +155,13 @@ export default function BlogComponents() {
     setBlogData(allBlogs);
   };
 
-  const goTo = (slug) => navigate(`/blog/${slug}`, { state: { name: slug } });
+  const goTo = (slug) => {
+    if (!slug) {
+      console.warn("Blog slug is undefined");
+      return;
+    }
+    navigate(`/blog/${slug}`, { state: { name: slug } });
+  };
 
   return (
     <section className="w-full md:w-[90%] max-w-[1400px] mx-auto mt-6 md:mt-10 px-4 md:px-0 pb-16 md:pb-20">
@@ -184,7 +190,6 @@ export default function BlogComponents() {
       )}
     </div>
 
-    {/* Mobile Search - Icon or Expanded Input */}
     <div className="flex md:hidden gap-2">
       {!isSearchOpen ? (
         <button
@@ -334,7 +339,11 @@ function BlogCard({ blog: b, onClick }) {
   };
   return (
     <div
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (onClick) onClick();
+      }}
       className="group bg-white rounded-xl md:rounded-2xl overflow-hidden border border-gray-100 cursor-pointer
                  flex flex-col hover:-translate-y-1 md:hover:-translate-y-2 hover:shadow-lg md:hover:shadow-xl hover:shadow-blue-100
                  hover:border-blue-100 transition-all duration-300"
@@ -346,7 +355,7 @@ function BlogCard({ blog: b, onClick }) {
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
           onError={(e) => {
-            e.target.src = "https://via.placeholder.com/400x200?text=No+Image";
+            e.target.src = "https://via.placeholder.com/400x200?text=No%20Image";
           }}
         />
         {getCategoryTitle(b.category) && (
