@@ -162,7 +162,8 @@ export default function BlogComponents() {
     }
     navigate(`/blog/${slug}`, { state: { name: slug } });
   };
-
+  console.log(blogData);
+  
   return (
     <section className="w-full md:w-[90%] max-w-[1400px] mx-auto mt-6 md:mt-10 px-4 md:px-0 pb-16 md:pb-20">
      <div className="mb-6 md:mb-8 flex flex-col gap-4 md:gap-6">
@@ -329,6 +330,7 @@ export default function BlogComponents() {
 }
 
 function BlogCard({ blog: b, onClick }) {
+  
   const stripHtml = (html = "") => {
     const div = document.createElement("div");
     div.innerHTML = html;
@@ -337,6 +339,7 @@ function BlogCard({ blog: b, onClick }) {
 
     return (div.textContent || div.innerText || "").trim();
   };
+  
   return (
     <div
       onClick={(e) => {

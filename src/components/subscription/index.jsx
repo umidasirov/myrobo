@@ -601,6 +601,12 @@ function SubscriptionOferta() {
                 support@myrobo.uz
               </a>
             </p>
+            <p className="oferta-p">
+              <span className="oferta-term">MFO:</span> 00450
+            </p>
+            <p className="oferta-p">
+              <span className="oferta-term">Hisob raqami:</span> 20208000105575324001
+            </p>
           </section>
 
           {/* ===== FOOTER ===== */}
