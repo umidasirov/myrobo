@@ -162,7 +162,6 @@ export default function BlogComponents() {
     }
     navigate(`/blog/${slug}`, { state: { name: slug } });
   };
-  console.log(blogData);
   
   return (
     <section className="w-full md:w-[90%] max-w-[1400px] mx-auto mt-6 md:mt-10 px-4 md:px-0 pb-16 md:pb-20">
