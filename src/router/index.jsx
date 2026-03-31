@@ -16,6 +16,8 @@ import NotFound from "../components/not-found";
 import BlogEditor from "../components/BlogEditor";
 import TeamComponents from "../components/team";
 import SubscriptionPage from "../components/subscription";
+import AboutMyRobo from "../components/about";
+import ContactSection from "../components/contact";
 
 const root = createBrowserRouter([
   {
@@ -86,6 +88,15 @@ const root = createBrowserRouter([
         path: "subscription",
         element: <SubscriptionPage />,
       },
+      {
+        path: "about",
+        element: <AboutMyRobo />
+      },
+      {
+        path: "contact",
+        element: <ContactSection />
+      },
+
     ],
   },
 

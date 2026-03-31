@@ -3,6 +3,7 @@ import Navbar from "../navbar";
 import { Outlet, useLocation } from "react-router-dom";
 import Footer from "../footer";
 import { Helmet } from 'react-helmet-async';
+import ScrollToTop from "../../top";
 
 function Layout() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function Layout() {
       </Helmet>
       {!hideLayout && <Navbar />}
       <main>
+        <ScrollToTop/>
         <Outlet />
       </main>
       {!hideLayout && <Footer />}

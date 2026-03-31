@@ -45,7 +45,7 @@ const AboutMyRobo = () => {
   return (
     <section className="w-full md:w-[90%] mx-auto mt-20 mb-20 px-4 md:px-0">
       
-      <div className="text-center mb-16">
+      <div className="text-center mb-16" id="about">
         <p className="text-lg text-gray-600 uppercase font-medium text-center">
           Biz haqimizda
         </p>
