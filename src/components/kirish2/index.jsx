@@ -273,7 +273,7 @@ function KirishComponentsID() {
               <div className="bg-white rounded-lg shadow-md overflow-hidden sticky top-4 lg:top-20">
                 <img
                   src={findData?.image}
-                  className="w-full h-40 md:h-48 lg:h-56 object-cover"
+                  className="w-full h-40 md:h-48 lg:h-56 object-contain mx-auto rounded-md sm:object-cover"
                   alt={findData?.title}
                   loading="lazy"
                 />
