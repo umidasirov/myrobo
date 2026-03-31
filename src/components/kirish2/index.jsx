@@ -49,7 +49,7 @@ function KirishComponentsID() {
       try {
         await fetchCourse();
       } catch (err) {
-        
+
       } finally {
         setPageLoading(false);
       }
@@ -91,11 +91,11 @@ function KirishComponentsID() {
             const topics = await topicsRes.json();
             setTopicsMap((prev) => ({ ...prev, [section.id]: topics }));
           } catch (err) {
-            
+
           }
         });
       } catch (err) {
-        
+
       } finally {
         setLoadingSections(false);
       }
@@ -286,16 +286,16 @@ function KirishComponentsID() {
                     <div className="flex items-center mt-1 md:mt-2">
                       <span className="text-lg md:text-xl font-bold text-gray-900">
                         {findData?.price === 0 ||
-                        findData?.price === "0" ||
-                        !findData?.price
+                          findData?.price === "0" ||
+                          !findData?.price
                           ? "Bepul"
                           : `${Number(findData?.price).toLocaleString(
-                              "uz-UZ"
-                            )} so'm`}
+                            "uz-UZ"
+                          )} so'm`}
                       </span>
                     </div>
                   </div>
-                  <label className="flex items-start gap-3 cursor-pointer group mb-4 p-3 rounded-lg hover:bg-blue-50 transition-colors">
+                  <label className="hidden sm:flex items-start gap-3 cursor-pointer group mb-4 p-3 rounded-lg hover:bg-blue-50 transition-colors">
                     <input
                       type="checkbox"
                       checked={agreeToTerms}
@@ -308,25 +308,49 @@ function KirishComponentsID() {
                         href="/subscription"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline font-semibold"
+                        className="text-blue-600 underline font-semibold"
                       >
                         ommaviy oferta shartnomasi
                       </a>
                       {" "}bilan tanishib chiqdim va rozilik beraman
                     </span>
                   </label>
+                  <div className="mb-4 rounded-xl border sm:hidden border-gray-200 p-3 bg-gray-50">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={agreeToTerms}
+                        onChange={(e) => setAgreeToTerms(e.target.checked)}
+                        className="w-5 h-5 mt-1 cursor-pointer accent-blue-600 flex-shrink-0 rounded border-2 border-gray-300"
+                      />
+                      <span className="text-gray-700 text-xs leading-relaxed">
+                        Men ommaviy oferta shartnomasi bilan tanishib chiqdim va rozilik beraman
+                      </span>
+                    </label>
+
+                    <p className="mt-2 text-xs text-gray-500">
+                      Shartnoma bilan tanishish uchun{" "}
+                      <a
+                        href="/subscription"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 font-medium underline"
+                      >
+                        shu yerni bosing
+                      </a>
+                    </p>
+                  </div>
                   <button
                     onClick={buyCourse}
                     disabled={!agreeToTerms}
-                    className={`text-white rounded-md w-full py-2.5 md:py-3 text-sm md:text-base font-medium transition duration-300 shadow-md flex items-center justify-center gap-2 active:scale-95 ${
-                      agreeToTerms
+                    className={`text-white rounded-md w-full py-2.5 md:py-3 text-sm md:text-base font-medium transition duration-300 shadow-md flex items-center justify-center gap-2 active:scale-95 ${agreeToTerms
                         ? "bg-blue-600 hover:bg-blue-700"
                         : "bg-gray-400 cursor-not-allowed"
-                    }`}
+                      }`}
                   >
                     Obuna bo'lish
                   </button>
-                  <div className="flex justify-around mt-4 gap-2">
+                  {/* <div className="flex justify-around mt-4 gap-2">
                     <img
                       src="https://api.logobank.uz/media/logos_png/Uzcard-01.png"
                       alt="Uzcard"
@@ -345,7 +369,7 @@ function KirishComponentsID() {
                       className="h-10 md:h-12 w-10 md:w-12 rounded-md object-contain"
                       loading="lazy"
                     />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
