@@ -192,7 +192,6 @@ function KirishComponentsID() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             <div className="lg:col-span-2 space-y-4 md:space-y-6">
               <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold flex flex-col sm:flex-row gap-1 sm:gap-2">
-                <span>Kurs haqida:</span>
                 <span className="text-blue-600 line-clamp-2">{findData?.title}</span>
               </h1>
               <div className="bg-white backdrop-blur-sm rounded-lg overflow-hidden p-2 md:p-4 shadow-lg">
