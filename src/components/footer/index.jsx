@@ -8,98 +8,78 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="mt-20 rounded-t-[32px] md:rounded-t-[56px] border-t border-gray-200 bg-gradient-to-b from-gray-50 to-white px-4 py-10 md:py-12">
+    <footer className="mt-20 border-t border-gray-200 bg-gradient-to-b from-gray-50 to-white px-4 py-10">
+
       <div className="mx-auto w-[92%] max-w-7xl">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
-          
-          {/* Logo + text */}
-          <div className="rounded-2xl bg-white/80 p-5 shadow-sm backdrop-blur-sm">
-            <div className="flex flex-col items-center gap-3 text-center sm:items-start sm:text-left">
-              <img
-                src={img}
-                alt="MyRobo Logo"
-                className="h-20 w-20 rounded-full bg-white p-2 shadow object-contain sm:h-24 sm:w-24"
-              />
-              <p className="text-sm leading-6 text-gray-600">
-                MyRobo — zamonaviy kasblarni o‘rganish va professional
-                mutaxassis bo‘lish uchun qulay platforma.
-              </p>
-            </div>
+
+        {/* ================= MOBILE (sm gacha) ================= */}
+        <div className="block sm:hidden space-y-6">
+
+          {/* Logo */}
+          <div className="rounded-2xl bg-white/80 p-5 shadow-sm backdrop-blur-sm text-center">
+            <img
+              src={img}
+              alt="Logo"
+              className="w-20 h-20 mx-auto rounded-full bg-white p-2 shadow"
+            />
+            <p className="mt-3 text-sm text-gray-600">
+              MyRobo — zamonaviy kasblarni o‘rganish platformasi
+            </p>
           </div>
 
           {/* Platforma */}
           <div className="rounded-2xl bg-white/80 p-5 shadow-sm backdrop-blur-sm">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-900">
+            <h3 className="mb-4 text-sm font-semibold uppercase text-gray-900">
               Platforma
-            </h3>
-
-            <ul className="grid grid-cols-1 gap-3 text-sm text-gray-600 sm:grid-cols-1">
-              <li>
-                <Link
-                  to="/"
-                  className="group flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 transition-all duration-300 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-                >
-                  <span>Bosh sahifa</span>
-                  <span className="translate-x-0 transition-transform duration-300 group-hover:translate-x-1">
-                    →
-                  </span>
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/kurslar"
-                  className="group flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 transition-all duration-300 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-                >
-                  <span>Kurslar</span>
-                  <span className="translate-x-0 transition-transform duration-300 group-hover:translate-x-1">
-                    →
-                  </span>
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/blog"
-                  className="group flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 transition-all duration-300 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-                >
-                  <span>Maqolalar</span>
-                  <span className="translate-x-0 transition-transform duration-300 group-hover:translate-x-1">
-                    →
-                  </span>
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Foydali sahifalar */}
-          <div className="rounded-2xl bg-white/80 p-5 shadow-sm backdrop-blur-sm">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-900">
-              Qo‘shimcha
             </h3>
 
             <ul className="space-y-3 text-sm text-gray-600">
               <li>
                 <Link
-                  to="/about/#about"
-                  className="transition-colors hover:text-blue-600"
+                  to="/"
+                  className="flex justify-between items-center p-3 rounded-xl border hover:bg-blue-50 hover:text-blue-600 transition"
                 >
+                  Bosh sahifa <span>→</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/kurslar"
+                  className="flex justify-between items-center p-3 rounded-xl border hover:bg-blue-50 hover:text-blue-600 transition"
+                >
+                  Kurslar <span>→</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/blog"
+                  className="flex justify-between items-center p-3 rounded-xl border hover:bg-blue-50 hover:text-blue-600 transition"
+                >
+                  Maqolalar <span>→</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Qo‘shimcha */}
+          <div className="rounded-2xl bg-white/80 p-5 shadow-sm backdrop-blur-sm">
+            <h3 className="mb-4 text-sm font-semibold uppercase text-gray-900">
+              Qo‘shimcha
+            </h3>
+
+            <ul className="space-y-3 text-sm text-gray-600">
+              <li>
+                <Link to="/about" className="hover:text-blue-600 transition">
                   Biz haqimizda
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/contact"
-                  className="transition-colors hover:text-blue-600"
-                >
-                  Biz bilan bog‘lanish
+                <Link to="/contact" className="hover:text-blue-600 transition">
+                  Bog‘lanish
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/subscription"
-                  className="transition-colors hover:text-blue-600"
-                >
+                <Link to="/subscription" className="hover:text-blue-600 transition">
                   Foydalanish shartlari
                 </Link>
               </li>
@@ -107,58 +87,118 @@ const Footer = () => {
           </div>
 
           {/* Social */}
-          <div className="rounded-2xl bg-white/80 p-5 shadow-sm backdrop-blur-sm">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-900">
+          <div className="rounded-2xl bg-white/80 p-5 shadow-sm backdrop-blur-sm text-center">
+            <h3 className="mb-4 text-sm font-semibold uppercase text-gray-900">
               Bizni kuzating
             </h3>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <a
-                href="https://www.instagram.com/myrobouz/"
-                className="rounded-full bg-white p-3 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                <img src={instagram} alt="Instagram" className="h-5 w-5" />
+            <div className="flex justify-center gap-3">
+              <a href="https://instagram.com">
+                <img src={instagram} className="w-6 h-6" />
               </a>
-
-              <a
-                href="https://facebook.com/myrobouz"
-                className="rounded-full bg-white p-3 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                <img src={facebook} alt="Facebook" className="h-5 w-5" />
+              <a href="https://facebook.com">
+                <img src={facebook} className="w-6 h-6" />
               </a>
-
-              <a
-                href="https://youtube.com/myrobouz"
-                className="rounded-full bg-white p-3 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                <img src={youtube} alt="YouTube" className="h-5 w-5" />
+              <a href="https://youtube.com">
+                <img src={youtube} className="w-6 h-6" />
               </a>
-
-              <a
-                href="https://t.me/myrobouz"
-                className="rounded-full bg-white p-3 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                <img src={telegram} alt="Telegram" className="h-5 w-5" />
+              <a href="https://t.me">
+                <img src={telegram} className="w-6 h-6" />
               </a>
             </div>
+          </div>
+        </div>
 
-            <p className="mt-4 text-xs italic text-gray-500">
-              Yangiliklardan xabardor bo‘lish uchun obuna bo‘ling.
+        {/* ================= DESKTOP (sm dan katta) ================= */}
+        <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+
+          {/* Logo */}
+          <div>
+            <img
+              src={img}
+              alt="Logo"
+              className="w-24 h-24 bg-white p-2 rounded-full shadow"
+            />
+            <p className="text-gray-600 text-sm mt-3">
+              MyRobo — zamonaviy kasblarni o‘rganish platformasi.
             </p>
+          </div>
+
+          {/* Platforma */}
+          <div>
+            <h3 className="text-gray-900 font-medium mb-4">Platforma</h3>
+            <ul className="space-y-2 text-gray-600 text-sm">
+              <li>
+                <Link to="/" className="hover:text-blue-600">
+                  Bosh sahifa
+                </Link>
+              </li>
+              <li>
+                <Link to="/kurslar" className="hover:text-blue-600">
+                  Kurslar
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="hover:text-blue-600">
+                  Maqolalar
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Qo‘shimcha */}
+          <div>
+            <h3 className="text-gray-900 font-medium mb-4">Qo‘shimcha</h3>
+            <ul className="space-y-2 text-gray-600 text-sm">
+              <li>
+                <Link to="/about" className="hover:text-blue-600">
+                  Biz haqimizda
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-blue-600">
+                  Bog‘lanish
+                </Link>
+              </li>
+              <li>
+                <Link to="/subscription" className="hover:text-blue-600">
+                  Foydalanish shartlari
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Social */}
+          <div>
+            <h3 className="text-gray-900 font-medium mb-4">Bizni kuzating</h3>
+            <div className="flex gap-3">
+              <a href="https://instagram.com">
+                <img src={instagram} className="w-5 h-5" />
+              </a>
+              <a href="https://facebook.com">
+                <img src={facebook} className="w-5 h-5" />
+              </a>
+              <a href="https://youtube.com">
+                <img src={youtube} className="w-5 h-5" />
+              </a>
+              <a href="https://t.me">
+                <img src={telegram} className="w-5 h-5" />
+              </a>
+            </div>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-gray-200 pt-5 text-center text-xs text-gray-500 md:flex-row md:text-left">
+        <div className="mt-10 border-t border-gray-200 pt-5 text-center text-xs text-gray-500 flex flex-col gap-2 sm:flex-row sm:justify-between sm:text-left">
           <p>© {new Date().getFullYear()} MyRobo. Barcha huquqlar himoyalangan.</p>
-
-          <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-5">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-5 items-center">
             <span>O‘zbekiston, Toshkent</span>
-            <a href="tel:+998999035333" className="font-medium text-gray-700">
+            <a href="tel:+998999035333" className="text-gray-700 font-medium">
               +998 99 903 53 33
             </a>
           </div>
         </div>
+
       </div>
     </footer>
   );
