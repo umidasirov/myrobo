@@ -602,6 +602,9 @@ function SubscriptionOferta() {
               </a>
             </p>
             <p className="oferta-p">
+              <span className="oferta-term">Bank:</span> O'zmilliybank
+            </p>
+            <p className="oferta-p">
               <span className="oferta-term">MFO:</span> 00450
             </p>
             <p className="oferta-p">
