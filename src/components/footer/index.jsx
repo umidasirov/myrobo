@@ -169,22 +169,25 @@ const Footer = () => {
           </div>
 
           {/* Social */}
-          <div>
-            <h3 className="text-gray-900 font-medium mb-4">Bizni kuzating</h3>
-            <div className="flex gap-3">
-              <a href="https://instagram.com">
-                <img src={instagram} className="w-5 h-5" />
+           <div>
+            <h3 className="text-gray-900 font-medium mb-4 uppercase text-xs tracking-wider">Bizni kuzating</h3>
+            <div className="flex md:justify-start gap-4 justify-center">
+              <a href="https://www.instagram.com/myrobouz/" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
+                <img src={instagram} alt="Instagram" className="w-5 h-5" />
               </a>
-              <a href="https://facebook.com">
-                <img src={facebook} className="w-5 h-5" />
+              <a href="https://facebook.com/myrobouz" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
+                <img src={facebook} alt="Facebook" className="w-5 h-5" />
               </a>
-              <a href="https://youtube.com">
-                <img src={youtube} className="w-5 h-5" />
+              <a href="https://youtube.com/myrobouz" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
+                <img src={youtube} alt="YouTube" className="w-5 h-5" />
               </a>
-              <a href="https://t.me">
-                <img src={telegram} className="w-5 h-5" />
+              <a href="https://t.me/myrobouz" className="p-2 bg-white rounded-full hover:shadow-md transition-shadow">
+                <img src={telegram} alt="Telegram" className="w-5 h-5" />
               </a>
             </div>
+            <p className="mt-4 text-gray-500 text-xs italic">
+              Yangiliklardan xabardor bo'lish uchun obuna bo'ling.
+            </p>
           </div>
         </div>
 
@@ -205,3 +208,4 @@ const Footer = () => {
 };
 
 export default Footer;
+         

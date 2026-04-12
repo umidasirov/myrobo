@@ -13,11 +13,7 @@ import notificationApi from "../../generic/notificition";
 import { useCourseAccess } from "../../hooks/useCourseAccess";
 import { Helmet } from "react-helmet-async";
 import { toSlug } from "../kirish";
-
-// ✅ YANGI FUNKSIYA: slugdan shortId ajratib oladi
-// SABABI: URL da "python-asoslari--b2b9f1c3" bo'ladi
-// Bizga kerak: "b2b9f1c3" — shu orqali kursni topamiz
-// "--" dan keyin kelgan qism = shortId
+import { notification } from "antd";
 function getShortIdFromSlug(slug) {
   if (!slug) return null;
   const parts = slug.split("--");
@@ -42,7 +38,9 @@ function KirishComponentsID() {
   const courseId = findData?.id;
 
   const { isBought, loading: accessLoading } = useCourseAccess(courseId);
-
+  console.log("Course ID:", courseId);
+  console.log(isBought);
+  
   useEffect(() => {
     const load = async () => {
       setPageLoading(true);
@@ -65,11 +63,11 @@ function KirishComponentsID() {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (!accessLoading && isBought && courseId && findData) {
+    if (!accessLoading && (isBought || findData?.is_bought) && courseId && findData) {
       navigate(`/kurslar/${slug}/${courseId}`, { replace: true });
     }
   }, [isBought, accessLoading, courseId, findData]);
-
+  
   useEffect(() => {
     if (!courseId) return;
     const fetchSections = async () => {
@@ -102,6 +100,9 @@ function KirishComponentsID() {
     };
     fetchSections();
   }, [courseId]);
+console.log(sections);
+console.log(topicsMap);
+console.log(courseId);
 
   const buyCourse = async () => {
     if (!token) {
@@ -109,9 +110,65 @@ function KirishComponentsID() {
       navigate("/login/");
       return;
     }
-    navigate("/subscription", {
-      state: { courseData: findData },
-    });
+
+    try {
+      console.log(courseId);
+      
+      const response = await fetch(
+        "https://myrobo.uz/api/courses/courses/buy/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            course_id: courseId,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        notification.success({
+          message: "Kurs muvaffaqiyatli sotib olindi!",
+        });
+        navigate(`/kurslar/${slug}/${courseId}`);
+      } else {
+        let errorMessage = "Xatolik yuz berdi";
+        
+        try {
+          const responseText = await response.text();
+          
+          if (responseText) {
+            try {
+              const errorData = JSON.parse(responseText);
+              if (errorData.detail) {
+                errorMessage = errorData.detail;
+              }
+            } catch (parseErr) {
+              errorMessage = responseText;
+            }
+          }
+        } catch (readErr) {
+          errorMessage = "Xatolik yuz berdi";
+        }
+
+        notification.error({
+          message: errorMessage,
+        });
+
+        if (response.status === 402) {
+          navigate("/subscription", {
+            state: { courseData: findData },
+          });
+        }
+      }
+    } catch (err) {
+      notification.error({
+        message: "Soʻrov yuborishda xatolik",
+      });
+    }
   };
 
   if (pageLoading || accessLoading) {
@@ -347,7 +404,7 @@ function KirishComponentsID() {
                         : "bg-gray-400 cursor-not-allowed"
                       }`}
                   >
-                    Obuna bo'lish
+                   Sotib olish
                   </button>
                   {/* <div className="flex justify-around mt-4 gap-2">
                     <img

@@ -290,22 +290,16 @@ const FrontendCourse = () => {
 
   if (!isBought) return null;
 
-  // ✅ SEO uchun to'liq URL — slug + courseId birga
   const fullUrl = `https://myrobo.uz/kurslar/${slug}/${id}`;
 
   return (
     <>
       <Helmet>
-        {/* Sahifa title */}
         <title>
           {courseData?.title
             ? `${courseData.title} - Darslar | MyRobo.uz`
             : "Kurs - MyRobo.uz"}
         </title>
-
-        {/* ✅ O'ZGARTIRILDI: description → about
-            SABABI: API da "description" field yo'q, "about" bor!
-            Bu sahifa login kerak bo'lgani uchun Google indekslamasin */}
         <meta name="robots" content="noindex, nofollow" />
         <meta
           name="description"

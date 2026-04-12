@@ -25,7 +25,7 @@ const Profilim = () => {
   useEffect(() => {
     fetchUserData();
   }, []);
-
+  
   const openModal = () => {
     setFirstName(user?.first_name || "");
     setLastName(user?.last_name || "");
