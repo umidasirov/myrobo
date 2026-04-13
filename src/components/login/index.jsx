@@ -180,7 +180,7 @@ const LoginPage = () => {
               rel="noopener noreferrer"
               className="inline-block bg-white text-blue-600 font-medium py-3 px-6 rounded-lg hover:bg-blue-50 transition duration-200"
             >
-              @robologinbot
+              @developer4o4_bot
             </a>
           </div>
 
