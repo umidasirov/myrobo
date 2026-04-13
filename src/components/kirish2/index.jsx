@@ -6,6 +6,7 @@ import {
   BarsOutlined,
   BookOutlined,
   UserSwitchOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import { useData } from "../../datacontect";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -13,7 +14,9 @@ import notificationApi from "../../generic/notificition";
 import { useCourseAccess } from "../../hooks/useCourseAccess";
 import { Helmet } from "react-helmet-async";
 import { toSlug } from "../kirish";
-import { notification } from "antd";
+import { notification, Modal } from "antd";
+import SubscriptionOferta from "../subscription";
+
 function getShortIdFromSlug(slug) {
   if (!slug) return null;
   const parts = slug.split("--");
@@ -32,6 +35,8 @@ function KirishComponentsID() {
   const [loadingSections, setLoadingSections] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [showOfertaModal, setShowOfertaModal] = useState(false);
+  const [hasReadOferta, setHasReadOferta] = useState(false);
 
   const shortId = getShortIdFromSlug(slug);
   const findData = data?.find((item) => item?.id?.startsWith(shortId));
@@ -100,14 +105,47 @@ function KirishComponentsID() {
     };
     fetchSections();
   }, [courseId]);
-console.log(sections);
-console.log(topicsMap);
-console.log(courseId);
+
+  console.log(sections);
+  console.log(topicsMap);
+  console.log(courseId);
+
+  const openOfertaModal = () => {
+    setShowOfertaModal(true);
+  };
+
+  const handleOfertaClose = () => {
+    setShowOfertaModal(false);
+  };
+
+  const handleAgreeTerms = (e) => {
+    const checked = e.target.checked;
+    if (checked && !hasReadOferta) {
+      // Agar checkbox belgilansa lekin ofertani o'qimagan bo'lsa, modal ochish
+      openOfertaModal();
+      setAgreeToTerms(false);
+    } else {
+      setAgreeToTerms(checked);
+    }
+  };
+
+  const handleOfertaRead = () => {
+    setHasReadOferta(true);
+    setAgreeToTerms(true);
+    setShowOfertaModal(false);
+  };
 
   const buyCourse = async () => {
     if (!token) {
       notify({ type: "token" });
       navigate("/login/");
+      return;
+    }
+
+    if (!agreeToTerms || !hasReadOferta) {
+      notification.warning({
+        message: "Iltimos, ommaviy oferta shartnomasi bilan tanishing va rozilik bering",
+      });
       return;
     }
 
@@ -230,7 +268,6 @@ console.log(courseId);
           }
         />
 
-
         <meta property="og:title" content={findData?.title} />
         <meta
           property="og:description"
@@ -243,6 +280,37 @@ console.log(courseId);
         <meta property="og:url" content={fullUrl} />
         <meta property="og:type" content="website" />
       </Helmet>
+
+      {/* Oferta Modal */}
+      <Modal
+        title="Ommaviy Oferta Shartnomasi"
+        className="h-full sm:h-auto top-0  sm:top-auto sm:my-8"
+        open={showOfertaModal}
+        width={"100%"}
+        onCancel={handleOfertaClose}
+        style={{ maxHeight: "90vh"}}
+        bodyStyle={{ maxHeight: "calc(90vh - 120px)", overflowY: "auto" }}
+        footer={[
+          <button
+            key="close"
+            onClick={handleOfertaClose}
+            className="bg-gray-400 m-1 hover:bg-gray-500 text-white px-6 py-2 rounded-md w-full sm:w-auto"
+          >
+            Yopish
+          </button>,
+          <button
+            key="agree"
+            onClick={handleOfertaRead}
+            className="bg-blue-600 m-1 sm:w-auto hover:bg-blue-700 w-full text-white px-6 py-2 rounded-md"
+          >
+            Men tanishib chiqdim va rozilik beraman
+          </button>,
+        ]}
+      >
+        <div style={{ maxHeight: "calc(90vh - 200px)", overflowY: "auto" }}>
+          <SubscriptionOferta />
+        </div>
+      </Modal>
 
       <div className="bg-gray-100 min-h-screen font-sans">
         <div className="w-full md:w-[90%] m-auto px-3 md:px-4 py-4 md:py-8">
@@ -351,32 +419,34 @@ console.log(courseId);
                       </span>
                     </div>
                   </div>
+                  
+                  {/* Desktop version */}
                   <label className="hidden sm:flex items-start gap-3 cursor-pointer group mb-4 p-3 rounded-lg hover:bg-blue-50 transition-colors">
                     <input
                       type="checkbox"
                       checked={agreeToTerms}
-                      onChange={(e) => setAgreeToTerms(e.target.checked)}
+                      onChange={handleAgreeTerms}
                       className="w-5 h-5 mt-1 cursor-pointer accent-blue-600 flex-shrink-0 rounded border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
                     />
                     <span className="text-gray-700 text-xs md:text-sm leading-relaxed">
                       Men{" "}
-                      <a
-                        href="/subscription"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 underline font-semibold"
+                      <button
+                        onClick={openOfertaModal}
+                        className="text-blue-600 underline font-semibold hover:text-blue-700"
                       >
                         ommaviy oferta shartnomasi
-                      </a>
+                      </button>
                       {" "}bilan tanishib chiqdim va rozilik beraman
                     </span>
                   </label>
+
+                  {/* Mobile version */}
                   <div className="mb-4 rounded-xl border sm:hidden border-gray-200 p-3 bg-gray-50">
                     <label className="flex items-start gap-3 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={agreeToTerms}
-                        onChange={(e) => setAgreeToTerms(e.target.checked)}
+                        onChange={handleAgreeTerms}
                         className="w-5 h-5 mt-1 cursor-pointer accent-blue-600 flex-shrink-0 rounded border-2 border-gray-300"
                       />
                       <span className="text-gray-700 text-xs leading-relaxed">
@@ -386,46 +456,26 @@ console.log(courseId);
 
                     <p className="mt-2 text-xs text-gray-500">
                       Shartnoma bilan tanishish uchun{" "}
-                      <a
-                        href="/subscription"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 font-medium underline"
+                      <button
+                        onClick={openOfertaModal}
+                        className="text-blue-600 font-medium underline hover:text-blue-700"
                       >
                         shu yerni bosing
-                      </a>
+                      </button>
                     </p>
                   </div>
+
                   <button
                     onClick={buyCourse}
-                    disabled={!agreeToTerms}
-                    className={`text-white rounded-md w-full py-2.5 md:py-3 text-sm md:text-base font-medium transition duration-300 shadow-md flex items-center justify-center gap-2 active:scale-95 ${agreeToTerms
+                    disabled={!agreeToTerms || !hasReadOferta}
+                    className={`text-white rounded-md w-full py-2.5 md:py-3 text-sm md:text-base font-medium transition duration-300 shadow-md flex items-center justify-center gap-2 active:scale-95 ${
+                      agreeToTerms && hasReadOferta
                         ? "bg-blue-600 hover:bg-blue-700"
                         : "bg-gray-400 cursor-not-allowed"
-                      }`}
+                    }`}
                   >
-                   Sotib olish
+                    Kursga yozilish
                   </button>
-                  {/* <div className="flex justify-around mt-4 gap-2">
-                    <img
-                      src="https://api.logobank.uz/media/logos_png/Uzcard-01.png"
-                      alt="Uzcard"
-                      className="h-10 md:h-12 w-10 md:w-12 rounded-md object-contain"
-                      loading="lazy"
-                    />
-                    <img
-                      src="https://humocard.uz/upload/medialibrary/8cf/ia2yatyqt4l0p0d5523erhmx6y0fssxw/HumoPay-Final-002.png"
-                      alt="Humo"
-                      className="h-10 md:h-12 w-10 md:w-12 rounded-md object-contain"
-                      loading="lazy"
-                    />
-                    <img
-                      src="https://pr.uz/wp-content/uploads/2024/05/photo_2024-05-14_20-27-31.jpg"
-                      alt="Click"
-                      className="h-10 md:h-12 w-10 md:w-12 rounded-md object-contain"
-                      loading="lazy"
-                    />
-                  </div> */}
                 </div>
               </div>
             </div>
