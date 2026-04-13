@@ -253,7 +253,7 @@ function SubscriptionOferta() {
             </p>
             <p className="oferta-p">
               <span className="oferta-term">«Foydalanuvchi»</span> — ushbu oferta
-              shartlarini aksept qilgan va Platformada ro'yxatdan o'tgan jismoniy yoki
+              shartlarini roziman va Platformada ro'yxatdan o'tgan jismoniy yoki
               yuridik shaxs.
             </p>
             <p className="oferta-p">
@@ -268,7 +268,7 @@ function SubscriptionOferta() {
               va qo'shimcha o'quv materiallari majmui.
             </p>
             <p className="oferta-p">
-              <span className="oferta-term">«Aksept»</span> — Foydalanuvchining
+              <span className="oferta-term">«Rozilig bildiris»</span> — Foydalanuvchining
               Platformadagi «Roziman» tugmasini bosishi yoki to'lovni amalga oshirishi
               orqali ushbu oferta shartlariga to'liq va so'zsiz rozilik bildirishi.
             </p>
