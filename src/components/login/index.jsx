@@ -31,7 +31,7 @@ const LoginPage = () => {
     }
   }, [access, navigate]);
 
-  const telegramLink = `https://t.me/developer4o4_bot?start=${uuid}`;
+  const telegramLink = `https://t.me/myrobologinbot?start=${uuid}`;
 
   const handleDigitChange = (e, index) => {
     const value = e.target.value.replace(/\D/, "").slice(0, 1);
@@ -180,7 +180,7 @@ const LoginPage = () => {
               rel="noopener noreferrer"
               className="inline-block bg-white text-blue-600 font-medium py-3 px-6 rounded-lg hover:bg-blue-50 transition duration-200"
             >
-              @developer4o4_bot
+              @myrobologinbot
             </a>
           </div>
 
