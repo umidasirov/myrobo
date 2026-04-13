@@ -65,6 +65,10 @@ const root = createBrowserRouter([
         element: <FrontendProfile />,
       },
       {
+        path: "kurslar/:slug/:courseId/:topicId",
+        element: <FrontendProfile />,
+      },
+      {
         path: "check",
         element: <Check />,
       },

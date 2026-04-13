@@ -110,11 +110,11 @@ function ContentSkeleton() {
 const FrontendCourse = () => {
   const { data, fetchCourse } = useData();
 
-  // ✅ O'ZGARTIRILDI: endi slug ham olinadi
+  // ✅ O'ZGARTIRILDI: endi slug, courseId, va topicId olinadi
   // OLDIN: const { courseId: id } = useParams()
   //        → faqat UUID bor edi: /kurslar/:slug/:courseId
-  // ENDI: slug ham olinadi — redirect va SEO uchun kerak
-  const { slug, courseId: id } = useParams();
+  // ENDI: slug ham, topicId ham olinadi — URL da dars saqlanadi
+  const { slug, courseId: id, topicId: urlTopicId } = useParams();
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -168,6 +168,35 @@ const FrontendCourse = () => {
     }
   }, [data, id]);
 
+  // ✅ FIXED: URL parametrdan darsni tanlash uchun effect
+  // SABABI: selectedTopic dependency'dan olib tashlandi
+  // Bu refresh qilganda ham URL dagi topicId saqlanadi
+  useEffect(() => {
+    if (!urlTopicId) return; // URL da topicId bo'lmasa, hech narsa qilmang
+    
+    if (sections.length === 0) return; // Sections load bo'lmaguncha kutish
+
+    // Barcha mavzualarni topish
+    const allTopics = sections.flatMap((sec) => topicsMap[sec.id] || []);
+    
+    // URL dagi topicId bilan mos keladigan darsni topish
+    const foundTopic = allTopics.find((t) => t.id === urlTopicId);
+
+    if (foundTopic) {
+      setSelectedTopic(foundTopic);
+      fetchTopicDetail(foundTopic.id);
+      
+      // Ota bo'limni topish va kengaytirish
+      const parentSection = sections.find((sec) =>
+        (topicsMap[sec.id] || []).some((t) => t.id === foundTopic.id)
+      );
+      if (parentSection) {
+        setExpandedSection(parentSection.id);
+        setSelectedSection(parentSection);
+      }
+    }
+  }, [urlTopicId, sections, topicsMap]);
+
   useEffect(() => {
     if (!id) return;
     const fetchSections = async () => {
@@ -178,10 +207,21 @@ const FrontendCourse = () => {
         });
         const result = await res.json();
         setSections(result);
+        
         if (result.length > 0) {
           setExpandedSection(result[0].id);
           setSelectedSection(result[0]);
-          fetchTopicsForSection(result[0].id, true);
+          
+          // ✅ YANGI: Agar URL da topicId bo'lmasa → avtomatik birinchi darsni tanlash
+          // autoSelectFirst = true da handleTopicClick ishlatadi va URL'da ID saqlanadi
+          if (!urlTopicId) {
+            fetchTopicsForSection(result[0].id, true); // ← true = auto select first topic
+          } else {
+            // URL da topicId bor → barcha bo'limlari mavzularini load qil
+            for (const section of result) {
+              fetchTopicsForSection(section.id, false);
+            }
+          }
         }
       } catch (err) {
         
@@ -190,7 +230,7 @@ const FrontendCourse = () => {
       }
     };
     fetchSections();
-  }, [id]);
+  }, [id, urlTopicId]);
 
   const fetchTopicsForSection = useCallback(
     async (sectionId, autoSelectFirst = false) => {
@@ -244,6 +284,8 @@ const FrontendCourse = () => {
     setSelectedTopic(topic);
     fetchTopicDetail(topic.id);
     setCode("");
+    // ✅ URL yangilanadi dars selected bo'lganda
+    navigate(`/kurslar/${slug}/${id}/${topic.id}`, { replace: false });
   };
 
   const getAllTopicsFlat = () =>
