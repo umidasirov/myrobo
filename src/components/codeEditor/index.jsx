@@ -362,7 +362,7 @@ const CodeEditor = ({ topicId, isCode = true }) => {
       ) : (
         <div style={{ width: "100%", height: "500px" }}>
           <iframe
-            src="https://wokwi.com/projects/new/arduino-uno"
+            src="https://simulyator.adxamov.uz/"
             width="100%"
             height="100%"
             style={{ border: "none" }}
