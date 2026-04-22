@@ -18,31 +18,59 @@ const BASE_URL = "https://myrobo.uz/api";
 function Skeleton({ className = "" }) {
   return <div className={`bg-gray-200 rounded animate-pulse ${className}`} />;
 }
+
+// function VimeoIframe({ url }) {
+//   const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+//   if (!match) return null;
+//   return (
+//     <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
+//       <iframe
+//         style={{
+//           position: "absolute",
+//           top: 0,
+//           left: 0,
+//           width: "100%",
+//           height: "100%",
+//           borderRadius: "8px",
+//           border: "none",
+//         }}
+//         src={`https://player.vimeo.com/video/${match[1]}?title=0&byline=0&portrait=0&controls=1&dnt=1`}
+//         allow="autoplay; fullscreen; picture-in-picture"
+//         allowFullScreen
+//       />
+//     </div>
+//   );
+// }
 function VdoCipherPlayer({ otp, playbackInfo }) {
   const playerRef = useRef(null);
 
   useEffect(() => {
-    if (!otp || !playbackInfo || !playerRef.current) return;
+  if (!otp || !playbackInfo) return;
 
-    const initPlayer = () => {
-      new window.VdoPlayer({
-        otp,
-        playbackInfo,
-        theme: "9ae8bbe8dd964ddc9bdb932cca1cb59a",
-        container: playerRef.current,
-      });
-    };
-
+  const loadPlayer = () => {
     if (!window.VdoPlayer) {
-      const script = document.createElement('script');
-      script.src = 'https://player.vdocipher.com/playerAssets/1.6.10/vdo.js';
-      script.async = true;
-      script.onload = initPlayer;
-      document.body.appendChild(script);
-    } else {
-      initPlayer();
+      console.error("VdoPlayer yuklanmadi!");
+      return;
     }
-  }, [otp, playbackInfo]);
+
+    new window.VdoPlayer({
+      otp,
+      playbackInfo,
+      container: playerRef.current,
+    });
+  };
+
+  if (!document.getElementById("vdocipher-script")) {
+    const script = document.createElement("script");
+    script.id = "vdocipher-script";
+    script.src = "https://player.vdocipher.com/playerAssets/1.6.10/vdo.js";
+    script.async = true;
+    script.onload = loadPlayer;
+    document.body.appendChild(script);
+  } else {
+    loadPlayer();
+  }
+}, [otp, playbackInfo]);
 
   if (!otp || !playbackInfo) return (
     <div className="w-full aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
@@ -131,12 +159,21 @@ function ContentSkeleton() {
 const FrontendCourse = () => {
   const { data, fetchCourse } = useData();
 
+  // ✅ O'ZGARTIRILDI: endi slug, courseId, va topicId olinadi
+  // OLDIN: const { courseId: id } = useParams()
+  //        → faqat UUID bor edi: /kurslar/:slug/:courseId
+  // ENDI: slug ham, topicId ham olinadi — URL da dars saqlanadi
   const { slug, courseId: id, topicId: urlTopicId } = useParams();
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   const { isBought, loading: accessLoading } = useCourseAccess(id);
+
+  // ✅ O'ZGARTIRILDI: redirect URL to'g'irlandi
+  // OLDIN: navigate(`/kirish2/${toSlug(course.title)}`)
+  //        → eski path, faqat title — UUID yo'q
+  // ENDI: navigate(`/kurslar/${slug}`) — slug bor, to'g'ri path
   useEffect(() => {
     if (!accessLoading && !isBought && id) {
       const course = data?.find((c) => String(c.id) === String(id));
@@ -179,24 +216,25 @@ const FrontendCourse = () => {
       if (found) setCourseData(found);
     }
   }, [data, id]);
-  useEffect(() => {
-    if (!urlTopicId) return;
 
-    if (sections.length === 0) return;
+  // ✅ FIXED: URL parametrdan darsni tanlash uchun effect
+  // SABABI: selectedTopic dependency'dan olib tashlandi
+  // Bu refresh qilganda ham URL dagi topicId saqlanadi
+  useEffect(() => {
+    if (!urlTopicId) return; // URL da topicId bo'lmasa, hech narsa qilmang
+    
+    if (sections.length === 0) return; // Sections load bo'lmaguncha kutish
 
     // Barcha mavzualarni topish
     const allTopics = sections.flatMap((sec) => topicsMap[sec.id] || []);
-    console.log("topiklar:",allTopics);
-    
     
     // URL dagi topicId bilan mos keladigan darsni topish
     const foundTopic = allTopics.find((t) => t.id === urlTopicId);
-    console.log("subTopicklar:", foundTopic);
 
     if (foundTopic) {
       setSelectedTopic(foundTopic);
       fetchTopicDetail(foundTopic.id);
-
+      
       // Ota bo'limni topish va kengaytirish
       const parentSection = sections.find((sec) =>
         (topicsMap[sec.id] || []).some((t) => t.id === foundTopic.id)
@@ -218,11 +256,11 @@ const FrontendCourse = () => {
         });
         const result = await res.json();
         setSections(result);
-
+        
         if (result.length > 0) {
           setExpandedSection(result[0].id);
           setSelectedSection(result[0]);
-
+          
           // ✅ YANGI: Agar URL da topicId bo'lmasa → avtomatik birinchi darsni tanlash
           // autoSelectFirst = true da handleTopicClick ishlatadi va URL'da ID saqlanadi
           if (!urlTopicId) {
@@ -235,14 +273,14 @@ const FrontendCourse = () => {
           }
         }
       } catch (err) {
-
+        
       } finally {
         setSectionsLoading(false);
       }
     };
     fetchSections();
   }, [id, urlTopicId]);
-
+  
   const fetchTopicsForSection = useCallback(
     async (sectionId, autoSelectFirst = false) => {
       try {
@@ -256,7 +294,7 @@ const FrontendCourse = () => {
           setTimeout(() => handleTopicClick(topics[0]), 50);
         }
       } catch (err) {
-
+        
       }
     },
     []
@@ -274,7 +312,7 @@ const FrontendCourse = () => {
       });
       const data = await res.json();
       setVideoOtp(data); // { otp, playbackInfo }
-    } catch (err) { }
+    } catch (err) {}
   };
   const fetchTopicDetail = async (topicId) => {
     setTopicLoading(true);
@@ -295,7 +333,7 @@ const FrontendCourse = () => {
       }
 
     } catch (err) {
-
+      
     } finally {
       setTopicLoading(false);
     }
@@ -314,6 +352,7 @@ const FrontendCourse = () => {
     setSelectedTopic(topic);
     fetchTopicDetail(topic.id);
     setCode("");
+    // ✅ URL yangilanadi dars selected bo'lganda
     navigate(`/kurslar/${slug}/${id}/${topic.id}`, { replace: false });
   };
 
@@ -424,10 +463,11 @@ const FrontendCourse = () => {
                   {sections.map((section) => (
                     <div key={section.id}>
                       <div
-                        className={`flex items-center p-2 hover:bg-blue-50 rounded cursor-pointer ${selectedSection?.id === section.id
+                        className={`flex items-center p-2 hover:bg-blue-50 rounded cursor-pointer ${
+                          selectedSection?.id === section.id
                             ? "bg-blue-100 font-medium"
                             : ""
-                          }`}
+                        }`}
                         onClick={() => handleSectionClick(section)}
                       >
                         <PlayCircleFilled className="text-blue-500 mr-2" />
@@ -450,10 +490,11 @@ const FrontendCourse = () => {
                             topicsMap[section.id].map((topic) => (
                               <div
                                 key={topic.id}
-                                className={`flex items-center p-2 hover:bg-blue-50 rounded cursor-pointer ${selectedTopic?.id === topic.id
+                                className={`flex items-center p-2 hover:bg-blue-50 rounded cursor-pointer ${
+                                  selectedTopic?.id === topic.id
                                     ? "bg-blue-200 font-medium"
                                     : ""
-                                  }`}
+                                }`}
                                 onClick={() => handleTopicClick(topic)}
                               >
                                 {topic.topic_type !== "code" ? (
@@ -543,10 +584,10 @@ const FrontendCourse = () => {
                 <>
                   <Card title={topicDetail?.title} className="mb-6 shadow">
                     <div className="aspect-w-16 aspect-h-9 mb-4">
-                      {topicDetail?.topic_type !== "code" && (
+                      {videoOtp?.otp && videoOtp?.playbackInfo && (
                         <VdoCipherPlayer
-                          otp={videoOtp?.otp}
-                          playbackInfo={videoOtp?.playbackInfo}
+                          otp={videoOtp.otp}
+                          playbackInfo={videoOtp.playbackInfo}
                         />
                       )}
                     </div>
@@ -614,10 +655,11 @@ const FrontendCourse = () => {
 
                       {submitResult && (
                         <div
-                          className={`mx-4 mb-4 p-4 rounded-lg flex items-start gap-3 ${submitResult.status === "accepted"
+                          className={`mx-4 mb-4 p-4 rounded-lg flex items-start gap-3 ${
+                            submitResult.status === "accepted"
                               ? "bg-green-50 border border-green-200 text-green-700"
                               : "bg-red-50 border border-red-200 text-red-700"
-                            }`}
+                          }`}
                         >
                           <span className="text-lg font-bold">
                             {submitResult.status === "accepted" ? "✓" : "✗"}
