@@ -50,7 +50,7 @@ function TeamComponents() {
   const postID = (slug) => {
     navigate(`/mentorlar/${slug}`);
   };
-  const isSmall = teacherData?.length < 4;
+  const isSmall = Array.isArray(teacherData) && teacherData?.length < 4 && teacherData?.length > 0;
   return (
     <section className="w-full md:w-[90%] m-auto mt-8 md:mt-[140px] px-4 md:px-0 mb-16">
       <div className="mb-8 md:mb-12 text-center">
@@ -65,7 +65,7 @@ function TeamComponents() {
       <div className={`${isSmall ? "flex flex-wrap justify-center":"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start"} `}>
         {loading
           ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
-          : teacherData?.map((value, index) => (
+          : Array.isArray(teacherData) && teacherData?.length > 0 ? teacherData.map((value, index) => (
             <motion.div
               key={value.slug}
               variants={itemVariants}
@@ -106,7 +106,13 @@ function TeamComponents() {
                 </button>
               </div>
             </motion.div>
-          ))}
+          ))
+          : (
+            // <div className="col-span-full flex flex-col items-center justify-center py-12">
+            //   <p className="text-gray-500 text-lg">Ma'lumotlar topilmadi</p>
+            // </div>
+            <div></div>
+          )}
       </div>
     </section>
   );
