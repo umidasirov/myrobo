@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import axios from "axios";
 import { createContext, useContext, useState } from "react";
+import { setGlobalLogoutCallback, apiFetch } from "../utils/api";
 
 const DataContext = createContext();
 
@@ -21,6 +23,7 @@ export const DataProvider = ({ children }) => {
   const [teacherData, setTeacherData] = useState([]);
   const [loading, setLoad] = useState(false);
   const [user, setUser] = useState(null);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("balance");
@@ -30,14 +33,43 @@ export const DataProvider = ({ children }) => {
     localStorage.removeItem("refresh");
     localStorage.removeItem("locate");
     setUser(null);
+    location.reload();
   };
 
-  api.interceptors.response.use(
-    (response) => response,
+  // ✅ Global logout callback'ni set qil - barcha fetch'lar uchun
+  setGlobalLogoutCallback(handleLogout);
+
+
+useEffect(() => {
+  const resInterceptor = api.interceptors.response.use(
+    (response) => {
+      if (
+        response?.data?.code === "token_not_valid" ||
+        response?.data?.detail?.includes("Sessiya bekor qilingan")
+      ) {
+        handleLogout();
+      }
+      return response;
+    },
     async (error) => {
       const originalRequest = error.config;
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      const status = error.response?.status;
+      const detail = error.response?.data?.detail;
+      const code = error.response?.data?.code;
+
+      const isTokenInvalid =
+        code === "token_not_valid" ||
+        detail?.includes("Sessiya bekor qilingan");
+
+      const hasToken = localStorage.getItem("token");
+
+      // ❗ TOKEN YO‘Q bo‘lsa logout qilma
+      if (!hasToken) {
+        return Promise.reject(error);
+      }
+
+      if ((status === 401 || isTokenInvalid) && !originalRequest._retry) {
         originalRequest._retry = true;
 
         const refresh = localStorage.getItem("refresh");
@@ -54,6 +86,7 @@ export const DataProvider = ({ children }) => {
 
           const newAccess = res.data.access;
           localStorage.setItem("token", newAccess);
+
           originalRequest.headers.Authorization = `Bearer ${newAccess}`;
           return api(originalRequest);
         } catch {
@@ -62,9 +95,18 @@ export const DataProvider = ({ children }) => {
         }
       }
 
+      if (status === 401 || isTokenInvalid) {
+        handleLogout();
+      }
+
       return Promise.reject(error);
     }
   );
+
+  return () => {
+    api.interceptors.response.eject(resInterceptor);
+  };
+}, []);
 
   const fetchTeam = async () => {
     setLoad(true);
@@ -77,9 +119,9 @@ export const DataProvider = ({ children }) => {
       });
 
       const result = await response.json();
-      setTeacherData(result)      
+      setTeacherData(result)
     } catch (err) {
-      
+
     } finally {
       setLoad(false);
     }
@@ -90,11 +132,15 @@ export const DataProvider = ({ children }) => {
     setLoad(true)
     try {
       const response = await api.get("/courses/courses/");
+      if (response.status == 401  || response.data?.code === "token_not_valid") {
+        handleLogout();
+      }
       setData(response.data);
     } catch (err) {
-      
+      console.log("err:", err);
+
     }
-    finally{
+    finally {
       setLoad(false)
     }
   };
@@ -103,9 +149,12 @@ export const DataProvider = ({ children }) => {
     try {
       setLoad(true);
       const response = await api.get("/user/auth/me/");
+      if (response.status == 401 || response.data?.code === "token_not_valid") {
+        handleLogout();
+      }
       setUser(response.data);
     } catch (error) {
-      
+
     } finally {
       setLoad(false);
     }

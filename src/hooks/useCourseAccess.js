@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiFetch } from "../utils/api";
 
 export function useCourseAccess(courseId) {
   const [isBought, setIsBought] = useState(false);
@@ -10,9 +11,8 @@ export function useCourseAccess(courseId) {
       setLoading(false);
       return;
     }
-    fetch("https://myrobo.uz/api/courses/my-courses/", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    // ✅ apiFetch bilan 401 avtomatik logout
+    apiFetch("https://myrobo.uz/api/courses/my-courses/")
       .then((r) => r.json())
       .then((list) => {
         const bought =

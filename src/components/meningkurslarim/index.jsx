@@ -3,20 +3,17 @@ import { Button, Empty } from "antd";
 import { useNavigate } from "react-router-dom";
 import { toSlug } from "../kirish";
 import { Helmet } from 'react-helmet-async';
+import { apiFetch } from "../../utils/api";
 
 function MeningKurslarim() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("https://myrobo.uz/api/courses/my-courses/", {
+    // ✅ apiFetch bilan 401 avtomatik logout
+    apiFetch("https://myrobo.uz/api/courses/my-courses/", {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
     })
       .then((response) => {
         if (!response.ok) throw new Error("Network response was not ok");

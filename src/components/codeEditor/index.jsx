@@ -434,7 +434,7 @@ const CodeEditor = ({ topicId, isCode = true }) => {
       ) : (
         <div style={{ width: "100%", height: isFullscreen ? "calc(100vh - 80px)" : "500px" }}>
           <iframe
-            src="https://simulyator.adxamov.uz/"
+            src="https://robo.myrobo.uz/"
             width="100%"
             height="100%"
             style={{ border: "none" }}

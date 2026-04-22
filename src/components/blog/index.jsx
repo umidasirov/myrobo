@@ -3,6 +3,7 @@ import { EyeOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { BiPencil } from "react-icons/bi";
 import notificationApi from "../../generic/notificition";
+import { apiFetch } from "../../utils/api";
 
 const truncate = (text = "", limit) => {
   const words = text.split(" ");
@@ -36,9 +37,8 @@ export default function BlogComponents() {
     const fetchCategories = async () => {
       setCatsLoading(true);
       try {
-        const res = await fetch("https://myrobo.uz/api/blog/categories/", {
-          headers: { "Content-Type": "application/json" },
-        });
+        // ✅ apiFetch bilan 401 avtomatik logout
+        const res = await apiFetch("https://myrobo.uz/api/blog/categories/");
         setCategories(await res.json());
       } catch (err) {
         
@@ -63,9 +63,8 @@ export default function BlogComponents() {
     const fetchAll = async () => {
       setBlogsLoading(true);
       try {
-        const res = await fetch("https://myrobo.uz/api/blog/blogs/", {
-          headers: { "Content-Type": "application/json" },
-        });
+        // ✅ apiFetch bilan 401 avtomatik logout
+        const res = await apiFetch("https://myrobo.uz/api/blog/blogs/");
         const data = await res.json();
         setAllBlogs(data);
         setBlogData(data);

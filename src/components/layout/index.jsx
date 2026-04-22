@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../navbar";
 import { Outlet, useLocation } from "react-router-dom";
 import Footer from "../footer";
 import { Helmet } from 'react-helmet-async';
 import ScrollToTop from "../../top";
-
+import { useData } from "../../datacontect";
 function Layout() {
   const location = useLocation();
+    useEffect(() => {
 
+  },[])
   const hideLayout = location.pathname === '/subscription' || location.pathname === '/login';
   return (
     <>
