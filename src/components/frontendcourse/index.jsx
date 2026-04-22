@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Card, Button } from "antd";
 import {
@@ -18,60 +19,7 @@ const BASE_URL = "https://myrobo.uz/api";
 function Skeleton({ className = "" }) {
   return <div className={`bg-gray-200 rounded animate-pulse ${className}`} />;
 }
-
-// function VimeoIframe({ url }) {
-//   const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-//   if (!match) return null;
-//   return (
-//     <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
-//       <iframe
-//         style={{
-//           position: "absolute",
-//           top: 0,
-//           left: 0,
-//           width: "100%",
-//           height: "100%",
-//           borderRadius: "8px",
-//           border: "none",
-//         }}
-//         src={`https://player.vimeo.com/video/${match[1]}?title=0&byline=0&portrait=0&controls=1&dnt=1`}
-//         allow="autoplay; fullscreen; picture-in-picture"
-//         allowFullScreen
-//       />
-//     </div>
-//   );
-// }
 function VdoCipherPlayer({ otp, playbackInfo }) {
-  const playerRef = useRef(null);
-
-  useEffect(() => {
-  if (!otp || !playbackInfo) return;
-
-  const loadPlayer = () => {
-    if (!window.VdoPlayer) {
-      console.error("VdoPlayer yuklanmadi!");
-      return;
-    }
-
-    new window.VdoPlayer({
-      otp,
-      playbackInfo,
-      container: playerRef.current,
-    });
-  };
-
-  if (!document.getElementById("vdocipher-script")) {
-    const script = document.createElement("script");
-    script.id = "vdocipher-script";
-    script.src = "https://player.vdocipher.com/playerAssets/1.6.10/vdo.js";
-    script.async = true;
-    script.onload = loadPlayer;
-    document.body.appendChild(script);
-  } else {
-    loadPlayer();
-  }
-}, [otp, playbackInfo]);
-
   if (!otp || !playbackInfo) return (
     <div className="w-full aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
       <LoadingOutlined style={{ fontSize: 32 }} className="text-blue-400" />
@@ -80,13 +28,18 @@ function VdoCipherPlayer({ otp, playbackInfo }) {
 
   return (
     <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
-      <div
-        ref={playerRef}
+      <iframe
+        key={otp}
+        src={`https://player.vdocipher.com/v2/?otp=${otp}&playbackInfo=${playbackInfo}`}
         style={{
-          position: "absolute", top: 0, left: 0,
+          position: "absolute",
+          top: 0, left: 0,
           width: "100%", height: "100%",
           borderRadius: "8px",
+          border: "none",
         }}
+        allow="encrypted-media"
+        allowFullScreen
       />
     </div>
   );
@@ -220,31 +173,29 @@ const FrontendCourse = () => {
   // ✅ FIXED: URL parametrdan darsni tanlash uchun effect
   // SABABI: selectedTopic dependency'dan olib tashlandi
   // Bu refresh qilganda ham URL dagi topicId saqlanadi
-  useEffect(() => {
-    if (!urlTopicId) return; // URL da topicId bo'lmasa, hech narsa qilmang
-    
-    if (sections.length === 0) return; // Sections load bo'lmaguncha kutish
+useEffect(() => {
+  if (!urlTopicId) return;
+  if (sections.length === 0) return;
 
-    // Barcha mavzualarni topish
-    const allTopics = sections.flatMap((sec) => topicsMap[sec.id] || []);
-    
-    // URL dagi topicId bilan mos keladigan darsni topish
-    const foundTopic = allTopics.find((t) => t.id === urlTopicId);
+  // Agar bu topic allaqachon selected va detail bor bo'lsa — skip
+  if (selectedTopic?.id === urlTopicId && topicDetail) return; // ← BU KALIT FIX
 
-    if (foundTopic) {
-      setSelectedTopic(foundTopic);
-      fetchTopicDetail(foundTopic.id);
-      
-      // Ota bo'limni topish va kengaytirish
-      const parentSection = sections.find((sec) =>
-        (topicsMap[sec.id] || []).some((t) => t.id === foundTopic.id)
-      );
-      if (parentSection) {
-        setExpandedSection(parentSection.id);
-        setSelectedSection(parentSection);
-      }
+  const allTopics = sections.flatMap((sec) => topicsMap[sec.id] || []);
+  const foundTopic = allTopics.find((t) => t.id === urlTopicId);
+
+  if (foundTopic) {
+    setSelectedTopic(foundTopic);
+    fetchTopicDetail(foundTopic.id);
+
+    const parentSection = sections.find((sec) =>
+      (topicsMap[sec.id] || []).some((t) => t.id === foundTopic.id)
+    );
+    if (parentSection) {
+      setExpandedSection(parentSection.id);
+      setSelectedSection(parentSection);
     }
-  }, [urlTopicId, sections, topicsMap]);
+  }
+}, [urlTopicId, sections, topicsMap]);
 
   useEffect(() => {
     if (!id) return;
@@ -301,43 +252,42 @@ const FrontendCourse = () => {
   );
   const [videoOtp, setVideoOtp] = useState(null);
 
-  const fetchVideoOtp = async (topicId) => {
-    setVideoOtp(null);
-    try {
-      const res = await fetch(`${BASE_URL}/courses/topics/${topicId}/video-otp/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      setVideoOtp(data); // { otp, playbackInfo }
-    } catch (err) {}
-  };
+ const fetchVideoOtp = async (topicId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/courses/topics/${topicId}/video-otp/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
+    setVideoOtp(data);
+  } catch (err) {}
+};
   const fetchTopicDetail = async (topicId) => {
-    setTopicLoading(true);
-    setTopicDetail(null);
-    setSubmitResult(null);
-    setVideoOtp(null);
-    try {
-      const res = await fetch(`${BASE_URL}/courses/topics/${topicId}/`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-      const detail = await res.json();
-      setTopicDetail(detail);
-      if (detail?.vdo_video_id) {
-        fetchVideoOtp(topicId);
-      }
+  setTopicLoading(true);
+  setTopicDetail(null);
+  setSubmitResult(null);
+  setVideoOtp(null);
+  try {
+    const res = await fetch(`${BASE_URL}/courses/topics/${topicId}/`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    const detail = await res.json();
+    setTopicDetail(detail);
 
-    } catch (err) {
-      
-    } finally {
-      setTopicLoading(false);
+    // Video bo'lsa — OTP kelguncha topicLoading true qoladi
+    if (detail?.vdo_video_id) {
+      await fetchVideoOtp(topicId); // ← await!
     }
-  };
+  } catch (err) {
+  } finally {
+    setTopicLoading(false); // hamma narsa tayyor bo'lgach
+  }
+};
 
   const handleSectionClick = (section) => {
     const isOpen = expandedSection === section.id;
