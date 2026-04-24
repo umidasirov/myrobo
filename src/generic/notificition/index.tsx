@@ -23,6 +23,11 @@ const notificationApi = () => {
           message: "Tizimga kirdingiz",
         });
         break
+      case "unauthorized":
+        return notification.error({
+          message: "Sizga ruxsat berilmagan. Iltimos qayta kiriting",
+        });
+        break
        case "noMoney":
         return notification.error({
           message: "Mablag' yetarli emas",

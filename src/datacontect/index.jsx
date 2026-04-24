@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { createContext, useContext, useState } from "react";
 import { setGlobalLogoutCallback, apiFetch } from "../utils/api";
+import { notification } from "antd";
 
 const DataContext = createContext();
 
@@ -33,80 +34,101 @@ export const DataProvider = ({ children }) => {
     localStorage.removeItem("refresh");
     localStorage.removeItem("locate");
     setUser(null);
-    location.reload();
+    notification.success({
+      message: "Siz muvaffaqiyatli tarzda tizimdan chiqdingiz",
+    });
+  };
+  
+  const handleLogoutAnother = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("balance");
+    localStorage.removeItem("phone");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("username");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("locate");
+    setUser(null);
+    notification.error({
+      message: "Sessiyangiz tugagan, iltimos qayta kirish qiling",
+    });
+    setTimeout(() => {
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
+    }, 2000);
   };
 
-  // ✅ Global logout callback'ni set qil - barcha fetch'lar uchun
-  setGlobalLogoutCallback(handleLogout);
+  // ✅ 401 hatolari uchun global logout callback'ni set qil
+  setGlobalLogoutCallback(handleLogoutAnother);
 
 
-useEffect(() => {
-  const resInterceptor = api.interceptors.response.use(
-    (response) => {
-      if (
-        response?.data?.code === "token_not_valid" ||
-        response?.data?.detail?.includes("Sessiya bekor qilingan")
-      ) {
-        handleLogout();
-      }
-      return response;
-    },
-    async (error) => {
-      const originalRequest = error.config;
+  useEffect(() => {
+    const resInterceptor = api.interceptors.response.use(
+      (response) => {
+        if (
+          response?.data?.code === "token_not_valid" ||
+          response?.data?.detail?.includes("Sessiya bekor qilingan")
+        ) {
+          handleLogout();
+        }
+        return response;
+      },
+      async (error) => {
+        const originalRequest = error.config;
 
-      const status = error.response?.status;
-      const detail = error.response?.data?.detail;
-      const code = error.response?.data?.code;
+        const status = error.response?.status;
+        const detail = error.response?.data?.detail;
+        const code = error.response?.data?.code;
 
-      const isTokenInvalid =
-        code === "token_not_valid" ||
-        detail?.includes("Sessiya bekor qilingan");
+        const isTokenInvalid =
+          code === "token_not_valid" ||
+          detail?.includes("Sessiya bekor qilingan");
 
-      const hasToken = localStorage.getItem("token");
+        const hasToken = localStorage.getItem("token");
 
-      // ❗ TOKEN YO‘Q bo‘lsa logout qilma
-      if (!hasToken) {
+        // ❗ TOKEN YO‘Q bo‘lsa logout qilma
+        if (!hasToken) {
+          return Promise.reject(error);
+        }
+
+        if ((status === 401 || isTokenInvalid) && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          const refresh = localStorage.getItem("refresh");
+          if (!refresh) {
+            handleLogoutAnother();
+            return Promise.reject(error);
+          }
+
+          try {
+            const res = await axios.post(
+              "https://myrobo.uz/api/user/auth/token/refresh/",
+              { refresh }
+            );
+
+            const newAccess = res.data.access;
+            localStorage.setItem("token", newAccess);
+
+            originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+            return api(originalRequest);
+          } catch {
+            handleLogoutAnother();
+            return Promise.reject(error);
+          }
+        }
+
+        if (status === 401 || isTokenInvalid) {
+          handleLogoutAnother();
+        }
+
         return Promise.reject(error);
       }
+    );
 
-      if ((status === 401 || isTokenInvalid) && !originalRequest._retry) {
-        originalRequest._retry = true;
-
-        const refresh = localStorage.getItem("refresh");
-        if (!refresh) {
-          handleLogout();
-          return Promise.reject(error);
-        }
-
-        try {
-          const res = await axios.post(
-            "https://myrobo.uz/api/user/auth/token/refresh/",
-            { refresh }
-          );
-
-          const newAccess = res.data.access;
-          localStorage.setItem("token", newAccess);
-
-          originalRequest.headers.Authorization = `Bearer ${newAccess}`;
-          return api(originalRequest);
-        } catch {
-          handleLogout();
-          return Promise.reject(error);
-        }
-      }
-
-      if (status === 401 || isTokenInvalid) {
-        handleLogout();
-      }
-
-      return Promise.reject(error);
-    }
-  );
-
-  return () => {
-    api.interceptors.response.eject(resInterceptor);
-  };
-}, []);
+    return () => {
+      api.interceptors.response.eject(resInterceptor);
+    };
+  }, []);
 
   const fetchTeam = async () => {
     setLoad(true);
@@ -132,7 +154,7 @@ useEffect(() => {
     setLoad(true)
     try {
       const response = await api.get("/courses/courses/");
-      if (response.status == 401  || response.data?.code === "token_not_valid") {
+      if (response.status == 401 || response.data?.code === "token_not_valid") {
         handleLogout();
       }
       setData(response.data);

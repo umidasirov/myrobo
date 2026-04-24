@@ -24,12 +24,13 @@ export const apiFetch = async (url, options = {}) => {
       headers,
     });
 
-    // ✅ 401 → SRAZU LOGOUT
+    // ✅ 401 → LOGOUT CALLBACK CHAQIRISH
     if (response.status === 401) {
+      // logoutCallback chaqirish (handleLogoutAnother)
       if (logoutCallback) {
         logoutCallback();
       } else {
-        // Agar callback belgilanmagan bo'lsa - localStorage tozalash
+        // Agar callback bo'lmasa - oddiy logout
         localStorage.removeItem("token");
         localStorage.removeItem("balance");
         localStorage.removeItem("phone");
@@ -38,12 +39,11 @@ export const apiFetch = async (url, options = {}) => {
         localStorage.removeItem("refresh");
         localStorage.removeItem("locate");
         
-        // ✅ Redirect to login
         if (typeof window !== "undefined") {
           window.location.href = "/kirish2";
         }
       }
-      throw new Error("Unauthorized - logged out");
+      return response;
     }
 
     return response;
