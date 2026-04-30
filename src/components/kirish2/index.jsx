@@ -234,34 +234,49 @@ function KirishComponentsID() {
 
       {/* Oferta Modal */}
       <Modal
-        title="Ommaviy Oferta Shartnomasi"
-        className="h-full sm:h-auto top-0 sm:top-auto sm:my-8"
-        open={showOfertaModal}
-        width={"100%"}
-        onCancel={handleOfertaClose}
-        style={{ maxHeight: "90vh" }}
-        bodyStyle={{ maxHeight: "calc(90vh - 120px)", overflowY: "auto" }}
-        footer={[
-          <button
-            key="close"
-            onClick={handleOfertaClose}
-            className="bg-gray-400 m-1 hover:bg-gray-500 text-white px-6 py-2 rounded-md w-full sm:w-auto"
-          >
-            Yopish
-          </button>,
-          <button
-            key="agree"
-            onClick={handleOfertaRead}
-            className="bg-blue-600 m-1 sm:w-auto hover:bg-blue-700 w-full text-white px-6 py-2 rounded-md"
-          >
-            Men tanishib chiqdim va rozilik beraman
-          </button>,
-        ]}
-      >
-        <div style={{ maxHeight: "calc(90vh - 200px)", overflowY: "auto" }}>
-          <SubscriptionOferta />
-        </div>
-      </Modal>
+  title="Ommaviy Oferta Shartnomasi"
+  className="
+    dark:[&_.ant-modal-content]:!bg-gray-800
+    dark:[&_.ant-modal-header]:!bg-gray-800
+    dark:[&_.ant-modal-title]:!text-white
+    dark:[&_.ant-modal-body]:!bg-gray-800
+    dark:[&_.ant-modal-body]:!text-gray-200
+    dark:[&_.ant-modal-footer]:!bg-gray-800
+  "
+  open={showOfertaModal}
+  width={"100%"}
+  onCancel={handleOfertaClose}
+  style={{ maxHeight: "90vh" }}
+  bodyStyle={{ maxHeight: "calc(90vh - 120px)", overflowY: "auto" }}
+  footer={[
+    <button
+      key="close"
+      onClick={handleOfertaClose}
+      className="
+        bg-gray-400 m-1 hover:bg-gray-500 text-white px-6 py-2 rounded-md
+        w-full sm:w-auto
+        dark:bg-gray-700 dark:hover:bg-gray-600
+      "
+    >
+      Yopish
+    </button>,
+
+    <button
+      key="agree"
+      onClick={handleOfertaRead}
+      className="
+        bg-blue-600 m-1 sm:w-auto hover:bg-blue-700 w-full text-white px-6 py-2 rounded-md
+        dark:bg-blue-500 dark:hover:bg-blue-400
+      "
+    >
+      Men tanishib chiqdim va rozilik beraman
+    </button>,
+  ]}
+>
+  <div className="dark:text-gray-200" style={{ maxHeight: "calc(90vh - 200px)", overflowY: "auto" }}>
+    <SubscriptionOferta />
+  </div>
+</Modal>
 
       {/* Asosiy sahifa */}
       <div className="bg-gray-100 dark:bg-gray-950 min-h-screen font-sans transition-colors duration-300">
