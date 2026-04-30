@@ -59,7 +59,7 @@ const Profilim = () => {
   
   if (loading || !user) {
     return (
-      <div className="w-[90%] m-auto mt-[50px] bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
+      <div className="w-[90%] m-auto mt-[50px] bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-600">
         <div className="flex items-center mb-8">
           <div className="bg-gray-200 animate-pulse rounded-full w-20 h-20 mr-4" />
           <div className="space-y-3">
@@ -68,7 +68,7 @@ const Profilim = () => {
             <div className="h-4 w-28 bg-gray-200 rounded animate-pulse" />
           </div>
         </div>
-        <div className="bg-gray-50 p-6 rounded-xl mb-8 border border-gray-200">
+        <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl mb-8 border border-gray-200 dark:border-gray-600">
           <div className="flex items-center gap-4">
             <div className="h-8 w-8 bg-gray-200 rounded animate-pulse" />
             <div className="space-y-2">
@@ -78,10 +78,10 @@ const Profilim = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
+          <div className="bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-600">
             <div className="h-6 w-36 bg-gray-200 rounded animate-pulse" />
           </div>
-          <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
+          <div className="bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-600">
             <div className="h-6 w-36 bg-gray-200 rounded animate-pulse" />
           </div>
         </div>
@@ -99,27 +99,27 @@ const Profilim = () => {
         <meta property="og:description" content="MyRobo platformasidagi shaxsiy profilingizni ko'ring va tahrirlang." />
         <meta property="og:type" content="profile" />
       </Helmet>
-      <div className="w-[90%] m-auto mt-[50px] bg-white rounded-2xl shadow-lg overflow-hidden p-8 text-gray-800 border border-gray-200">
+      <div className="w-[90%] m-auto mt-[50px] bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden p-8 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600">
 
         {/* Profil header */}
         <div className="flex items-start flex-col sm:flex-row justify-between mb-8">
           <div className="flex items-center">
-            <div className="bg-gray-100 p-6 rounded-full mr-4">
-              <UserOutlined className="text-gray-600 text-3xl" />
+            <div className="bg-gray-100 dark:bg-gray-700 p-6 rounded-full mr-4">
+              <UserOutlined className="text-gray-600 dark:text-gray-400 dark:text-gray-500 text-3xl" />
             </div>
             <div>
-              <h3 className="font-bold text-2xl text-gray-900">{user?.phone}</h3>
-              <p className="text-gray-500">
+              <h3 className="font-bold text-2xl text-gray-900 dark:text-white">{user?.phone}</h3>
+              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">
                 {user?.first_name || "—"} {user?.last_name || ""}
               </p>
-              <p className="text-gray-500">Username: {user?.username}</p>
+              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">Username: {user?.username}</p>
             </div>
           </div>
 
           {/* Tahrirlash tugmasi */}
           <button
             onClick={openModal}
-            className="flex w-full justify-center mt-5 sm:w-1/4 sm:mt-0 md:w-40 items-center gap-2 border border-gray-200 hover:border-blue-400 hover:text-blue-600 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition"
+            className="flex w-full justify-center mt-5 sm:w-1/4 sm:mt-0 md:w-40 items-center gap-2 border border-gray-200 dark:border-gray-600 hover:border-blue-400 hover:text-blue-600 text-gray-600 dark:text-gray-400 dark:text-gray-500 px-4 py-2 rounded-lg text-sm font-medium transition"
           >
             <EditOutlined />
             Tahrirlash
@@ -127,12 +127,12 @@ const Profilim = () => {
         </div>
 
         {/* Balans */}
-        <div className="bg-gray-50 p-6 rounded-xl mb-8 border border-gray-200">
+        <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl mb-8 border border-gray-200 dark:border-gray-600">
           <div className="flex items-center">
-            <WalletOutlined className="text-gray-700 text-2xl mr-3" />
+            <WalletOutlined className="text-gray-700 dark:text-gray-300 text-2xl mr-3" />
             <div>
-              <p className="text-gray-500 text-sm">Joriy balans</p>
-              <p className="font-bold text-2xl text-gray-900">
+              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-sm">Joriy balans</p>
+              <p className="font-bold text-2xl text-gray-900 dark:text-white">
                 {balance.toLocaleString()} so'm
               </p>
             </div>
@@ -141,16 +141,16 @@ const Profilim = () => {
 
         {/* Linklar */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Link to={"/my-courses"} className="bg-gray-50 p-5 rounded-xl border border-gray-200">
+          <Link to={"/my-courses"} className="bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-600">
             <div className="flex items-center">
-              <BookOutlined className="text-gray-700 text-xl mr-2" />
-              <h4 className="font-semibold text-lg text-gray-900">Mening kurslarim</h4>
+              <BookOutlined className="text-gray-700 dark:text-gray-300 text-xl mr-2" />
+              <h4 className="font-semibold text-lg text-gray-900 dark:text-white">Mening kurslarim</h4>
             </div>
           </Link>
-          <Link to={"/sertificatlarim"} className="bg-gray-50 p-5 rounded-xl border border-gray-200">
+          <Link to={"/sertificatlarim"} className="bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-600">
             <div className="flex items-center">
-              <IdcardOutlined className="text-gray-700 text-xl mr-2" />
-              <h4 className="font-semibold text-lg text-gray-900">Sertifikatlarim</h4>
+              <IdcardOutlined className="text-gray-700 dark:text-gray-300 text-xl mr-2" />
+              <h4 className="font-semibold text-lg text-gray-900 dark:text-white">Sertifikatlarim</h4>
             </div>
           </Link>
         </div>
@@ -162,17 +162,17 @@ const Profilim = () => {
           onClick={closeModal}
         >
           <div
-            className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md mx-4"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-md mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-xl text-gray-900 flex items-center gap-2">
+              <h3 className="font-bold text-xl text-gray-900 dark:text-white flex items-center gap-2">
                 <EditOutlined className="text-blue-600" />
                 Profilni tahrirlash
               </h3>
               <button
                 onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:text-gray-500 transition"
               >
                 <CloseOutlined className="text-lg" />
               </button>
@@ -180,23 +180,23 @@ const Profilim = () => {
 
             <div className="flex flex-col gap-4 mb-6">
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-gray-500">Ism</label>
+                <label className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Ism</label>
                 <input
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="Ismingiz"
-                  className="border border-gray-200 rounded-lg px-4 py-2.5 text-gray-800 outline-none focus:border-blue-400 transition"
+                  className="border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-800 dark:text-gray-200 outline-none focus:border-blue-400 transition"
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-gray-500">Familiya</label>
+                <label className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Familiya</label>
                 <input
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Familiyangiz"
-                  className="border border-gray-200 rounded-lg px-4 py-2.5 text-gray-800 outline-none focus:border-blue-400 transition"
+                  className="border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-800 dark:text-gray-200 outline-none focus:border-blue-400 transition"
                 />
               </div>
             </div>
@@ -210,7 +210,7 @@ const Profilim = () => {
             <div className="flex gap-3">
               <button
                 onClick={closeModal}
-                className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-600 py-2.5 rounded-lg font-medium transition"
+                className="flex-1 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 text-gray-600 dark:text-gray-400 dark:text-gray-500 py-2.5 rounded-lg font-medium transition"
               >
                 Bekor qilish
               </button>

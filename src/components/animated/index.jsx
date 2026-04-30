@@ -100,14 +100,14 @@ const AnimatedStats = () => {
         className="flex  items-center justify-between gap-6 max-[768px]:grid max-[768px]:grid-cols-2"
       >
         {/* 1. Talabalar statistikasi */}
-        <div className="bg-white w-full rounded-lg shadow-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-200 shadow-blue-200  ">
+        <div className="bg-white dark:bg-gray-800 w-full rounded-lg shadow-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-200 dark:hover:shadow-blue-900/30 shadow-blue-200 dark:shadow-blue-900/20  ">
           <div className="text-4xl font-bold text-blue-600 mb-2 max-[768px]:text-2xl max-[500px]:text-sm">
             {studentCount.toLocaleString()}
           </div>
-          <div className="text-gray-600 max-[600px]:text-[15px] max-[500px]:text-[10px]">
+          <div className="text-gray-600 dark:text-gray-400 max-[600px]:text-[15px] max-[500px]:text-[10px]">
             Talaba ro'yhatdan o'tdi
           </div>
-          <div className="mt-4 h-2 bg-blue-100 rounded-full max-[500px]:h-1">
+          <div className="mt-4 h-2 bg-blue-100 dark:bg-blue-900/30 rounded-full max-[500px]:h-1">
             <div
               className="h-2 bg-blue-500 rounded-full max-[500px]:h-1"
               style={{ width: `${(studentCount / targetStudentCount) * 100}%` }}
@@ -116,14 +116,14 @@ const AnimatedStats = () => {
         </div>
 
         {/* 2. Sinf yo'qlamalari */}
-        <div className="bg-white w-full rounded-lg shadow-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-200 shadow-blue-200">
+        <div className="bg-white dark:bg-gray-800 w-full rounded-lg shadow-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-200 dark:hover:shadow-blue-900/30 shadow-blue-200 dark:shadow-blue-900/20">
           <div className="text-4xl font-bold text-green-600 mb-2 max-[768px]:text-2xl max-[500px]:text-sm">
             {completedClasses.toLocaleString()}
           </div>
-          <div className="text-gray-600 max-[600px]:text-[15px] max-[500px]:text-[10px]">
+          <div className="text-gray-600 dark:text-gray-400 max-[600px]:text-[15px] max-[500px]:text-[10px]">
             Sinf yo'qlamalari
           </div>
-          <div className="mt-4 h-2 bg-green-100 rounded-full max-[500px]:h-1">
+          <div className="mt-4 h-2 bg-green-100 dark:bg-green-900/30 rounded-full max-[500px]:h-1">
             <div
               className="h-2 bg-green-500 rounded-full max-[500px]:h-1"
               style={{
@@ -134,14 +134,14 @@ const AnimatedStats = () => {
         </div>
 
         {/* 3. Qoniqish darajasi */}
-        <div className="bg-white w-full rounded-lg shadow-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-200 shadow-blue-200">
+        <div className="bg-white dark:bg-gray-800 w-full rounded-lg shadow-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-200 dark:hover:shadow-blue-900/30 shadow-blue-200 dark:shadow-blue-900/20">
           <div className="text-4xl font-bold text-purple-600 mb-2 max-[768px]:text-2xl max-[500px]:text-sm">
             {satisfactionRate.toFixed(1)}%
           </div>
-          <div className="text-gray-600 max-[600px]:text-[15px] max-[500px]:text-[10px]">
+          <div className="text-gray-600 dark:text-gray-400 max-[600px]:text-[15px] max-[500px]:text-[10px]">
             Qoniqish darajasi
           </div>
-          <div className="mt-4 h-2 bg-purple-100 rounded-full max-[500px]:h-1">
+          <div className="mt-4 h-2 bg-purple-100 dark:bg-purple-900/30 rounded-full max-[500px]:h-1">
             <div
               className="h-2 bg-purple-500 rounded-full max-[500px]:h-1"
               style={{
@@ -152,14 +152,14 @@ const AnimatedStats = () => {
         </div>
 
         {/* 4. Eng yaxshi o'qituvchilar (pastki qatorda markazda) */}
-        <div className="bg-white w-full rounded-lg shadow-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-200 shadow-blue-200">
+        <div className="bg-white dark:bg-gray-800 w-full rounded-lg shadow-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-200 dark:hover:shadow-blue-900/30 shadow-blue-200 dark:shadow-blue-900/20">
           <div className="text-4xl font-bold text-orange-600 mb-2 max-[768px]:text-2xl max-[500px]:text-sm ">
             {teacherCount.toLocaleString()}
           </div>
-          <div className="text-gray-600 max-[600px]:text-[15px] max-[500px]:text-[10px]">
+          <div className="text-gray-600 dark:text-gray-400 max-[600px]:text-[15px] max-[500px]:text-[10px]">
             Eng yaxshi o'qituvchilar
           </div>
-          <div className="mt-4 h-2 bg-orange-100 rounded-full max-[500px]:h-1">
+          <div className="mt-4 h-2 bg-orange-100 dark:bg-orange-900/30 rounded-full max-[500px]:h-1">
             <div
               className="h-2 bg-orange-500 rounded-full max-[500px]:h-1"
               style={{

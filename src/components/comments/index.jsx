@@ -104,33 +104,33 @@ function CommentSection({ slug }) {
   };
 
   return (
-    <section className="w-full py-6 pb-12 font-sans text-[#0f0f0f]">
+    <section className="w-full py-6 pb-12 font-sans text-gray-900 dark:text-gray-100">
 
       <div className="flex items-center gap-6 mb-6">
         {!loading && (
-          <span className="text-base font-medium text-[#0f0f0f]">
+          <span className="text-base font-medium text-gray-900 dark:text-gray-100">
             {comments.length} ta izoh
           </span>
         )}
       </div>
 
       {success && (
-        <div className="inline-flex items-center gap-2 bg-[#323232] text-white text-[13px] px-4 py-2.5 rounded mb-5">
+        <div className="inline-flex items-center gap-2 bg-gray-800 dark:bg-gray-700 text-white text-[13px] px-4 py-2.5 rounded mb-5">
           ✓ Izohingiz joylashtirildi
         </div>
       )}
 
       {token ? (
         <div className="flex gap-4 items-start mb-10">
-          <div className="w-10 h-10 rounded-full bg-[#606060] flex items-center justify-center text-white font-bold text-[15px] flex-shrink-0 select-none">
-            {user.length>0 ? user[0] : 'u'}
+          <div className="w-10 h-10 rounded-full bg-gray-500 dark:bg-gray-600 flex items-center justify-center text-white font-bold text-[15px] flex-shrink-0 select-none">
+            {user && user.length > 0 ? user[0] : 'u'}
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className={`border-b transition-all duration-150 ${focused ? "border-b-2 border-gray-300" : "border-b border-gray-300"}`}>
+            <div className={`border-b transition-all duration-150 ${focused ? "border-b-2 border-gray-400 dark:border-gray-500" : "border-b border-gray-300 dark:border-gray-600"}`}>
               <textarea
                 ref={textareaRef}
-                className="w-full border-none outline-none bg-transparent text-sm text-[#0f0f0f] placeholder-[#717171] py-1 pb-2 resize-none leading-5 overflow-hidden box-border"
+                className="w-full border-none outline-none bg-transparent text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 py-1 pb-2 resize-none leading-5 overflow-hidden box-border"
                 value={content}
                 placeholder="Izoh qo'shish..."
                 rows={1}
@@ -147,7 +147,7 @@ function CommentSection({ slug }) {
               <div className="flex items-center justify-end gap-2 mt-3">
                 <button
                   onClick={handleCancel}
-                  className="text-sm font-medium text-[#0f0f0f] px-4 py-2 rounded-full hover:bg-[#f2f2f2] transition-colors cursor-pointer border-none bg-transparent"
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer border-none bg-transparent"
                 >
                   Bekor qilish
                 </button>
@@ -155,8 +155,8 @@ function CommentSection({ slug }) {
                   onClick={handleSubmit}
                   disabled={submitting || !content.trim()}
                   className="text-sm font-medium px-4 py-2 rounded transition-colors cursor-pointer border-none
-                    bg-[#065fd4] text-white hover:bg-[#0b57c0]
-                    disabled:bg-[#f2f2f2] disabled:text-[#aaaaaa] disabled:cursor-default"
+                    bg-blue-600 text-white hover:bg-blue-700
+                    disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-default"
                 >
                   {submitting
                     ? <span className="flex items-center gap-1.5"><LoadingOutlined />Yuborilmoqda</span>
@@ -167,9 +167,9 @@ function CommentSection({ slug }) {
           </div>
         </div>
       ) : (
-        <div className="flex gap-4 items-center mb-8 pb-3 border-b border-[#e5e5e5]">
-          <div className="w-10 h-10 rounded-full bg-[#e5e5e5] flex-shrink-0" />
-          <div className="text-sm text-[#717171] border-b border-[#d3d3d3] flex-1 pb-2">
+        <div className="flex gap-4 items-center mb-8 pb-3 border-b border-gray-200 dark:border-gray-700">
+          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
+          <div className="text-sm text-gray-500 dark:text-gray-400 border-b border-gray-300 dark:border-gray-600 flex-1 pb-2">
             Izoh qoldirish uchun tizimga kiring
           </div>
         </div>
@@ -179,18 +179,18 @@ function CommentSection({ slug }) {
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex gap-4 py-4">
-              <div className="w-10 h-10 rounded-full flex-shrink-0 bg-gradient-to-r from-[#f0f0f0] via-[#e0e0e0] to-[#f0f0f0] bg-[length:200%_100%] animate-pulse" />
+              <div className="w-10 h-10 rounded-full flex-shrink-0 bg-gray-200 dark:bg-gray-700 animate-pulse" />
               <div className="flex-1 flex flex-col gap-2 pt-1">
-                <div className="h-3 w-[28%] rounded bg-gradient-to-r from-[#f0f0f0] via-[#e0e0e0] to-[#f0f0f0] bg-[length:200%_100%] animate-pulse" />
-                <div className="h-3 w-[88%] rounded bg-gradient-to-r from-[#f0f0f0] via-[#e0e0e0] to-[#f0f0f0] bg-[length:200%_100%] animate-pulse" />
-                <div className="h-3 w-[60%] rounded bg-gradient-to-r from-[#f0f0f0] via-[#e0e0e0] to-[#f0f0f0] bg-[length:200%_100%] animate-pulse" />
+                <div className="h-3 w-[28%] rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                <div className="h-3 w-[88%] rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                <div className="h-3 w-[60%] rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
               </div>
             </div>
           ))
         ) : comments.length === 0 ? (
           <div className="py-12 text-center">
             <div className="text-5xl mb-3 opacity-35">💬</div>
-            <div className="text-sm text-[#717171]">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
               Hali izoh qoldirilmagan. Birinchi bo'ling!
             </div>
           </div>
@@ -203,15 +203,15 @@ function CommentSection({ slug }) {
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                  <span className="text-[13px] font-medium text-[#0f0f0f]">
+                  <span className="text-[13px] font-medium text-gray-900 dark:text-gray-100">
                     {comment.user}
                   </span>
-                  <span className="text-xs text-[#717171]">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     {formatDate(comment.created_at)}
                   </span>
                 </div>
                 <div
-                  className="text-sm text-[#0f0f0f] leading-5 break-words [&_p]:mb-1 [&_p:last-child]:mb-0"
+                  className="text-sm text-gray-800 dark:text-gray-300 leading-5 break-words [&_p]:mb-1 [&_p:last-child]:mb-0"
                   dangerouslySetInnerHTML={{ __html: comment.text }}
                 />
               </div>

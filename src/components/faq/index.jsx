@@ -34,15 +34,14 @@ const FAQ = () => {
 
   return (
     <section className="w-full md:w-[90%] mx-auto mt-20 mb-20 px-4 md:px-0">
-      {/* Sarlavha - About bo'limi bilan bir xil */}
       <div className="text-center mb-12">
-        <p className="text-lg text-gray-600 font-medium text-center uppercase">
+        <p className="text-lg text-gray-600 dark:text-gray-400 font-medium text-center uppercase">
           Savol-javoblar
         </p>
-        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-950 tracking-tight">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-950 dark:text-white tracking-tight">
           Ko'p beriladigan <span className="text-blue-600">savollar</span>
         </h2>
-        <p className="mt-4 text-gray-500 text-sm md:text-base max-w-xl mx-auto">
+        <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm md:text-base max-w-xl mx-auto">
           O'quvchilarimizni qiziqtirgan eng asosiy savollarga shu yerda javob berganmiz.
         </p>
       </div>
@@ -51,17 +50,17 @@ const FAQ = () => {
         {faqData.map((item, index) => (
           <div
             key={item.id}
-            className={`bg-white rounded-lg shadow-lg shadow-blue-200 overflow-hidden transition-all duration-300`}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg shadow-blue-200 dark:shadow-blue-900/20 overflow-hidden transition-all duration-300 border border-transparent dark:border-gray-700"
           >
             <button
               onClick={() => toggleFAQ(index)}
               className="w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none"
             >
               <div className="flex items-center gap-4">
-                <div className="hidden sm:flex w-8 h-8 rounded-lg bg-blue-50 items-center justify-center flex-shrink-0">
+                <div className="hidden sm:flex w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 items-center justify-center flex-shrink-0">
                   <HelpCircle className="w-4 h-4 text-blue-600" />
                 </div>
-                <span className="text-sm md:text-base font-bold text-gray-900 pr-4">
+                <span className="text-sm md:text-base font-bold text-gray-900 dark:text-white pr-4">
                   {item.question}
                 </span>
               </div>
@@ -69,7 +68,7 @@ const FAQ = () => {
                 {activeIndex === index ? (
                   <Minus className="w-5 h-5 text-blue-600" />
                 ) : (
-                  <Plus className="w-5 h-5 text-gray-400" />
+                  <Plus className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 )}
               </div>
             </button>
@@ -82,7 +81,7 @@ const FAQ = () => {
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
-                  <div className="px-6 pb-6 md:px-16 text-gray-600 text-xs md:text-sm leading-relaxed border-t border-gray-50 pt-4">
+                  <div className="px-6 pb-6 md:px-16 text-gray-600 dark:text-gray-300 text-xs md:text-sm leading-relaxed border-t border-gray-100 dark:border-gray-700 pt-4">
                     {item.answer}
                   </div>
                 </motion.div>
@@ -92,9 +91,8 @@ const FAQ = () => {
         ))}
       </div>
 
-      {/* Qo'shimcha yordam kerakmi? */}
       <div className="mt-12 text-center">
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
           Savolingizga javob topmadingizmi?{" "}
           <a href="https://t.me/developer_id_26" className="text-blue-600 font-bold hover:underline">
             Biz bilan bog'laning

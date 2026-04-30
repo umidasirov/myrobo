@@ -61,7 +61,7 @@ const slides = [
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
-            <div className="flex flex-col overflow-hidden md:flex-row items-center justify-between bg-white pb-8">
+            <div className="flex flex-col overflow-hidden md:flex-row items-center justify-between bg-white dark:bg-gray-900 pb-8">
               <div className="w-full md:w-1/2 p-4 md:p-6 lg:p-8">
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
                   <span className="text-blue-600">{slide.title}</span> yonalishini
@@ -82,14 +82,14 @@ const slides = [
                   loading="lazy"
                 />
                 <div
-                  className={`absolute -bottom-4 right-4 w-1/2 bg-white p-3 rounded-lg shadow-md transition-all duration-500 ${
+                  className={`absolute -bottom-4 right-4 w-1/2 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md transition-all duration-500 ${
                     isPulsing ? "scale-105" : "scale-100"
                   }`}
                 >
                   <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-blue-600">
                     {slide.rating}
                   </h1>
-                  <p className="text-xs text-center mt-1">
+                  <p className="text-xs text-center mt-1 dark:text-gray-300">
                     IJODKORLAR UCHUN{" "}
                     <span className="text-blue-500">12 MINGDAN</span> ORTIQ
                     KURSLAR <span className="text-green-500">BEPUL</span>

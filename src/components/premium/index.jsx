@@ -26,7 +26,7 @@ const PremiumEducation = () => {
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: false }}
-              className="text-lg text-gray-600 font-medium text-center md:text-left"
+              className="text-lg text-gray-600 dark:text-gray-400 font-medium text-center md:text-left"
             >
               PREMIUM TA'LIM
             </motion.p>
@@ -36,7 +36,7 @@ const PremiumEducation = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: false }}
-              className="text-2xl sm:text-3xl font-bold text-center md:text-left"
+              className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white text-center md:text-left"
             >
               Eng Zamonaviy-Elektron
               <span className="text-blue-500"> Ta'lim Tajribasi</span>
@@ -50,7 +50,7 @@ const PremiumEducation = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
                   viewport={{ once: false }}
-                  className="p-3 border-b border-gray-200 hover:bg-gray-50 hover:rounded-lg transition-all cursor-pointer"
+                  className="p-3 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all cursor-pointer text-gray-700 dark:text-gray-300"
                 >
                   <p className="font-medium text-sm sm:text-base">{item}</p>
                 </motion.div>
@@ -59,7 +59,6 @@ const PremiumEducation = () => {
           </div>
         </motion.div>
 
-        {/* Image - right side */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -77,7 +76,7 @@ const PremiumEducation = () => {
             <img
               src={opani_Rasmi}
               alt="Premium ta'lim tasviri"
-              className="w-full h-auto "
+              className="w-full h-auto rounded-2xl"
             />
           </motion.div>
         </motion.div>

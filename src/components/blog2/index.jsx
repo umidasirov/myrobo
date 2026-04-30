@@ -65,7 +65,7 @@ function BlogComponentsId() {
 
         <div className="w-full flex flex-col gap-[20px]">
           {loading ? (
-            <div className="w-full h-[500px] bg-gray-300 animate-pulse rounded-2xl" />
+            <div className="w-full h-[500px] bg-gray-200 dark:bg-gray-700 animate-pulse rounded-2xl" />
           ) : (
             <img
               className="w-full h-[250px] sm:h-[350px] md:h-[450px] xl:h-[550px] object-cover rounded-2xl"
@@ -94,15 +94,15 @@ function BlogComponentsId() {
 
           <div className="flex items-end justify-between gap-[40px]">
             {loading ? (
-              <div className="h-8 w-[250px] bg-gray-300 rounded-md animate-pulse" />
+              <div className="h-8 w-[250px] bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
             ) : (
               <div className="flex flex-col gap-1">
                 {getCategoryTitle(blog?.category) && (
-                  <span className="text-[12px] font-semibold uppercase tracking-wider text-[#525254]">
+                  <span className="text-[12px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     {getCategoryTitle(blog?.category)}
                   </span>
                 )}
-                <h1 className="text-[29px] font-bold max-[768px]:text-[22px] max-[590px]:text-[17px]">
+                <h1 className="text-[29px] font-bold dark:text-white max-[768px]:text-[22px] max-[590px]:text-[17px]">
                   {blog?.title}
                 </h1>
               </div>
@@ -125,10 +125,10 @@ function BlogComponentsId() {
 
           <div className="flex flex-col gap-[30px]">
             {loading ? (
-              <div className="h-6 w-[90%] bg-gray-300 rounded-md animate-pulse" />
+              <div className="h-6 w-[90%] bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
             ) : (
               <div
-                className="text-[17px] blog-content text-gray-600 max-[590px]:text-[15px] max-[490px]:text-[13px] prose max-w-none"
+                className="text-[17px] blog-content text-gray-600 dark:text-gray-300 max-[590px]:text-[15px] max-[490px]:text-[13px] prose dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: blog?.description }}
               />
             )}
@@ -137,7 +137,7 @@ function BlogComponentsId() {
               {loading ? (
                 <>
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="w-[45px] h-[45px] bg-gray-300 rounded-full animate-pulse" />
+                    <div key={i} className="w-[45px] h-[45px] bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
                   ))}
                 </>
               ) : (
@@ -162,10 +162,10 @@ function BlogComponentsId() {
 function MetaItem({ icon, label }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="w-[25px] h-[25px] bg-[#525254] rounded-full flex items-center justify-center text-[#fff]">
+      <div className="w-[25px] h-[25px] bg-gray-600 dark:bg-gray-500 rounded-full flex items-center justify-center text-white">
         {icon}
       </div>
-      <p className="text-[17px] text-gray-500">{label}</p>
+      <p className="text-[17px] text-gray-500 dark:text-gray-400">{label}</p>
     </div>
   );
 }
@@ -173,15 +173,15 @@ function MetaItem({ icon, label }) {
 function MetaSkeleton() {
   return (
     <div className="flex items-center gap-2 animate-pulse">
-      <div className="w-[25px] h-[25px] bg-gray-300 rounded-full" />
-      <div className="h-4 w-16 bg-gray-300 rounded-md" />
+      <div className="w-[25px] h-[25px] bg-gray-200 dark:bg-gray-700 rounded-full" />
+      <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded-md" />
     </div>
   );
 }
 
 function SocialBtn({ icon }) {
   return (
-    <div className="w-[45px] cursor-pointer h-[45px] p-3 rounded-full shadow-md shadow-blue-300 flex items-center justify-center text-[22px] hover:bg-blue-600 hover:text-[#FFF] transition-all duration-300">
+    <div className="w-[45px] cursor-pointer h-[45px] p-3 rounded-full shadow-md shadow-blue-300 dark:shadow-blue-900/30 flex items-center justify-center text-[22px] text-gray-700 dark:text-gray-300 hover:bg-blue-600 hover:text-white transition-all duration-300">
       {icon}
     </div>
   );

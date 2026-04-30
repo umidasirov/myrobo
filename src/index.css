@@ -21,10 +21,22 @@
   }
 }
 
+html.dark .bgBlock {
+  background-color: #1f2937;
+}
+
 /* html, */
 body {
   max-width: 100%;
   overflow-x: hidden;
+  background-color: #ffffff;
+  color: #111827;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark body {
+  background-color: #111827;
+  color: #f9fafb;
 }
 
 @keyframes shimmer {

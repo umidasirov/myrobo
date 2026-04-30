@@ -21,7 +21,6 @@ const LoginPage = () => {
     if (!uuid) {
       const newUUID = uuidv4();
       Cookies.set("my_uuid", newUUID, { expires: 365 });
-    } else {
     }
   }, []);
 
@@ -63,50 +62,49 @@ const LoginPage = () => {
     }
   };
 
- const handleCodeSubmit = async () => {
-  const code = codeDigits.join("");
+  const handleCodeSubmit = async () => {
+    const code = codeDigits.join("");
 
-  if (!code || code.length !== 6) {
-    setError("Iltimos, 6 xonali kodni to‘liq kiriting.");
-    return;
-  }
-
-  try {
-    const response = await fetch("https://myrobo.uz/api/user/auth/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      const errorMsg = data?.detail || data?.message || "Kod yuborishda xatolik yuz berdi.";
-      setError(errorMsg);
+    if (!code || code.length !== 6) {
+      setError("Iltimos, 6 xonali kodni to'liq kiriting.");
       return;
     }
 
+    try {
+      const response = await fetch("https://myrobo.uz/api/user/auth/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code }),
+      });
 
-    if (data.access) localStorage.setItem("token", data.access);
-    if (data.refresh) localStorage.setItem("refresh", data.refresh);
+      const data = await response.json();
 
-    if (data.user) {
-      localStorage.setItem("user_id", data.user.id || "nmadr");
-      localStorage.setItem("phone", data.user.phone || "nmadr");
-      localStorage.setItem("username", data.user.username || "nmadr");
+      if (!response.ok) {
+        const errorMsg = data?.detail || data?.message || "Kod yuborishda xatolik yuz berdi.";
+        setError(errorMsg);
+        return;
+      }
+
+      if (data.access) localStorage.setItem("token", data.access);
+      if (data.refresh) localStorage.setItem("refresh", data.refresh);
+
+      if (data.user) {
+        localStorage.setItem("user_id", data.user.id || "nmadr");
+        localStorage.setItem("phone", data.user.phone || "nmadr");
+        localStorage.setItem("username", data.user.username || "nmadr");
+      }
+
+      notify({ type: "loginSuccses" });
+
+      navigate("/");
+    } catch (err) {
+      const errorMsg = err?.response?.data?.detail || err.message || "Server bilan bog'lanishda xatolik yuz berdi.";
+      setError(errorMsg);
     }
+  };
 
-    notify({ type: "loginSuccses" }); 
-
-    navigate("/");
-  } catch (err) {
-
-    const errorMsg = err?.response?.data?.detail || err.message || "Server bilan bog‘lanishda xatolik yuz berdi.";
-    setError(errorMsg);
-  }
-};
   return (
     <>
       <Helmet>
@@ -117,79 +115,79 @@ const LoginPage = () => {
         <meta property="og:description" content="MyRobo platformasiga kirish uchun tasdiqlash kodini kiriting." />
         <meta property="og:type" content="website" />
       </Helmet>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
-        <div className="w-full md:w-1/2 p-8 flex flex-col items-center justify-center">
-          <div className="mb-8 text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <UserOutlined className="text-blue-600 text-2xl" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-800">Tizimga kirish</h1>
-            <p className="text-gray-500 mt-2">Tasdiqlash kodingizni kiriting</p>
-          </div>
-
-          <div className="w-full max-w-md">
-            <div className="flex justify-between gap-1 mb-6">
-              {codeDigits.map((digit, idx) => (
-                <input
-                  key={idx}
-                  id={`code-input-${idx}`}
-                  type="text"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleDigitChange(e, idx)}
-                  onKeyDown={(e) => handleKeyDown(e, idx)}
-                  onPaste={idx === 0 ? handlePaste : undefined}
-                  className="w-8 h-10 sm:w-12 sm:h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
-                />
-              ))}
-            </div>
-
-            {(status || error) && (
-              <div
-                className={`mb-4 p-3 rounded-lg text-sm ${
-                  error
-                    ? "bg-red-100 text-red-700"
-                    : "bg-blue-100 text-blue-700"
-                }`}
-              >
-                {error || status}
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-950 dark:to-gray-900 flex items-center justify-center p-4 transition-colors duration-300">
+        <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+          <div className="w-full md:w-1/2 p-8 flex flex-col items-center justify-center">
+            <div className="mb-8 text-center">
+              <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center mx-auto mb-4">
+                <UserOutlined className="text-blue-600 text-2xl" />
               </div>
-            )}
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Tizimga kirish</h1>
+              <p className="text-gray-500 dark:text-gray-400 mt-2">Tasdiqlash kodingizni kiriting</p>
+            </div>
 
-            <button
-              onClick={handleCodeSubmit}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition duration-200"
-            >
-              Kirish <ArrowRightOutlined />
-            </button>
+            <div className="w-full max-w-md">
+              <div className="flex justify-between gap-1 mb-6">
+                {codeDigits.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    id={`code-input-${idx}`}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleDigitChange(e, idx)}
+                    onKeyDown={(e) => handleKeyDown(e, idx)}
+                    onPaste={idx === 0 ? handlePaste : undefined}
+                    className="w-8 h-10 sm:w-12 sm:h-14 text-center text-xl font-semibold border border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                ))}
+              </div>
+
+              {(status || error) && (
+                <div
+                  className={`mb-4 p-3 rounded-lg text-sm ${
+                    error
+                      ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                      : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                  }`}
+                >
+                  {error || status}
+                </div>
+              )}
+
+              <button
+                onClick={handleCodeSubmit}
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition duration-200"
+              >
+                Kirish <ArrowRightOutlined />
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 p-8 flex flex-col items-center justify-center text-center rounded-t-3xl md:rounded-l-none md:rounded-r-3xl">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white mb-4">
-              MyRoboga Kirish
-            </h1>
-            <p className="text-blue-100 mb-6">
-              Tasdiqlash kodini olish uchun kiring:
-            </p>
-            <a
-              href={telegramLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-white text-blue-600 font-medium py-3 px-6 rounded-lg hover:bg-blue-50 transition duration-200"
-            >
-              @myrobologinbot
-            </a>
-          </div>
+          <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 p-8 flex flex-col items-center justify-center text-center rounded-t-3xl md:rounded-l-none md:rounded-r-3xl">
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold text-white mb-4">
+                MyRoboga Kirish
+              </h1>
+              <p className="text-blue-100 mb-6">
+                Tasdiqlash kodini olish uchun kiring:
+              </p>
+              <a
+                href={telegramLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-white text-blue-600 font-medium py-3 px-6 rounded-lg hover:bg-blue-50 transition duration-200"
+              >
+                @myrobologinbot
+              </a>
+            </div>
 
-          <div className="mt-6 text-blue-200 text-sm">
-            <p>Agar sizda akkaunt bo'lmasa, bot orqali ro'yxatdan o'ting</p>
+            <div className="mt-6 text-blue-200 text-sm">
+              <p>Agar sizda akkaunt bo'lmasa, bot orqali ro'yxatdan o'ting</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

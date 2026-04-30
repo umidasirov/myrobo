@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Card, Button } from "antd";
 import {
@@ -17,14 +16,18 @@ import { Helmet } from "react-helmet-async";
 const BASE_URL = "https://myrobo.uz/api";
 
 function Skeleton({ className = "" }) {
-  return <div className={`bg-gray-200 rounded animate-pulse ${className}`} />;
-}
-function VdoCipherPlayer({ otp, playbackInfo }) {
-  if (!otp || !playbackInfo) return (
-    <div className="w-full aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-      <LoadingOutlined style={{ fontSize: 32 }} className="text-blue-400" />
-    </div>
+  return (
+    <div className={`bg-gray-200 dark:bg-gray-700 rounded animate-pulse ${className}`} />
   );
+}
+
+function VdoCipherPlayer({ otp, playbackInfo }) {
+  if (!otp || !playbackInfo)
+    return (
+      <div className="w-full aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+        <LoadingOutlined style={{ fontSize: 32 }} className="text-blue-400" />
+      </div>
+    );
 
   return (
     <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
@@ -33,8 +36,10 @@ function VdoCipherPlayer({ otp, playbackInfo }) {
         src={`https://player.vdocipher.com/v2/?otp=${otp}&playbackInfo=${playbackInfo}`}
         style={{
           position: "absolute",
-          top: 0, left: 0,
-          width: "100%", height: "100%",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
           borderRadius: "8px",
           border: "none",
         }}
@@ -44,10 +49,11 @@ function VdoCipherPlayer({ otp, playbackInfo }) {
     </div>
   );
 }
+
 function EmptySections() {
   return (
     <div className="flex flex-col items-center justify-center py-10 px-4 text-center gap-4">
-      <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center">
+      <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-8 h-8 text-blue-300"
@@ -64,10 +70,10 @@ function EmptySections() {
         </svg>
       </div>
       <div>
-        <p className="text-gray-700 font-semibold text-sm">
+        <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">
           Darslar hali qo'shilmagan
         </p>
-        <p className="text-gray-400 text-xs mt-1 leading-relaxed">
+        <p className="text-gray-400 dark:text-gray-500 text-xs mt-1 leading-relaxed">
           Kurs tayyorlanmoqda.
           <br />
           Tez orada darslar joylashtiriladi!
@@ -97,7 +103,7 @@ function SidebarSkeleton() {
 
 function ContentSkeleton() {
   return (
-    <Card className="mb-6 shadow">
+    <div className="mb-6 shadow bg-white dark:bg-gray-800 rounded-lg p-6 border border-transparent dark:border-gray-700">
       <div className="space-y-4">
         <Skeleton className="h-7 w-1/2 rounded" />
         <Skeleton className="w-full rounded-lg" style={{ height: "400px" }} />
@@ -105,17 +111,12 @@ function ContentSkeleton() {
         <Skeleton className="h-4 w-4/5 rounded" />
         <Skeleton className="h-4 w-3/5 rounded" />
       </div>
-    </Card>
+    </div>
   );
 }
 
 const FrontendCourse = () => {
   const { data, fetchCourse } = useData();
-
-  // ✅ O'ZGARTIRILDI: endi slug, courseId, va topicId olinadi
-  // OLDIN: const { courseId: id } = useParams()
-  //        → faqat UUID bor edi: /kurslar/:slug/:courseId
-  // ENDI: slug ham, topicId ham olinadi — URL da dars saqlanadi
   const { slug, courseId: id, topicId: urlTopicId } = useParams();
 
   const token = localStorage.getItem("token");
@@ -123,10 +124,6 @@ const FrontendCourse = () => {
 
   const { isBought, loading: accessLoading } = useCourseAccess(id);
 
-  // ✅ O'ZGARTIRILDI: redirect URL to'g'irlandi
-  // OLDIN: navigate(`/kirish2/${toSlug(course.title)}`)
-  //        → eski path, faqat title — UUID yo'q
-  // ENDI: navigate(`/kurslar/${slug}`) — slug bor, to'g'ri path
   useEffect(() => {
     if (!accessLoading && !isBought && id) {
       const course = data?.find((c) => String(c.id) === String(id));
@@ -170,32 +167,27 @@ const FrontendCourse = () => {
     }
   }, [data, id]);
 
-  // ✅ FIXED: URL parametrdan darsni tanlash uchun effect
-  // SABABI: selectedTopic dependency'dan olib tashlandi
-  // Bu refresh qilganda ham URL dagi topicId saqlanadi
-useEffect(() => {
-  if (!urlTopicId) return;
-  if (sections.length === 0) return;
+  useEffect(() => {
+    if (!urlTopicId) return;
+    if (sections.length === 0) return;
+    if (selectedTopic?.id === urlTopicId && topicDetail) return;
 
-  // Agar bu topic allaqachon selected va detail bor bo'lsa — skip
-  if (selectedTopic?.id === urlTopicId && topicDetail) return; // ← BU KALIT FIX
+    const allTopics = sections.flatMap((sec) => topicsMap[sec.id] || []);
+    const foundTopic = allTopics.find((t) => t.id === urlTopicId);
 
-  const allTopics = sections.flatMap((sec) => topicsMap[sec.id] || []);
-  const foundTopic = allTopics.find((t) => t.id === urlTopicId);
+    if (foundTopic) {
+      setSelectedTopic(foundTopic);
+      fetchTopicDetail(foundTopic.id);
 
-  if (foundTopic) {
-    setSelectedTopic(foundTopic);
-    fetchTopicDetail(foundTopic.id);
-
-    const parentSection = sections.find((sec) =>
-      (topicsMap[sec.id] || []).some((t) => t.id === foundTopic.id)
-    );
-    if (parentSection) {
-      setExpandedSection(parentSection.id);
-      setSelectedSection(parentSection);
+      const parentSection = sections.find((sec) =>
+        (topicsMap[sec.id] || []).some((t) => t.id === foundTopic.id)
+      );
+      if (parentSection) {
+        setExpandedSection(parentSection.id);
+        setSelectedSection(parentSection);
+      }
     }
-  }
-}, [urlTopicId, sections, topicsMap]);
+  }, [urlTopicId, sections, topicsMap]);
 
   useEffect(() => {
     if (!id) return;
@@ -207,31 +199,27 @@ useEffect(() => {
         });
         const result = await res.json();
         setSections(result);
-        
+
         if (result.length > 0) {
           setExpandedSection(result[0].id);
           setSelectedSection(result[0]);
-          
-          // ✅ YANGI: Agar URL da topicId bo'lmasa → avtomatik birinchi darsni tanlash
-          // autoSelectFirst = true da handleTopicClick ishlatadi va URL'da ID saqlanadi
+
           if (!urlTopicId) {
-            fetchTopicsForSection(result[0].id, true); // ← true = auto select first topic
+            fetchTopicsForSection(result[0].id, true);
           } else {
-            // URL da topicId bor → barcha bo'limlari mavzularini load qil
             for (const section of result) {
               fetchTopicsForSection(section.id, false);
             }
           }
         }
       } catch (err) {
-        
       } finally {
         setSectionsLoading(false);
       }
     };
     fetchSections();
   }, [id, urlTopicId]);
-  
+
   const fetchTopicsForSection = useCallback(
     async (sectionId, autoSelectFirst = false) => {
       try {
@@ -244,50 +232,48 @@ useEffect(() => {
         if (autoSelectFirst && topics.length > 0) {
           setTimeout(() => handleTopicClick(topics[0]), 50);
         }
-      } catch (err) {
-        
-      }
+      } catch (err) { }
     },
     []
   );
+
   const [videoOtp, setVideoOtp] = useState(null);
 
- const fetchVideoOtp = async (topicId) => {
-  try {
-    const res = await fetch(`${BASE_URL}/courses/topics/${topicId}/video-otp/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
-    setVideoOtp(data);
-  } catch (err) {}
-};
-  const fetchTopicDetail = async (topicId) => {
-  setTopicLoading(true);
-  setTopicDetail(null);
-  setSubmitResult(null);
-  setVideoOtp(null);
-  try {
-    const res = await fetch(`${BASE_URL}/courses/topics/${topicId}/`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-    const detail = await res.json();
-    setTopicDetail(detail);
+  const fetchVideoOtp = async (topicId) => {
+    try {
+      const res = await fetch(`${BASE_URL}/courses/topics/${topicId}/video-otp/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      setVideoOtp(data);
+    } catch (err) { }
+  };
 
-    // Video bo'lsa — OTP kelguncha topicLoading true qoladi
-    if (detail?.vdo_video_id) {
-      await fetchVideoOtp(topicId); // ← await!
+  const fetchTopicDetail = async (topicId) => {
+    setTopicLoading(true);
+    setTopicDetail(null);
+    setSubmitResult(null);
+    setVideoOtp(null);
+    try {
+      const res = await fetch(`${BASE_URL}/courses/topics/${topicId}/`, {
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      const detail = await res.json();
+      setTopicDetail(detail);
+      if (detail?.vdo_video_id) {
+        await fetchVideoOtp(topicId);
+      }
+    } catch (err) {
+    } finally {
+      setTopicLoading(false);
     }
-  } catch (err) {
-  } finally {
-    setTopicLoading(false); // hamma narsa tayyor bo'lgach
-  }
-};
+  };
 
   const handleSectionClick = (section) => {
     const isOpen = expandedSection === section.id;
@@ -302,7 +288,6 @@ useEffect(() => {
     setSelectedTopic(topic);
     fetchTopicDetail(topic.id);
     setCode("");
-    // ✅ URL yangilanadi dars selected bo'lganda
     navigate(`/kurslar/${slug}/${id}/${topic.id}`, { replace: false });
   };
 
@@ -327,22 +312,14 @@ useEffect(() => {
   };
 
   const allTopicsFlat = getAllTopicsFlat();
-  const currentIndex = allTopicsFlat.findIndex(
-    (t) => t.id === selectedTopic?.id
-  );
+  const currentIndex = allTopicsFlat.findIndex((t) => t.id === selectedTopic?.id);
   const isFirst = currentIndex <= 0;
   const isLast = currentIndex >= allTopicsFlat.length - 1;
 
-  // function getVimeoEmbedUrl(url) {
-  //   if (!url) return null;
-  //   const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-  //   if (!match) return null;
-  //   return `https://player.vimeo.com/video/${match[1]}`;
-  // }
-
+  /* ── Loading ── */
   if (accessLoading || pageLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
         <LoadingOutlined style={{ fontSize: 36 }} className="text-blue-500" />
       </div>
     );
@@ -368,12 +345,7 @@ useEffect(() => {
             "MyRobo platformasida kursni o'rganing."
           }
         />
-
-
-        <meta
-          property="og:title"
-          content={courseData?.title || "Kurs - MyRobo.uz"}
-        />
+        <meta property="og:title" content={courseData?.title || "Kurs - MyRobo.uz"} />
         <meta
           property="og:description"
           content={
@@ -382,50 +354,57 @@ useEffect(() => {
           }
         />
         <meta property="og:image" content={courseData?.image} />
-        {/* ✅ YANGI: og:url to'g'ri URL */}
         <meta property="og:url" content={fullUrl} />
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-3 md:p-6 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-2">
+
+          {/* Kurs nomi */}
+          <div className="text-center mb-4">
             {!courseData ? (
-              <div className="w-full bg-white p-4 rounded-lg shadow flex justify-center">
+              <div className="w-full bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-transparent dark:border-gray-700 flex justify-center">
                 <Skeleton className="h-9 w-72" />
               </div>
             ) : (
-              <h1 className="text-3xl font-bold text-gray-800 w-full bg-white p-4 rounded-lg shadow">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 w-full bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-transparent dark:border-gray-700">
                 {courseData?.title || "Kurs"}
               </h1>
             )}
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar */}
-            <div className="w-full lg:w-1/4 bg-white p-4 rounded-lg shadow">
+          <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
+
+            {/* ── Sidebar ── */}
+            <div className="w-full lg:w-1/4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-transparent dark:border-gray-700 h-fit lg:sticky lg:top-20">
               {sectionsLoading ? (
                 <SidebarSkeleton />
               ) : sections.length === 0 ? (
                 <EmptySections />
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {sections.map((section) => (
                     <div key={section.id}>
+                      {/* Bo'lim sarlavhasi */}
                       <div
-                        className={`flex items-center p-2 hover:bg-blue-50 rounded cursor-pointer ${
-                          selectedSection?.id === section.id
-                            ? "bg-blue-100 font-medium"
+                        className={`flex items-center p-2 rounded cursor-pointer transition-colors
+                          hover:bg-blue-50 dark:hover:bg-blue-900/20
+                          ${selectedSection?.id === section.id
+                            ? "bg-blue-100 dark:bg-blue-900/30 font-medium"
                             : ""
-                        }`}
+                          }`}
                         onClick={() => handleSectionClick(section)}
                       >
-                        <PlayCircleFilled className="text-blue-500 mr-2" />
-                        <span>{section.title}</span>
+                        <PlayCircleFilled className="text-blue-500 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-800 dark:text-gray-200 leading-snug">
+                          {section.title}
+                        </span>
                       </div>
 
+                      {/* Mavzular ro'yxati */}
                       {expandedSection === section.id && (
-                        <div className="ml-6 space-y-1">
+                        <div className="ml-5 space-y-0.5 mt-0.5">
                           {!topicsMap[section.id] ? (
                             <div className="space-y-1 py-1">
                               <Skeleton className="h-7 w-full rounded" />
@@ -433,26 +412,29 @@ useEffect(() => {
                               <Skeleton className="h-7 w-3/5 rounded" />
                             </div>
                           ) : topicsMap[section.id].length === 0 ? (
-                            <p className="text-xs text-gray-400 py-2 px-2">
+                            <p className="text-xs text-gray-400 dark:text-gray-500 py-2 px-2">
                               Mavzular yo'q
                             </p>
                           ) : (
                             topicsMap[section.id].map((topic) => (
                               <div
                                 key={topic.id}
-                                className={`flex items-center p-2 hover:bg-blue-50 rounded cursor-pointer ${
-                                  selectedTopic?.id === topic.id
-                                    ? "bg-blue-200 font-medium"
+                                className={`flex items-center p-2 rounded cursor-pointer transition-colors
+                                  hover:bg-blue-50 dark:hover:bg-blue-900/20
+                                  ${selectedTopic?.id === topic.id
+                                    ? "bg-blue-200 dark:bg-blue-800/50 font-medium"
                                     : ""
-                                }`}
+                                  }`}
                                 onClick={() => handleTopicClick(topic)}
                               >
                                 {topic.topic_type !== "code" ? (
-                                  <PlayCircleFilled className="text-blue-400 mr-2 text-xl" />
+                                  <PlayCircleFilled className="text-blue-400 mr-2 flex-shrink-0" />
                                 ) : (
-                                  <CodeOutlined className="text-blue-400 mr-2 text-xl" />
+                                  <CodeOutlined className="text-green-500 mr-2 flex-shrink-0" />
                                 )}
-                                <span className="text-sm">{topic.title}</span>
+                                <span className="text-xs md:text-sm text-gray-700 dark:text-gray-300 leading-snug">
+                                  {topic.title}
+                                </span>
                               </div>
                             ))
                           )}
@@ -464,11 +446,14 @@ useEffect(() => {
               )}
             </div>
 
+            {/* ── Asosiy kontent ── */}
             <div className="w-full lg:w-3/4">
+
+              {/* Bo'sh holat */}
               {!sectionsLoading && sections.length === 0 ? (
-                <Card className="mb-6 shadow">
+                <div className="mb-6 shadow bg-white dark:bg-gray-800 rounded-lg p-6 border border-transparent dark:border-gray-700">
                   <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
-                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-900/10 flex items-center justify-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="w-10 h-10 text-blue-300"
@@ -485,110 +470,150 @@ useEffect(() => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-700">
+                      <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
                         {courseData?.title} kursi tayyorlanmoqda
                       </h3>
-                      <p className="text-gray-400 text-sm mt-2 max-w-sm leading-relaxed">
+                      <p className="text-gray-400 dark:text-gray-500 text-sm mt-2 max-w-sm leading-relaxed">
                         Hozircha bu kursda darslar mavjud emas. O'qituvchi tez
                         orada video darslar va topshiriqlarni qo'shadi.
                       </p>
                     </div>
                     <div className="flex flex-col gap-2 w-full max-w-xs">
-                      <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 rounded-xl px-4 py-3">
                         <span className="text-lg">🎬</span>
                         <div className="text-left">
-                          <p className="text-xs font-medium text-gray-600">
+                          <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
                             Video darslar
                           </p>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-gray-400 dark:text-gray-500">
                             Tez orada qo'shiladi
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 rounded-xl px-4 py-3">
                         <span className="text-lg">💻</span>
                         <div className="text-left">
-                          <p className="text-xs font-medium text-gray-600">
+                          <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
                             Amaliy topshiriqlar
                           </p>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-gray-400 dark:text-gray-500">
                             Tez orada qo'shiladi
                           </p>
                         </div>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-300 mt-2">
+                    <p className="text-xs text-gray-300 dark:text-gray-600 mt-2">
                       Yangilanishlarni kuzatib boring 👀
                     </p>
                   </div>
-                </Card>
+                </div>
+
+                /* Dars tanlanmagan */
               ) : !selectedTopic ? (
-                <Card title="Darsni tanlang" className="mb-6 shadow">
-                  <div className="text-center py-8 text-gray-500">
+                <div className="mb-6 shadow bg-white dark:bg-gray-800 rounded-lg border border-transparent dark:border-gray-700 overflow-hidden">
+                  <div className="px-5 py-3 border-b border-gray-200 dark:border-gray-700">
+                    <span className="font-semibold text-gray-800 dark:text-gray-100">
+                      Darsni tanlang
+                    </span>
+                  </div>
+                  <div className="text-center py-10 text-gray-500 dark:text-gray-400 text-sm">
                     Iltimos, chap menyudan darsni tanlang
                   </div>
-                </Card>
+                </div>
+
+                /* Dars yuklanmoqda */
               ) : topicLoading ? (
                 <ContentSkeleton />
+
+                /* Dars kontenti */
               ) : (
                 <>
-                  <Card title={topicDetail?.title} className="mb-6 shadow">
-                    <div className="aspect-w-16 aspect-h-9 mb-4">
+                  {/* Video / sarlavha karti */}
+                  <div className="mb-4 shadow bg-white dark:bg-gray-800 rounded-lg border border-transparent dark:border-gray-700 overflow-hidden">
+                    {/* Kart sarlavhasi */}
+                    <div className="px-5 py-3 border-b border-gray-200 dark:border-gray-700">
+                      <span className="font-semibold text-gray-800 dark:text-gray-100">
+                        {topicDetail?.title}
+                      </span>
+                    </div>
+                    <div className="p-4 md:p-5">
+                      {/* Video player */}
                       {videoOtp?.otp && videoOtp?.playbackInfo && (
-                        <VdoCipherPlayer
-                          otp={videoOtp.otp}
-                          playbackInfo={videoOtp.playbackInfo}
-                        />
+                        <div className="mb-4">
+                          <VdoCipherPlayer
+                            otp={videoOtp.otp}
+                            playbackInfo={videoOtp.playbackInfo}
+                          />
+                        </div>
+                      )}
+                      {/* Tavsif */}
+                      {topicDetail?.about && (
+                        <p className="text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed">
+                          {topicDetail.about}
+                        </p>
                       )}
                     </div>
-                    <div className="prose max-w-none">
-                      {topicDetail?.about && <p>{topicDetail.about}</p>}
-                    </div>
-                  </Card>
+                  </div>
 
-                  <div className="flex justify-between mb-6">
+                  {/* Navigatsiya tugmalari */}
+                  <div className="flex justify-between mb-4">
                     <Button
                       type="primary"
                       icon={<BookFilled />}
                       onClick={() => goToAdjacent(-1)}
                       disabled={isFirst}
+                      className="
+                      dark:!bg-gray-800 
+                      dark:!border-gray-700 
+                      dark:!text-white 
+                      dark:hover:!bg-gray-700
+                      dark:disabled:!bg-gray-900
+                      dark:disabled:!text-gray-500"
                     >
                       Oldingi dars
                     </Button>
+
                     <Button
                       type="primary"
                       icon={<CheckCircleFilled />}
                       onClick={() => goToAdjacent(1)}
                       disabled={isLast}
+                      className="
+                      dark:!bg-gray-800 
+                      dark:!border-gray-700 
+                      dark:!text-white 
+                      dark:hover:!bg-gray-700
+                      dark:disabled:!bg-gray-900
+                      dark:disabled:!text-gray-500"
                     >
                       Keyingi dars
                     </Button>
                   </div>
-
+                  {/* Kod muharriri */}
                   {topicDetail?.topic_type === "code" && (
-                    <div className="bg-white rounded-lg shadow overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 overflow-hidden">
                       {topicDetail.problem && (
-                        <div className="mb-2 p-4 border-b">
-                          <h2 className="text-lg font-semibold mb-2">
+                        <div className="mb-2 p-4 border-b border-gray-200 dark:border-gray-700">
+                          <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
                             {topicDetail.problem.title}
                           </h2>
-                          <p className="text-gray-700 mb-3">
+                          <p className="text-gray-700 dark:text-gray-300 mb-3 text-sm">
                             {topicDetail.problem.statement}
                           </p>
                           <div className="grid md:grid-cols-2 gap-4">
-                            <div className="bg-white p-3 rounded border">
-                              <p className="text-sm font-semibold text-gray-500 mb-1">
+                            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700">
+                              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">
                                 Input:
                               </p>
-                              <pre className="text-sm font-mono whitespace-pre-wrap">
+                              <pre className="text-sm font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200">
                                 {topicDetail.problem.sample_input}
                               </pre>
                             </div>
-                            <div className="bg-white p-3 rounded border">
-                              <p className="text-sm font-semibold text-gray-500 mb-1">
+                            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700">
+                              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">
                                 Output:
                               </p>
-                              <pre className="text-sm font-mono whitespace-pre-wrap">
+                              <pre className="text-sm font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200">
                                 {topicDetail.problem.sample_output}
                               </pre>
                             </div>
@@ -603,13 +628,13 @@ useEffect(() => {
                         />
                       </div>
 
+                      {/* Submit natijasi */}
                       {submitResult && (
                         <div
-                          className={`mx-4 mb-4 p-4 rounded-lg flex items-start gap-3 ${
-                            submitResult.status === "accepted"
-                              ? "bg-green-50 border border-green-200 text-green-700"
-                              : "bg-red-50 border border-red-200 text-red-700"
-                          }`}
+                          className={`mx-4 mb-4 p-4 rounded-lg flex items-start gap-3 ${submitResult.status === "accepted"
+                              ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400"
+                              : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400"
+                            }`}
                         >
                           <span className="text-lg font-bold">
                             {submitResult.status === "accepted" ? "✓" : "✗"}

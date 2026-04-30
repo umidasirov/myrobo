@@ -46,13 +46,13 @@ const AboutMyRobo = () => {
     <section className="w-full md:w-[90%] mx-auto mt-20 mb-20 px-4 md:px-0">
       
       <div className="text-center mb-16" id="about">
-        <p className="text-lg text-gray-600 uppercase font-medium text-center">
+        <p className="text-lg text-gray-600 dark:text-gray-400 uppercase font-medium text-center">
           Biz haqimizda
         </p>
-        <h2 className="text-3xl md:text-5xl font-extrabold text-gray-950 tracking-tight leading-tight">
+        <h2 className="text-3xl md:text-5xl font-extrabold text-gray-950 dark:text-white tracking-tight leading-tight">
           Nega o'quvchilar <span className="text-blue-600">bizni tanlashadi</span>?
         </h2>
-        <p className="mt-5 text-gray-600 text-base text-start shadow-lg shadow-blue-200 md:text-lg p-6 mx-auto leading-relaxed ">
+        <p className="mt-5 text-gray-600 dark:text-gray-400 text-base text-start shadow-lg shadow-blue-200 dark:shadow-blue-900/20 md:text-lg p-6 mx-auto leading-relaxed bg-white dark:bg-gray-800 rounded-lg ">
           Myrobo — zamonaviy IT va robototexnika ta’lim platformasi. Biz murakkab mavzularni sodda, tushunarli va amaliy usulda o‘rgatamiz. O‘quvchilar nazariya bilan cheklanib qolmay, real loyihalar, amaliy mashg‘ulotlar va tajribali ustozlar yordamida o‘z ko‘nikmalarini mustahkamlaydi.
         </p>
       </div>
@@ -64,7 +64,7 @@ const AboutMyRobo = () => {
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="bg-white rounded-lg p-6 text-center border border-gray-100 shadow-lg shadow-blue-200"
+                className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center border border-gray-100 dark:border-gray-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/20"
               >
                 <p className={`text-3xl sm:text-4xl font-black ${s.color} tracking-tight`}>{s.value}</p>
                 <p className="text-[11px] sm:text-xs text-gray-400 mt-2 uppercase font-bold tracking-wider leading-tight">
@@ -74,8 +74,8 @@ const AboutMyRobo = () => {
             ))}
           </div>
           
-          <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-lg shadow-blue-200">
-             <p className="text-sm text-gray-500 leading-relaxed">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-100 dark:border-gray-700 shadow-lg shadow-blue-200 dark:shadow-blue-900/20">
+             <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                <span className="text-blue-500 font-semibold italic text-base">Myrobo</span> — zamonaviy IT va muhandislik 
                bilimlarini hamyonbop va tushunarli tarzda taqdim etuvchi 
                innovatsion markazdir.
@@ -87,16 +87,16 @@ const AboutMyRobo = () => {
           {features.map((f) => (
             <div
               key={f.id}
-              className={`flex items-start gap-5 bg-white rounded-lg p-6 border-gray-100 shadow-lg shadow-blue-200 hover:shadow-[0_15px_50px_rgb(59,130,246,0.1)] transition-all duration-300`}
+              className={`flex items-start gap-5 bg-white dark:bg-gray-800 rounded-lg p-6 border-gray-100 shadow-lg shadow-blue-200 dark:shadow-blue-900/20 hover:shadow-[0_15px_50px_rgb(59,130,246,0.1)] transition-all duration-300`}
             >
-              <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
                 {f.icon}
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-gray-950 text-base sm:text-lg mb-1 tracking-tight">
+                <h4 className="font-bold text-gray-950 dark:text-white text-base sm:text-lg mb-1 tracking-tight">
                   {f.title}
                 </h4>
-                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed max-w-xl">
+                <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm leading-relaxed max-w-xl">
                   {f.text}
                 </p>
               </div>

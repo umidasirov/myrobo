@@ -32,59 +32,47 @@ export default function BlogComponents() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [blogsLoading, setBlogsLoading] = useState(false);
   const [catsLoading, setCatsLoading] = useState(false);
-  const [showEditor, setShowEditor] = useState(false);
+
   useEffect(() => {
     const fetchCategories = async () => {
       setCatsLoading(true);
       try {
-        // ✅ apiFetch bilan 401 avtomatik logout
         const res = await apiFetch("https://myrobo.uz/api/blog/categories/");
         setCategories(await res.json());
-      } catch (err) {
-        
-      } finally {
-        setCatsLoading(false);
-      }
+      } catch (err) {}
+      finally { setCatsLoading(false); }
     };
     fetchCategories();
   }, []);
-  const notif = notificationApi();
-  const token = localStorage.getItem('token')
-  const handleBlogAdd = () => {
-    if (!token) {
-      notif({ type: 'token' })
-    }
-    else {
-      navigate('/blog-qosh')
-    }
 
-  }
+  const notif = notificationApi();
+  const token = localStorage.getItem('token');
+  const handleBlogAdd = () => {
+    if (!token) { notif({ type: 'token' }); }
+    else { navigate('/blog-qosh'); }
+  };
+
   useEffect(() => {
     const fetchAll = async () => {
       setBlogsLoading(true);
       try {
-        // ✅ apiFetch bilan 401 avtomatik logout
         const res = await apiFetch("https://myrobo.uz/api/blog/blogs/");
         const data = await res.json();
         setAllBlogs(data);
         setBlogData(data);
-      } catch (err) {
-        
-      } finally {
-        setBlogsLoading(false);
-      }
+      } catch (err) {}
+      finally { setBlogsLoading(false); }
     };
     fetchAll();
   }, []);
+
   const fetchBySelected = useCallback(async (slugSet) => {
     if (slugSet.size === 0) {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
-        const filtered = allBlogs.filter((b) =>
-          b?.title?.toLowerCase().includes(query) ||
-          b?.description?.toLowerCase().includes(query)
-        );
-        setBlogData(filtered);
+        setBlogData(allBlogs.filter((b) =>
+          b?.title?.toLowerCase().includes(query) || b?.description?.toLowerCase().includes(query)
+        ));
       } else {
         setBlogData(allBlogs);
       }
@@ -102,39 +90,29 @@ export default function BlogComponents() {
       const merged = Object.values(
         results.flat().reduce((acc, b) => ({ ...acc, [b.id]: b }), {})
       );
-      
-      // Apply search filter to merged results
       let filtered = merged;
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         filtered = merged.filter((b) =>
-          b?.title?.toLowerCase().includes(query) ||
-          b?.description?.toLowerCase().includes(query)
+          b?.title?.toLowerCase().includes(query) || b?.description?.toLowerCase().includes(query)
         );
       }
       setBlogData(filtered);
-    } catch (err) {
-      
-    } finally {
-      setBlogsLoading(false);
-    }
+    } catch (err) {}
+    finally { setBlogsLoading(false); }
   }, [allBlogs, searchQuery]);
 
-  // Search effect
   useEffect(() => {
     if (selected.size === 0) {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
-        const filtered = allBlogs.filter((b) =>
-          b?.title?.toLowerCase().includes(query) ||
-          b?.description?.toLowerCase().includes(query)
-        );
-        setBlogData(filtered);
+        setBlogData(allBlogs.filter((b) =>
+          b?.title?.toLowerCase().includes(query) || b?.description?.toLowerCase().includes(query)
+        ));
       } else {
         setBlogData(allBlogs);
       }
     } else {
-      // Re-fetch with current selected and search query
       fetchBySelected(selected);
     }
   }, [searchQuery]);
@@ -155,189 +133,180 @@ export default function BlogComponents() {
   };
 
   const goTo = (slug) => {
-    if (!slug) {
-      console.warn("Blog slug is undefined");
-      return;
-    }
+    if (!slug) return;
     navigate(`/blog/${slug}`, { state: { name: slug } });
   };
-  
+
   return (
     <section className="w-full md:w-[90%] max-w-[1400px] mx-auto mt-6 md:mt-10 px-4 md:px-0 pb-16 md:pb-20">
-     <div className="mb-6 md:mb-8 flex flex-col gap-4 md:gap-6">
-  {/* Search Input - Mobile Icon / Desktop Full */}
-  <div className="flex flex-col gap-3">
-    {/* Desktop Search */}
-    <div className="hidden md:flex gap-3 md:gap-4">
-      <input
-        type="text"
-        placeholder="Maqola nomi yoki tavsifni izlang..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="flex-1 px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl border border-gray-200 text-sm md:text-base
-                   focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-      />
-      {(searchQuery || selected.size > 0) && (
-        <button
-          onClick={clearAll}
-          className="px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-medium text-red-400
-                     border-[1.5px] border-red-100 bg-red-50 hover:bg-red-100
-                     transition-all duration-200 whitespace-nowrap"
-        >
-          Tozalash
-        </button>
-      )}
-    </div>
+      <div className="mb-6 md:mb-8 flex flex-col gap-4 md:gap-6">
 
-    <div className="flex md:hidden gap-2">
-      {!isSearchOpen ? (
-        <button
-          onClick={() => setIsSearchOpen(true)}
-          className="w-full px-4 py-2.5 rounded-lg border border-gray-200 flex items-center justify-center gap-2
-                     hover:border-blue-400 hover:text-blue-600 transition-all"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <span className="text-sm">Izlash</span>
-        </button>
-      ) : (
-        <div className="flex gap-2 w-full">
-          <input
-            type="text"
-            autoFocus
-            placeholder="Maqola izlang..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm
-                       focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-          />
-          <button
-            onClick={() => {
-              setIsSearchOpen(false);
-              setSearchQuery("");
-            }}
-            className="px-3 py-2.5 rounded-lg border border-gray-200 flex items-center justify-center
-                       hover:border-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
-          >
-            ✕
-          </button>
+        {/* Search */}
+        <div className="flex flex-col gap-3">
+          <div className="hidden md:flex gap-3 md:gap-4">
+            <input
+              type="text"
+              placeholder="Maqola nomi yoki tavsifni izlang..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl border border-gray-200 dark:border-gray-600
+                         bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500
+                         focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all text-sm md:text-base"
+            />
+            {(searchQuery || selected.size > 0) && (
+              <button
+                onClick={clearAll}
+                className="px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-medium text-red-400
+                           border-[1.5px] border-red-100 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30
+                           transition-all duration-200 whitespace-nowrap"
+              >
+                Tozalash
+              </button>
+            )}
+          </div>
+
+          <div className="flex md:hidden gap-2">
+            {!isSearchOpen ? (
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center gap-2
+                           text-gray-600 dark:text-gray-300 hover:border-blue-400 hover:text-blue-600 transition-all bg-white dark:bg-gray-800"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="text-sm">Izlash</span>
+              </button>
+            ) : (
+              <div className="flex gap-2 w-full">
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder="Maqola izlang..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600
+                             bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500
+                             focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all text-sm"
+                />
+                <button
+                  onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }}
+                  className="px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center
+                             text-gray-500 dark:text-gray-400 hover:border-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  </div>
 
-  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
-    <div className="flex items-center gap-2">
-      <div className="h-0.5 md:h-[2px] flex-1 rounded-full bg-gradient-to-r from-blue-500 to-blue-400" />
-      <span className="whitespace-nowrap text-sm md:text-base font-medium text-gray-800">
-        Barcha maqolalar
-      </span>
-    </div>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
+          <div className="flex items-center gap-2">
+            <div className="h-0.5 md:h-[2px] flex-1 rounded-full bg-gradient-to-r from-blue-500 to-blue-400" />
+            <span className="whitespace-nowrap text-sm md:text-base font-medium text-gray-800 dark:text-gray-200">
+              Barcha maqolalar
+            </span>
+          </div>
 
-    <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
-      {!blogsLoading && (
-        <span className="text-xs md:text-sm text-gray-400">
-          {blogData.length} ta natija
-        </span>
-      )}
-
-      <button
-        onClick={() => handleBlogAdd()}
-        className="flex items-center justify-center gap-2 rounded-md bg-blue-500 px-3 md:px-4 py-2 text-xs md:text-sm text-white transition hover:bg-blue-600 active:scale-95"
-      >
-        Maqola qo'shish
-        <BiPencil />
-      </button>
-    </div>
-  </div>
-
-      {catsLoading ? (
-        <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
-          {[80, 100, 70, 90, 75].map((w, i) => (
-            <div key={i} className="h-7 md:h-8 rounded-full bg-blue-50 animate-pulse" style={{ width: w }} />
-          ))}
-        </div>
-      ) : categories.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
-
-          <button
-            onClick={clearAll}
-            className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium border-[1.5px] transition-all duration-200 whitespace-nowrap
-              ${selected.size === 0 && searchQuery === ""
-                ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200"
-                : "bg-white text-gray-500 border-gray-200 hover:border-blue-400 hover:text-blue-600"
-              }`}
-          >
-            Barchasi
-          </button>
-
-          {categories.map((cat) => (
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
+            {!blogsLoading && (
+              <span className="text-xs md:text-sm text-gray-400 dark:text-gray-500">
+                {blogData.length} ta natija
+              </span>
+            )}
             <button
-              key={cat.id}
-              onClick={() => handleSelect(cat.slug)}
-              className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium border-[1.5px] transition-all duration-200 whitespace-nowrap
-                ${selected.has(cat.slug)
-                  ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200"
-                  : "bg-white text-gray-500 border-gray-200 hover:border-blue-400 hover:text-blue-600"
-                }`}
+              onClick={() => handleBlogAdd()}
+              className="flex items-center justify-center gap-2 rounded-md bg-blue-500 hover:bg-blue-600 px-3 md:px-4 py-2 text-xs md:text-sm text-white transition active:scale-95"
             >
-              {cat.title}
+              Maqola qo'shish
+              <BiPencil />
             </button>
-          ))}
+          </div>
+        </div>
 
-          {selected.size > 0 && (
+        {catsLoading ? (
+          <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
+            {[80, 100, 70, 90, 75].map((w, i) => (
+              <div key={i} className="h-7 md:h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 animate-pulse" style={{ width: w }} />
+            ))}
+          </div>
+        ) : categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
             <button
               onClick={clearAll}
-              className="px-2 md:px-3 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium text-red-400
-                         border-[1.5px] border-red-100 bg-red-50 hover:bg-red-100
-                         transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
+              className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium border-[1.5px] transition-all duration-200 whitespace-nowrap
+                ${selected.size === 0 && searchQuery === ""
+                  ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                  : "bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-600 hover:border-blue-400 hover:text-blue-600"
+                }`}
             >
-              <span>×</span>
-              <span>Tozalash {selected.size}</span>
+              Barchasi
             </button>
-          )}
-        </div>
-      )}
 
-      {blogsLoading ? (
-        <SkeletonGrid />
-      ) : blogData.length === 0 ? (
-        <div className="flex flex-col items-center py-24 gap-3 text-gray-400">
-          <span className="text-5xl">📭</span>
-          <p className="text-[15px] font-semibold text-gray-700 mt-1">
-            Bu kategoriyada hech narsa topilmadi
-          </p>
-          <button
-            onClick={clearAll}
-            className="text-sm text-blue-500 underline underline-offset-4 hover:text-blue-700 transition-colors"
-          >
-            Filtrni tozalash
-          </button>
-        </div>
-      ) : (
-        <div className="grid gap-4 md:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {blogData.map((b) => (
-            <BlogCard key={b.id} blog={b} onClick={() => goTo(b.slug)} />
-          ))}
-        </div>
-      )}
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => handleSelect(cat.slug)}
+                className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium border-[1.5px] transition-all duration-200 whitespace-nowrap
+                  ${selected.has(cat.slug)
+                    ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                    : "bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-600 hover:border-blue-400 hover:text-blue-600"
+                  }`}
+              >
+                {cat.title}
+              </button>
+            ))}
+
+            {selected.size > 0 && (
+              <button
+                onClick={clearAll}
+                className="px-2 md:px-3 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium text-red-400
+                           border-[1.5px] border-red-100 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30
+                           transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
+              >
+                <span>×</span>
+                <span>Tozalash {selected.size}</span>
+              </button>
+            )}
+          </div>
+        )}
+
+        {blogsLoading ? (
+          <SkeletonGrid />
+        ) : blogData.length === 0 ? (
+          <div className="flex flex-col items-center py-24 gap-3 text-gray-400 dark:text-gray-500">
+            <span className="text-5xl">📭</span>
+            <p className="text-[15px] font-semibold text-gray-700 dark:text-gray-300 mt-1">
+              Bu kategoriyada hech narsa topilmadi
+            </p>
+            <button
+              onClick={clearAll}
+              className="text-sm text-blue-500 underline underline-offset-4 hover:text-blue-700 transition-colors"
+            >
+              Filtrni tozalash
+            </button>
+          </div>
+        ) : (
+          <div className="grid gap-4 md:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {blogData.map((b) => (
+              <BlogCard key={b.id} blog={b} onClick={() => goTo(b.slug)} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
 function BlogCard({ blog: b, onClick }) {
-  
   const stripHtml = (html = "") => {
     const div = document.createElement("div");
     div.innerHTML = html;
-
     div.querySelectorAll("img, video, iframe, figure").forEach((el) => el.remove());
-
     return (div.textContent || div.innerText || "").trim();
   };
-  
+
   return (
     <div
       onClick={(e) => {
@@ -345,11 +314,11 @@ function BlogCard({ blog: b, onClick }) {
         e.stopPropagation();
         if (onClick) onClick();
       }}
-      className="group bg-white rounded-xl md:rounded-2xl overflow-hidden border border-gray-100 cursor-pointer
-                 flex flex-col hover:-translate-y-1 md:hover:-translate-y-2 hover:shadow-lg md:hover:shadow-xl hover:shadow-blue-100
-                 hover:border-blue-100 transition-all duration-300"
+      className="group bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700 cursor-pointer
+                 flex flex-col hover:-translate-y-1 md:hover:-translate-y-2 hover:shadow-lg md:hover:shadow-xl hover:shadow-blue-100 dark:hover:shadow-blue-900/20
+                 hover:border-blue-100 dark:hover:border-blue-700 transition-all duration-300"
     >
-      <div className="relative h-40 md:h-48 overflow-hidden bg-blue-50">
+      <div className="relative h-40 md:h-48 overflow-hidden bg-blue-50 dark:bg-gray-700">
         <img
           src={b.img}
           alt={b.title}
@@ -368,12 +337,13 @@ function BlogCard({ blog: b, onClick }) {
       </div>
 
       <div className="flex flex-col gap-2 p-3 md:p-4 flex-1">
-        <h3 className="text-sm md:text-base font-bold text-gray-900 leading-snug line-clamp-2">
+        <h3 className="text-sm md:text-base font-bold text-gray-900 dark:text-white leading-snug line-clamp-2">
           {b.title}
         </h3>
-        <p className="text-xs md:text-sm text-gray-400 line-clamp-2 flex-1 leading-relaxed">
-          {truncate(stripHtml(b.description), 15)}</p>
-        <div className="flex items-center gap-3 md:gap-4 pt-2 md:pt-3 mt-auto border-t border-gray-100">
+        <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 line-clamp-2 flex-1 leading-relaxed">
+          {truncate(stripHtml(b.description), 15)}
+        </p>
+        <div className="flex items-center gap-3 md:gap-4 pt-2 md:pt-3 mt-auto border-t border-gray-100 dark:border-gray-700">
           <MetaItem icon={<EyeOutlined />} label={b.views ?? 0} />
           <MetaItem icon={<CalendarOutlined />} label={formatDate(b.created_at)} />
         </div>
@@ -388,7 +358,7 @@ function MetaItem({ icon, label }) {
       <div className="w-4 md:w-5 h-4 md:h-5 rounded-full flex items-center justify-center text-blue-500 text-xs md:text-sm flex-shrink-0">
         {icon}
       </div>
-      <span className="text-[10px] md:text-xs text-gray-400 truncate">{label}</span>
+      <span className="text-[10px] md:text-xs text-gray-400 dark:text-gray-500 truncate">{label}</span>
     </div>
   );
 }
@@ -397,15 +367,15 @@ function SkeletonGrid() {
   return (
     <div className="grid gap-4 md:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {[...Array(8)].map((_, i) => (
-        <div key={i} className="rounded-xl md:rounded-2xl bg-white border border-gray-100 overflow-hidden animate-pulse">
-          <div className="h-40 md:h-48 bg-blue-50" />
+        <div key={i} className="rounded-xl md:rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden animate-pulse">
+          <div className="h-40 md:h-48 bg-blue-50 dark:bg-gray-700" />
           <div className="p-3 md:p-4 flex flex-col gap-2 md:gap-3">
-            <div className="h-2 md:h-3 w-2/5 bg-blue-50 rounded-full" />
-            <div className="h-3 md:h-4 w-full bg-gray-100 rounded-full" />
-            <div className="h-3 md:h-4 w-3/4 bg-gray-100 rounded-full" />
-            <div className="flex gap-2 md:gap-3 pt-2 border-t border-gray-100 mt-1">
-              <div className="h-2 md:h-3 w-12 md:w-14 bg-blue-50 rounded-full" />
-              <div className="h-2 md:h-3 w-16 md:w-20 bg-blue-50 rounded-full" />
+            <div className="h-2 md:h-3 w-2/5 bg-blue-50 dark:bg-gray-700 rounded-full" />
+            <div className="h-3 md:h-4 w-full bg-gray-100 dark:bg-gray-700 rounded-full" />
+            <div className="h-3 md:h-4 w-3/4 bg-gray-100 dark:bg-gray-700 rounded-full" />
+            <div className="flex gap-2 md:gap-3 pt-2 border-t border-gray-100 dark:border-gray-700 mt-1">
+              <div className="h-2 md:h-3 w-12 md:w-14 bg-blue-50 dark:bg-gray-700 rounded-full" />
+              <div className="h-2 md:h-3 w-16 md:w-20 bg-blue-50 dark:bg-gray-700 rounded-full" />
             </div>
           </div>
         </div>

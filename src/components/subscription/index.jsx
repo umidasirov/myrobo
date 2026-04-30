@@ -34,6 +34,22 @@ function SubscriptionOferta() {
           -webkit-font-smoothing: antialiased;
         }
 
+        html.dark .oferta-root {
+          --ink: #e5e7eb;
+          --ink-light: #d1d5db;
+          --ink-muted: #9ca3af;
+          --paper: #111827;
+          --paper-warm: #1f2937;
+          --accent: #3b82f6;
+          --accent-dark: #60a5fa;
+          --border: #374151;
+          --border-strong: #4b5563;
+          --highlight: #1e3a5f;
+          --section-bg: #1f2937;
+          background: #111827;
+          color: #e5e7eb;
+        }
+
         .oferta-container {
           max-width: 820px;
           margin: 0 auto;
@@ -240,7 +256,6 @@ function SubscriptionOferta() {
 
           <div className="oferta-divider">• • •</div>
 
-          {/* ===== 1. ATAMALAR ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">1</span>Atamalar va ta'riflar
@@ -248,8 +263,7 @@ function SubscriptionOferta() {
             <p className="oferta-p">
               <span className="oferta-term">«Platforma»</span> — «INFINITE CO» MCHJ
               tomonidan boshqariladigan, https://myrobo.uz domen manzilida joylashgan
-              veb-sayt hamda tegishli mobil ilovalar majmui bo'lib, dasturlash va
-              axborot texnologiyalari sohasida onlayn ta'lim xizmatlarini taqdim etadi.
+              veb-sayt hamda tegishli mobil ilovalar majmui.
             </p>
             <p className="oferta-p">
               <span className="oferta-term">«Foydalanuvchi»</span> — ushbu oferta
@@ -262,120 +276,59 @@ function SubscriptionOferta() {
               muddat yoki muddatsiz kirish huquqini beruvchi pullik xizmat.
             </p>
             <p className="oferta-p">
-              <span className="oferta-term">«Kurs»</span> — dasturlash, veb-dizayn,
-              mobil ilova ishlab chiqish, bulutli texnologiyalar va boshqa IT fanlar
-              bo'yicha Platformada joylashtirilgan video darslar, amaliy topshiriqlar
-              va qo'shimcha o'quv materiallari majmui.
-            </p>
-            <p className="oferta-p">
-              <span className="oferta-term">«Rozilig bildiris»</span> — Foydalanuvchining
-              Platformadagi «Roziman» tugmasini bosishi yoki to'lovni amalga oshirishi
-              orqali ushbu oferta shartlariga to'liq va so'zsiz rozilik bildirishi.
-            </p>
-            <p className="oferta-p">
-              <span className="oferta-term">«Shaxsiy kabinet»</span> — Foydalanuvchiga
-              tegishli bo'lgan, obuna holatini boshqarish, ta'lim jarayonini kuzatish
-              va sozlamalarni o'zgartirish imkonini beruvchi shaxsiy sahifa.
+              <span className="oferta-term">«Kurs»</span> — dasturlash va boshqa IT fanlar
+              bo'yicha Platformada joylashtirilgan video darslar va materiallar majmui.
             </p>
           </section>
 
-          {/* ===== 2. UMUMIY QOIDALAR ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">2</span>Umumiy qoidalar
             </h2>
             <p className="oferta-p">
               2.1. Ushbu shartnoma Foydalanuvchi aksept harakatini amalga oshirgan
-              paytdan boshlab kuchga kiradi va tanlangan obuna muddati tugaguniga
-              qadar yoki tomonlardan biri tomonidan bekor qilinguniga qadar amal
-              qiladi.
+              paytdan boshlab kuchga kiradi.
             </p>
             <p className="oferta-p">
               2.2. Foydalanuvchi «Roziman» tugmasini bosishi yoki birinchi to'lovni
-              amalga oshirishi ushbu shartnomaning barcha bandlariga to'liq va
-              so'zsiz rozilik bildirish hisoblanadi.
+              amalga oshirishi ushbu shartnomaning barcha bandlariga to'liq rozilik bildirish hisoblanadi.
             </p>
             <p className="oferta-p">
               2.3. Kompaniya ushbu oferta shartlarini istalgan vaqtda bir tomonlama
-              o'zgartirish huquqini o'zida saqlab qoladi. O'zgartirishlar Platformada
-              e'lon qilingan paytdan boshlab kuchga kiradi. Faol obunaga ega
-              Foydalanuvchilar uchun o'zgartirishlar joriy obuna muddati tugaganidan
-              keyin qo'llaniladi.
-            </p>
-            <p className="oferta-p">
-              2.4. Platformadan foydalanish O'zbekiston Respublikasi amaldagi
-              qonunchiligiga muvofiq tartibga solinadi.
+              o'zgartirish huquqini o'zida saqlab qoladi.
             </p>
           </section>
 
-          {/* ===== 3. OBUNA TURLARI ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">3</span>Obuna turlari va narxlar
             </h2>
-            <p className="oferta-p">
-              3.1. Platformada quyidagi obuna turlari mavjud:
-            </p>
+            <p className="oferta-p">3.1. Platformada quyidagi obuna turlari mavjud:</p>
             <div className="oferta-highlight-box">
               <p className="oferta-p" style={{ marginBottom: "0.5rem" }}>
                 <span className="oferta-term">Oylik obuna</span> — Platformadagi
-                barcha kurslar va ta'lim materiallariga 30 (o'ttiz) kalendar kun
-                davomida cheksiz kirish huquqi.
+                barcha kurslar va ta'lim materiallariga 30 kalendar kun davomida kirish huquqi.
               </p>
               <p className="price">Narxi: 200 000 (ikki yuz ming) so'm / oy</p>
             </div>
-            <p className="oferta-p">
-              3.2. Kompaniya kelajakda qo'shimcha tarif rejalarini (yillik, lifetime
-              va boshqalar) joriy etish huquqini o'zida saqlab qoladi. Yangi tarif
-              rejalari Platformada alohida e'lon qilinadi.
-            </p>
-            <p className="oferta-p">
-              3.3. Obuna faollashtirilgan paytdan boshlab Foydalanuvchi tanlangan
-              tarif rejasiga mos ravishda barcha mavjud kurslar, video darslar,
-              amaliy topshiriqlar va qo'shimcha materiallardan foydalanish
-              imkoniyatiga ega bo'ladi.
-            </p>
           </section>
 
-          {/* ===== 4. TO'LOV ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">4</span>To'lov tartibi va avtomatik yechib olish
             </h2>
             <p className="oferta-p">
               4.1. Oylik obuna uchun to'lov Foydalanuvchining bank kartasidan har
-              oyning tegishli sanasida <span className="oferta-term">avtomatik
-              ravishda</span> yechib olinadi. Birinchi to'lov obuna rasmiylashtirish
-              vaqtida amalga oshiriladi.
+              oyning tegishli sanasida <span className="oferta-term">avtomatik ravishda</span> yechib olinadi.
             </p>
             <p className="oferta-p">
-              4.2. Foydalanuvchi obunani istalgan vaqtda Shaxsiy kabinet sozlamalari
-              orqali bekor qilish huquqiga ega. Bekor qilish arizasi qabul
-              qilingandan so'ng, joriy to'langan davrning oxirigacha xizmatdan
-              foydalanish huquqi saqlanadi va keyingi davrda avtomatik yechib olish
-              to'xtatiladi.
+              4.2. Foydalanuvchi obunani istalgan vaqtda Shaxsiy kabinet orqali bekor qilish huquqiga ega.
             </p>
             <p className="oferta-p">
-              4.3. Barcha to'lovlar SSL/TLS shifrlash texnologiyasi orqali
-              himoyalangan xavfsiz kanal bo'ylab amalga oshiriladi. Foydalanuvchining
-              bank karta ma'lumotlari Kompaniya serverlarida saqlanmaydi —
-              to'lovlar litsenziyalangan to'lov provayderlari orqali qayta ishlanadi.
-            </p>
-            <p className="oferta-p">
-              4.4. To'lov amalga oshirilmasligi (kartada mablag' yetishmasligi,
-              kartaning muddati tugashi va h.k.) oqibatida obuna avtomatik ravishda
-              to'xtatiladi. Foydalanuvchi to'lov ma'lumotlarini yangilagan holda
-              obunani qayta faollashtirishi mumkin.
-            </p>
-            <p className="oferta-p">
-              4.5. To'lov O'zbekiston so'mida (UZS) amalga oshiriladi. Kompaniya
-              narxlarni o'zgartirish huquqini o'zida saqlab qoladi. Narx
-              o'zgarishi haqida Foydalanuvchi kamida 10 (o'n) kalendar kun oldin
-              xabardor qilinadi.
+              4.3. Barcha to'lovlar SSL/TLS shifrlash texnologiyasi orqali himoyalangan.
             </p>
           </section>
 
-          {/* ===== 5. QAYTARISH ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">5</span>Qaytarish siyosati
@@ -387,170 +340,66 @@ function SubscriptionOferta() {
             </p>
             <p className="oferta-p">
               5.2. Qaytarish arizasi{" "}
-              <a
-                href="mailto:support@myrobo.uz"
-                style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}
-              >
+              <a href="mailto:support@myrobo.uz" style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
                 support@myrobo.uz
               </a>{" "}
               elektron pochta manziliga yoki Shaxsiy kabinet orqali yuboriladi.
             </p>
-            <p className="oferta-p">
-              5.3. Ariza qabul qilinganidan so'ng, to'lov summasi 5 (besh) ish
-              kuni ichida Foydalanuvchining bank kartasiga qaytariladi.
-            </p>
-            <p className="oferta-p">
-              5.4. Qaytarish faqat birinchi obuna davri uchun amal qiladi. Keyingi
-              davrlar uchun yechib olingan to'lovlar qaytarilmaydi, biroq
-              Foydalanuvchi istalgan vaqtda keyingi davr uchun avtomatik yechib
-              olishni bekor qilishi mumkin (4.2-band).
-            </p>
           </section>
 
-          {/* ===== 6. MUALLIFLIK HUQUQI ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">6</span>Intellektual mulk va mualliflik huquqi
             </h2>
             <p className="oferta-p">
-              6.1. Platformada joylashtirilgan barcha ta'lim materiallari — jumladan,
-              video darslar, dasturiy kodlar, matnli qo'llanmalar, grafik
-              materiallar, dizayn elementlari va boshqa kontent — Kompaniyaning
-              intellektual mulki hisoblanadi va O'zbekiston Respublikasining
-              «Mualliflik huquqi va turdosh huquqlar to'g'risida»gi Qonuni bilan
-              himoyalangan.
-            </p>
-            <p className="oferta-p">
-              6.2. Foydalanuvchiga Platformadagi materiallardan{" "}
-              <span className="oferta-term">faqat shaxsiy ta'lim maqsadida</span>{" "}
-              foydalanish huquqi beriladi. Quyidagi harakatlar qat'iyan taqiqlanadi:
+              6.1. Platformada joylashtirilgan barcha ta'lim materiallari Kompaniyaning
+              intellektual mulki hisoblanadi.
             </p>
             <ul className="oferta-list">
-              <li>
-                Ta'lim materiallarini to'liq yoki qisman nusxalash, ko'chirish
-                yoki boshqa platformalarga joylashtirish
-              </li>
-              <li>
-                Video darslar, kodlar yoki boshqa materiallarni uchinchi shaxslarga
-                tarqatish, sotish yoki ijaraga berish
-              </li>
-              <li>
-                Platformadagi kontentni tijorat maqsadlarida ishlatish yoki qayta
-                ishlash
-              </li>
-              <li>
-                Materiallarni ekran yozuvi (screen recording) yoki boshqa texnik
-                vositalar yordamida ro'yxatga olish va tarqatish
-              </li>
+              <li>Ta'lim materiallarini to'liq yoki qisman nusxalash taqiqlanadi</li>
+              <li>Video darslarni uchinchi shaxslarga tarqatish taqiqlanadi</li>
+              <li>Platformadagi kontentni tijorat maqsadlarida ishlatish taqiqlanadi</li>
             </ul>
-            <p className="oferta-p">
-              6.3. Mualliflik huquqi buzilgan taqdirda Kompaniya Foydalanuvchining
-              akkauntini ogohlantirmasdan bloklash va amaldagi qonunchilikka
-              muvofiq huquqiy choralar ko'rish huquqiga ega.
-            </p>
           </section>
 
-          {/* ===== 7. FOYDALANUVCHI MAJBURIYATLARI ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">7</span>Foydalanuvchining majburiyatlari
             </h2>
             <ul className="oferta-list">
-              <li>
-                Ro'yxatdan o'tishda to'g'ri va ishonchli shaxsiy ma'lumotlarni
-                taqdim etish hamda ularni dolzarb holatda saqlash
-              </li>
-              <li>
-                Akkaunt kirish ma'lumotlarini (login va parol) maxfiy saqlash va
-                uchinchi shaxslarga bermash. Akkauntdan ruxsatsiz foydalanish
-                oqibatlari uchun Foydalanuvchi to'liq javobgar
-              </li>
-              <li>
-                Platformadagi ta'lim materiallaridan faqat shaxsiy ta'lim
-                maqsadlarida foydalanish va ularni tarqatmaslik
-              </li>
-              <li>
-                Platforma ishiga xalaqit beruvchi harakatlarni amalga oshirmaslik
-                (hacking, DDoS hujumlari, botlar va h.k.)
-              </li>
-              <li>
-                Ushbu shartnoma shartlariga va O'zbekiston Respublikasi amaldagi
-                qonunchiligiga rioya qilish
-              </li>
-              <li>
-                Obuna uchun to'lovlarni o'z vaqtida amalga oshirish
-              </li>
+              <li>Ro'yxatdan o'tishda to'g'ri shaxsiy ma'lumotlarni taqdim etish</li>
+              <li>Akkaunt kirish ma'lumotlarini maxfiy saqlash</li>
+              <li>Platformadagi ta'lim materiallaridan faqat shaxsiy maqsadda foydalanish</li>
+              <li>Platforma ishiga xalaqit beruvchi harakatlarni amalga oshirmaslik</li>
+              <li>Obuna uchun to'lovlarni o'z vaqtida amalga oshirish</li>
             </ul>
           </section>
 
-          {/* ===== 8. KOMPANIYA MAJBURIYATLARI ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">8</span>Kompaniyaning majburiyatlari
             </h2>
             <ul className="oferta-list">
-              <li>
-                Faol obunaga ega Foydalanuvchiga tanlangan tarif rejasi doirasida
-                barcha ta'lim materiallariga to'siqsiz kirish imkoniyatini
-                ta'minlash
-              </li>
-              <li>
-                Platformaning barqaror ishlashini ta'minlash va texnik nosozliklarni
-                imkon qadar qisqa muddatda bartaraf etish
-              </li>
-              <li>
-                Ta'lim kontentini muntazam yangilash va sifatini oshirish
-              </li>
-              <li>
-                Foydalanuvchining shaxsiy ma'lumotlarini O'zbekiston Respublikasining
-                «Shaxsiy ma'lumotlar to'g'risida»gi Qonuniga muvofiq himoya qilish
-              </li>
-              <li>
-                Foydalanuvchilarning texnik va tashkiliy murojatlariga ish
-                kunlarida 24 soat ichida javob berish
-              </li>
-              <li>
-                To'lov qayta ishlash xavfsizligini ta'minlash va karta
-                ma'lumotlarini saqlamslik
-              </li>
+              <li>Faol obunaga ega Foydalanuvchiga barcha ta'lim materiallariga kirish imkoniyatini ta'minlash</li>
+              <li>Platformaning barqaror ishlashini ta'minlash</li>
+              <li>Ta'lim kontentini muntazam yangilash</li>
+              <li>Foydalanuvchining shaxsiy ma'lumotlarini himoya qilish</li>
             </ul>
           </section>
 
-          {/* ===== 9. JAVOBGARLIK ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">9</span>Javobgarlik va javobgarlikni cheklash
             </h2>
             <p className="oferta-p">
-              9.1. Kompaniya Platformaga uzluksiz va xatosiz kirish imkoniyatini
-              kafolatlamaydi. Texnik xizmat ko'rsatish, yangilash yoki fors-major
-              holatlari sababli xizmatda vaqtinchalik uzilishlar bo'lishi mumkin.
-              Rejalashtirilgan texnik ishlar haqida Foydalanuvchilar oldindan
-              xabardor qilinadi.
+              9.1. Kompaniya Platformaga uzluksiz kirish imkoniyatini kafolatlamaydi.
             </p>
             <p className="oferta-p">
-              9.2. Kompaniya Foydalanuvchining Platformadagi bilimlarni amalda
-              qo'llashi natijasida yuzaga keladigan oqibatlar uchun javobgar
-              emas.
-            </p>
-            <p className="oferta-p">
-              9.3. Foydalanuvchi o'z akkauntida amalga oshirilgan barcha harakatlar
+              9.2. Foydalanuvchi o'z akkauntida amalga oshirilgan barcha harakatlar
               uchun to'liq javobgarlikni o'z zimmasiga oladi.
-            </p>
-            <p className="oferta-p">
-              9.4. Tomonlar o'rtasida yuzaga keladigan nizolar muzokaralar yo'li
-              bilan hal etiladi. Kelishuvga erishilmagan taqdirda, nizo
-              O'zbekiston Respublikasi sudlari tomonidan amaldagi qonunchilikka
-              muvofiq ko'rib chiqiladi.
-            </p>
-            <p className="oferta-p">
-              9.5. Kompaniya Foydalanuvchi tomonidan ushbu shartnoma shartlari
-              buzilgan taqdirda obunani to'xtatish va akkauntni bloklash huquqiga
-              ega.
             </p>
           </section>
 
-          {/* ===== 10. YAKUNIY QOIDALAR ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">
               <span className="num">10</span>Yakuniy qoidalar
@@ -563,20 +412,10 @@ function SubscriptionOferta() {
               10.2. Shartnomada nazarda tutilmagan masalalar O'zbekiston
               Respublikasining amaldagi qonunchiligiga muvofiq tartibga solinadi.
             </p>
-            <p className="oferta-p">
-              10.3. Ushbu shartnomaning alohida bandlari yaroqsiz deb topilgan
-              taqdirda, qolgan bandlar o'z kuchini saqlab qoladi.
-            </p>
-            <p className="oferta-p">
-              10.4. Kompaniya ushbu oferta matnini istalgan vaqtda yangilash
-              huquqini o'zida saqlab qoladi. Yangilangan matn Platformada
-              joylashtirilgan paytdan boshlab kuchga kiradi.
-            </p>
           </section>
 
           <div className="oferta-divider">• • •</div>
 
-          {/* ===== KOMPANIYA MA'LUMOTLARI ===== */}
           <section className="oferta-section">
             <h2 className="oferta-section-title">Kompaniya rekvizitlari</h2>
             <p className="oferta-p">
@@ -585,34 +424,21 @@ function SubscriptionOferta() {
             </p>
             <p className="oferta-p">
               <span className="oferta-term">Platforma:</span>{" "}
-              <a
-                href="https://myrobo.uz"
-                style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}
-              >
+              <a href="https://myrobo.uz" style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
                 https://myrobo.uz
               </a>
             </p>
             <p className="oferta-p">
               <span className="oferta-term">Elektron pochta:</span>{" "}
-              <a
-                href="mailto:support@myrobo.uz"
-                style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}
-              >
+              <a href="mailto:support@myrobo.uz" style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
                 support@myrobo.uz
               </a>
             </p>
-            <p className="oferta-p">
-              <span className="oferta-term">Bank:</span> O'zmilliybank
-            </p>
-            <p className="oferta-p">
-              <span className="oferta-term">MFO:</span> 00450
-            </p>
-            <p className="oferta-p">
-              <span className="oferta-term">Hisob raqami:</span> 20208000105575324001
-            </p>
+            <p className="oferta-p"><span className="oferta-term">Bank:</span> O'zmilliybank</p>
+            <p className="oferta-p"><span className="oferta-term">MFO:</span> 00450</p>
+            <p className="oferta-p"><span className="oferta-term">Hisob raqami:</span> 20208000105575324001</p>
           </section>
 
-          {/* ===== FOOTER ===== */}
           <footer className="oferta-footer">
             <p style={{ marginBottom: "0.5rem" }}>
               Savollar yoki murojaatlar uchun:{" "}
