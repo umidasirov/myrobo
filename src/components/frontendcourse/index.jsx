@@ -12,7 +12,7 @@ import CodeEditor from "../codeEditor";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCourseAccess } from "../../hooks/useCourseAccess";
 import { Helmet } from "react-helmet-async";
-
+import { Progress } from "antd"; // Progress qo'shildi
 const BASE_URL = "https://myrobo.uz/api";
 
 function Skeleton({ className = "" }) {
@@ -237,6 +237,25 @@ const FrontendCourse = () => {
     []
   );
 
+  // Mavzuni tugatilgan deb belgilash funksiyasi
+  const markAsCompleted = async (topicId) => {
+    try {
+      await fetch(`${BASE_URL}/courses/topics/${topicId}/complete/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      // Ro'yxatni yangilash (galka chiqishi uchun)
+      if (selectedSection) {
+        fetchTopicsForSection(selectedSection.id);
+      }
+    } catch (err) {
+      console.error("Progressni saqlashda xatolik:", err);
+    }
+  };
+
   const [videoOtp, setVideoOtp] = useState(null);
 
   const fetchVideoOtp = async (topicId) => {
@@ -370,6 +389,7 @@ const FrontendCourse = () => {
             ) : (
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 w-full bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-transparent dark:border-gray-700">
                 {courseData?.title || "Kurs"}
+
               </h1>
             )}
           </div>
@@ -383,65 +403,91 @@ const FrontendCourse = () => {
               ) : sections.length === 0 ? (
                 <EmptySections />
               ) : (
-                <div className="space-y-1">
-                  {sections.map((section) => (
-                    <div key={section.id}>
-                      {/* Bo'lim sarlavhasi */}
-                      <div
-                        className={`flex items-center p-2 rounded cursor-pointer transition-colors
-                          hover:bg-blue-50 dark:hover:bg-blue-900/20
-                          ${selectedSection?.id === section.id
-                            ? "bg-blue-100 dark:bg-blue-900/30 font-medium"
-                            : ""
-                          }`}
-                        onClick={() => handleSectionClick(section)}
-                      >
-                        <PlayCircleFilled className="text-blue-500 mr-2 flex-shrink-0" />
-                        <span className="text-sm text-gray-800 dark:text-gray-200 leading-snug">
-                          {section.title}
-                        </span>
-                      </div>
+                <div className="flex flex-col gap-4">
 
-                      {/* Mavzular ro'yxati */}
-                      {expandedSection === section.id && (
-                        <div className="ml-5 space-y-0.5 mt-0.5">
-                          {!topicsMap[section.id] ? (
-                            <div className="space-y-1 py-1">
-                              <Skeleton className="h-7 w-full rounded" />
-                              <Skeleton className="h-7 w-4/5 rounded" />
-                              <Skeleton className="h-7 w-3/5 rounded" />
-                            </div>
-                          ) : topicsMap[section.id].length === 0 ? (
-                            <p className="text-xs text-gray-400 dark:text-gray-500 py-2 px-2">
-                              Mavzular yo'q
-                            </p>
-                          ) : (
-                            topicsMap[section.id].map((topic) => (
-                              <div
-                                key={topic.id}
-                                className={`flex items-center p-2 rounded cursor-pointer transition-colors
-                                  hover:bg-blue-50 dark:hover:bg-blue-900/20
-                                  ${selectedTopic?.id === topic.id
-                                    ? "bg-blue-200 dark:bg-blue-800/50 font-medium"
-                                    : ""
-                                  }`}
-                                onClick={() => handleTopicClick(topic)}
-                              >
-                                {topic.topic_type !== "code" ? (
-                                  <PlayCircleFilled className="text-blue-400 mr-2 flex-shrink-0" />
-                                ) : (
-                                  <CodeOutlined className="text-green-500 mr-2 flex-shrink-0" />
-                                )}
-                                <span className="text-xs md:text-sm text-gray-700 dark:text-gray-300 leading-snug">
-                                  {topic.title}
-                                </span>
-                              </div>
-                            ))
-                          )}
-                        </div>
-                      )}
+                  {/* 1. Ixcham Progress Bar (Sidebar tepasida) */}
+                  <div className="pb-4 border-b border-gray-100 dark:border-gray-700">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        O'zlashtirish
+                      </span>
+                      <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                        {courseData?.progress_percentage || 0}%
+                      </span>
                     </div>
-                  ))}
+                    {/* Tailwind Progress Bar */}
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-gradient-to-r from-blue-500 to-green-500 h-full transition-all duration-500 ease-out"
+                        style={{ width: `${courseData?.progress_percentage || 0}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* 2. Bo'limlar va Mavzular ro'yxati */}
+                  <div className="space-y-1">
+                    {sections.map((section) => (
+                      <div key={section.id} className="mb-1">
+                        {/* Bo'lim sarlavhasi */}
+                        <div
+                          className={`flex items-center p-2.5 rounded-lg cursor-pointer transition-all duration-200
+                ${selectedSection?.id === section.id
+                              ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 shadow-sm"
+                              : "hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
+                            }`}
+                          onClick={() => handleSectionClick(section)}
+                        >
+                          <PlayCircleFilled className={`mr-2.5 flex-shrink-0 ${selectedSection?.id === section.id ? "text-blue-600" : "text-gray-400"}`} />
+                          <span className="text-sm font-medium leading-tight">
+                            {section.title}
+                          </span>
+                        </div>
+
+                        {/* Mavzular (Dropdown) */}
+                        {expandedSection === section.id && (
+                          <div className="ml-4 pl-2 border-l border-gray-100 dark:border-gray-700 mt-1 space-y-1">
+                            {!topicsMap[section.id] ? (
+                              <div className="py-2 space-y-2">
+                                <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded w-full animate-pulse" />
+                                <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded w-4/5 animate-pulse" />
+                              </div>
+                            ) : topicsMap[section.id].length === 0 ? (
+                              <p className="text-[11px] text-gray-400 dark:text-gray-500 py-2">
+                                Mavzular yuklanmagan
+                              </p>
+                            ) : (
+                              topicsMap[section.id].map((topic) => (
+                                <div
+                                  key={topic.id}
+                                  className={`group flex items-center p-2 rounded-md cursor-pointer transition-all
+                        ${selectedTopic?.id === topic.id
+                                      ? "bg-white dark:bg-gray-700 shadow-sm ring-1 ring-gray-200 dark:ring-gray-600"
+                                      : "hover:bg-gray-50 dark:hover:bg-gray-700/30 text-gray-600 dark:text-gray-400"
+                                    }`}
+                                  onClick={() => handleTopicClick(topic)}
+                                >
+                                  {/* Progress Ikonkasi: mantiq to'g'irlandi */}
+                                  <div className="mr-2.5 flex-shrink-0">
+                                    {topic.is_completed ? (
+                                      <CheckCircleFilled className="text-green-500 text-sm" />
+                                    ) : topic.topic_type === "code" ? (
+                                      <CodeOutlined className="text-blue-400 text-sm" />
+                                    ) : (
+                                      <PlayCircleFilled className="text-gray-300 group-hover:text-blue-400 text-sm transition-colors" />
+                                    )}
+                                  </div>
+
+                                  <span className={`text-[13px] leading-snug ${selectedTopic?.id === topic.id ? "font-semibold text-gray-900 dark:text-white" : ""}`}>
+                                    {topic.title}
+                                  </span>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -450,6 +496,7 @@ const FrontendCourse = () => {
             <div className="w-full lg:w-3/4">
 
               {/* Bo'sh holat */}
+
               {!sectionsLoading && sections.length === 0 ? (
                 <div className="mb-6 shadow bg-white dark:bg-gray-800 rounded-lg p-6 border border-transparent dark:border-gray-700">
                   <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
@@ -632,8 +679,8 @@ const FrontendCourse = () => {
                       {submitResult && (
                         <div
                           className={`mx-4 mb-4 p-4 rounded-lg flex items-start gap-3 ${submitResult.status === "accepted"
-                              ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400"
-                              : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400"
+                            ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400"
+                            : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400"
                             }`}
                         >
                           <span className="text-lg font-bold">
