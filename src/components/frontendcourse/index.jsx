@@ -14,14 +14,14 @@ import { useCourseAccess } from "../../hooks/useCourseAccess";
 import { Helmet } from "react-helmet-async";
 import { Progress } from "antd"; // Progress qo'shildi
 const BASE_URL = "https://myrobo.uz/api";
-
+import KinescopePlayer from '@kinescope/react-kinescope-player';
 function Skeleton({ className = "" }) {
   return (
     <div className={`bg-gray-200 dark:bg-gray-700 rounded animate-pulse ${className}`} />
   );
 }
 
-function VdoCipherPlayer({ otp, playbackInfo }) {
+function Kinoscope({ otp, playbackInfo }) {
   if (!otp || !playbackInfo)
     return (
       <div className="w-full aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
@@ -30,22 +30,8 @@ function VdoCipherPlayer({ otp, playbackInfo }) {
     );
 
   return (
-    <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
-      <iframe
-        key={otp}
-        src={`https://player.vdocipher.com/v2/?otp=${otp}&playbackInfo=${playbackInfo}`}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          borderRadius: "8px",
-          border: "none",
-        }}
-        allow="encrypted-media"
-        allowFullScreen
-      />
+    <div className="rounded-lg overflow-hidden relative w-full h-full bg-[#1E1E1E]">
+      <KinescopePlayer videoId={`oZ1h78FPcFUFAc9vTTenHR`} title='Salom' language='ru' />
     </div>
   );
 }
@@ -586,8 +572,8 @@ const FrontendCourse = () => {
                     <div className="p-4 md:p-5">
                       {/* Video player */}
                       {videoOtp?.otp && videoOtp?.playbackInfo && (
-                        <div className="mb-4">
-                          <VdoCipherPlayer
+                        <div className="w-full aspect-video rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-800">
+                          <Kinoscope
                             otp={videoOtp.otp}
                             playbackInfo={videoOtp.playbackInfo}
                           />

@@ -40,13 +40,13 @@ function Navbar() {
 const userMenu = (
   <Menu
     theme={theme === "dark" ? "dark" : "light"}
-    className="dark:!bg-gray-900 dark:!text-white"
+    className="dark:!bg-gray-900 dark:!text-white w-[150px] p-8"
   >
     <Menu.Item
       key="1"
       icon={<BookOutlined />}
       onClick={() => navigate("/my-courses")}
-      className="dark:!text-gray-200 dark:hover:!bg-gray-800"
+      className="dark:!text-gray-200 dark:hover:!bg-gray-800 text-md"
     >
       Kurslarim
     </Menu.Item>
@@ -55,7 +55,7 @@ const userMenu = (
       key="2"
       icon={<UserOutlined />}
       onClick={() => navigate("/profilim")}
-      className="dark:!text-gray-200 dark:hover:!bg-gray-800"
+      className="dark:!text-gray-200 dark:hover:!bg-gray-800 text-md"
     >
       Profilim
     </Menu.Item>
@@ -66,7 +66,7 @@ const userMenu = (
       key="3"
       icon={<LogoutOutlined />}
       onClick={handleLogout}
-      className="dark:!text-red-400 dark:hover:!bg-gray-800"
+      className="dark:!text-red-400 dark:hover:!bg-gray-800 text-md"
     >
       Chiqish
     </Menu.Item>

@@ -5,12 +5,13 @@ import Footer from "../footer";
 import { Helmet } from 'react-helmet-async';
 import ScrollToTop from "../../top";
 import { useData } from "../../datacontect";
+import AdminPanel from "../../pages/admin";
 function Layout() {
   const location = useLocation();
     useEffect(() => {
 
   },[])
-  const hideLayout = location.pathname === '/subscription' || location.pathname === '/login';
+  const hideLayout = location.pathname === '/subscription' || location.pathname === '/login' || location.pathname === '/admin';
   return (
     <>
       <Helmet>
@@ -19,7 +20,7 @@ function Layout() {
         <meta name="author" content="MyRobo" />
         <meta property="og:site_name" content="MyRobo" />
       </Helmet>
-      {!hideLayout && <Navbar />}
+      {!hideLayout && <Navbar /> }
       <main>
         <ScrollToTop/>
         <Outlet />

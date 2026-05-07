@@ -18,6 +18,8 @@ import TeamComponents from "../components/team";
 import SubscriptionPage from "../components/subscription";
 import AboutMyRobo from "../components/about";
 import ContactSection from "../components/contact";
+import AdminPanel from "../pages/admin";
+import PaymentPage from "../components/obuna";
 
 const root = createBrowserRouter([
   {
@@ -100,7 +102,14 @@ const root = createBrowserRouter([
         path: "contact",
         element: <ContactSection />
       },
-
+      {
+        path:'admin',
+        element:<AdminPanel/> 
+      },
+      {
+        path: "pay",
+        element: <PaymentPage/>
+      }
     ],
   },
 

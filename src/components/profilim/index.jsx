@@ -12,7 +12,8 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useData } from "../../datacontect";
 import { Helmet } from 'react-helmet-async';
-
+import { notification } from "antd";
+import payme from "../../assets/payme.png";
 const Profilim = () => {
   const { user, loading, fetchUserData, updateUser } = useData();
 
@@ -21,11 +22,13 @@ const Profilim = () => {
   const [lastName, setLastName] = useState("");
   const [patchLoading, setPatchLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-
+  const [topupModal, setTopupModal] = useState(false);
+  const [payLoading, setPayLoading] = useState(false);
+  const [amount, setAmount] = useState("");
   useEffect(() => {
     fetchUserData();
   }, []);
-  
+
   const openModal = () => {
     setFirstName(user?.first_name || "");
     setLastName(user?.last_name || "");
@@ -37,6 +40,55 @@ const Profilim = () => {
     setModalOpen(false);
     setSuccess(false);
   };
+
+const addBalance = async () => {
+  try {
+    const response = await fetch(
+      "https://api.myrobo.uz/payment/checkout/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          amount: Number(amount),
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    console.log(data);
+
+    if (response.ok) {
+      // notification.success({
+      //   message: "Muvaffaqiyatli",
+      //   description: "To‘lov sahifasi ochilmoqda",
+      //   placement: "topRight",
+      // });
+
+      window.open(data.payment_url, "_blank");
+    } else {
+      notification.error({
+        message: "Xatolik",
+        description:
+          data?.message ||
+          data?.detail ||
+          "Balansni to‘ldirishda xatolik yuz berdi",
+        placement: "topRight",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+
+    notification.error({
+      message: "Server bilan bog‘lanib bo‘lmadi",
+      description: "Internet yoki serverda muammo mavjud",
+      placement: "topRight",
+    });
+  }
+};
 
   const handleUpdate = async () => {
     if (!firstName && !lastName) return;
@@ -56,7 +108,7 @@ const Profilim = () => {
   };
 
   const balance = user?.balance ?? 0;
-  
+
   if (loading || !user) {
     return (
       <div className="w-[90%] m-auto mt-[50px] bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-600">
@@ -127,15 +179,57 @@ const Profilim = () => {
         </div>
 
         {/* Balans */}
-        <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl mb-8 border border-gray-200 dark:border-gray-600">
-          <div className="flex items-center">
-            <WalletOutlined className="text-gray-700 dark:text-gray-300 text-2xl mr-3" />
-            <div>
-              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-sm">Joriy balans</p>
-              <p className="font-bold text-2xl text-gray-900 dark:text-white">
-                {balance.toLocaleString()} so'm
-              </p>
+        <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl mb-8 border border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+            <div className="flex items-center">
+              <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center mr-4">
+                <WalletOutlined className="text-blue-600 text-2xl" />
+              </div>
+
+              <div>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                  Joriy balans
+                </p>
+
+                <p className="font-bold text-3xl text-gray-900 dark:text-white mt-1">
+                  {balance.toLocaleString()} so'm
+                </p>
+              </div>
             </div>
+
+            <button
+              onClick={() => setTopupModal(true)}
+              className="
+              group
+              relative
+              overflow-hidden
+              flex
+              items-center
+              justify-center
+              gap-2
+              bg-blue-600
+              hover:bg-blue-700
+              active:scale-[0.98]
+              text-white
+              font-semibold
+              px-6
+              py-3.5
+              rounded-2xl
+              transition-all
+              duration-200
+              shadow-lg
+              shadow-blue-500/20
+              hover:shadow-blue-500/40
+            "
+            >
+              <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition" />
+
+              <WalletOutlined className="relative z-10 text-lg" />
+
+              <span className="relative z-10">
+                Balansni to‘ldirish
+              </span>
+            </button>
           </div>
         </div>
 
@@ -223,6 +317,97 @@ const Profilim = () => {
                 Saqlash
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {topupModal && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4"
+          onClick={() => setTopupModal(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl border border-gray-200 dark:border-gray-700"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                  Balansni to‘ldirish
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Payme orqali hisobingizni to‘ldiring
+                </p>
+              </div>
+
+              <button
+                onClick={() => setTopupModal(false)}
+                className="w-9 h-9 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition"
+              >
+                <CloseOutlined className="text-gray-500" />
+              </button>
+            </div>
+
+            <div className="mb-5 flex items-center gap-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 text-md dark:border-gray-700 rounded-2xl px-4 py-3">
+              <img
+                src={payme}
+                alt="payme"
+                className="w-20 h-20 rounded-xl"
+              />
+
+              <div>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  Payme
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Tezkor va xavfsiz to‘lov
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="text-sm text-gray-500 dark:text-gray-400 mb-2 block">
+                Summa kiriting
+              </label>
+
+              <div className="relative">
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="50 000"
+                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-4 text-lg text-gray-900 dark:text-white outline-none focus:border-blue-500 transition"
+                />
+
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                  so‘m
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              {[50000, 100000, 200000, 300000, 500000, 1000000].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => setAmount(item)}
+                  className={`py-3 rounded-2xl border text-sm font-medium transition-all
+              ${Number(amount) === item
+                      ? "bg-blue-600 border-blue-600 text-white"
+                      : "bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-400"
+                    }`}
+                >
+                  {item.toLocaleString()}
+                </button>
+              ))}
+            </div>
+
+            <button
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-4 rounded-2xl font-semibold transition-all duration-200 shadow-lg shadow-blue-500/20"
+              disabled={!amount}
+              onClick={()=>addBalance()}
+            >
+              {payLoading ? <LoadingOutlined /> : "Payme orqali to‘lash"}
+            </button>
           </div>
         </div>
       )}
