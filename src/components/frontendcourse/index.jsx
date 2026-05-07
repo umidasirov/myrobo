@@ -31,7 +31,7 @@ function Kinoscope({ otp, playbackInfo }) {
 
   return (
     <div className="rounded-lg overflow-hidden relative w-full h-full bg-[#1E1E1E]">
-      <KinescopePlayer videoId={`oZ1h78FPcFUFAc9vTTenHR`} title='Salom' language='ru' />
+      <KinescopePlayer videoId={otp} title='Salom' language='ru' />
     </div>
   );
 }
