@@ -123,7 +123,7 @@ const SwiperComponent = () => {
 
               {/* IMAGE */}
               <div className="group relative">
-                <div className="relative aspect-video w-full overflow-hidden rounded-[3rem] shadow-2xl
+                <div className="relative aspect-video w-full overflow-hidden rounded-[3rem] shadow-xl
                 bg-gray-200 dark:bg-gray-800">
                   
                   <img
