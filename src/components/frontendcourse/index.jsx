@@ -21,17 +21,17 @@ function Skeleton({ className = "" }) {
   );
 }
 
-function Kinoscope({ otp, playbackInfo }) {
-  if (!otp || !playbackInfo)
-    return (
-      <div className="w-full aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-        <LoadingOutlined style={{ fontSize: 32 }} className="text-blue-400" />
-      </div>
-    );
+function Kinoscope({ otp, playbackInfo,token }) {
+  // if (!otp || !playbackInfo)
+  //   return (
+  //     <div className="w-full aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+  //       <LoadingOutlined style={{ fontSize: 32 }} className="text-blue-400" />
+  //     </div>
+  //   );
 
   return (
     <div className="rounded-lg overflow-hidden relative w-full h-full bg-[#1E1E1E]">
-      <KinescopePlayer videoId={otp} title='Salom' language='ru' />
+      <KinescopePlayer videoId={otp} token={token} title='Salom' language='ru' />
     </div>
   );
 }
@@ -333,7 +333,11 @@ const FrontendCourse = () => {
   if (!isBought) return null;
 
   const fullUrl = `https://myrobo.uz/kurslar/${slug}/${id}`;
-
+  console.log("course", courseData);
+  console.log("section", sections);
+  console.log("selectedTopic", selectedTopic);
+  
+  
   return (
     <>
       <Helmet>
@@ -571,11 +575,11 @@ const FrontendCourse = () => {
                     </div>
                     <div className="p-4 md:p-5">
                       {/* Video player */}
-                      {videoOtp?.otp && videoOtp?.playbackInfo && (
+                      {videoOtp?.video_id && (
                         <div className="w-full aspect-video rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-800">
                           <Kinoscope
-                            otp={videoOtp.otp}
-                            playbackInfo={videoOtp.playbackInfo}
+                            otp={videoOtp.video_id}
+                            token={videoOtp.token}
                           />
                         </div>
                       )}
