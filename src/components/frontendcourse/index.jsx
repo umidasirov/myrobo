@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import { Card, Button } from "antd";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { Button } from "antd";
 import {
   PlayCircleFilled,
   BookFilled,
@@ -12,60 +12,18 @@ import CodeEditor from "../codeEditor";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCourseAccess } from "../../hooks/useCourseAccess";
 import { Helmet } from "react-helmet-async";
-import { Progress } from "antd"; // Progress qo'shildi
+import KinescopePlayer from "@kinescope/react-kinescope-player";
+
 const BASE_URL = "https://myrobo.uz/api";
-import KinescopePlayer from '@kinescope/react-kinescope-player';
-function Skeleton({ className = "" }) {
-  return (
-    <div className={`bg-gray-200 dark:bg-gray-700 rounded animate-pulse ${className}`} />
-  );
-}
 
-function Kinoscope({ otp, playbackInfo,token }) {
-  // if (!otp || !playbackInfo)
-  //   return (
-  //     <div className="w-full aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-  //       <LoadingOutlined style={{ fontSize: 32 }} className="text-blue-400" />
-  //     </div>
-  //   );
+/* ─────────────── UI helpers ─────────────── */
 
+function Skeleton({ className = "", style }) {
   return (
-    <div className="rounded-lg overflow-hidden relative w-full h-full bg-[#1E1E1E]">
-      <KinescopePlayer videoId={otp} token={token} title='Salom' language='ru' />
-    </div>
-  );
-}
-
-function EmptySections() {
-  return (
-    <div className="flex flex-col items-center justify-center py-10 px-4 text-center gap-4">
-      <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-8 h-8 text-blue-300"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-          />
-        </svg>
-      </div>
-      <div>
-        <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">
-          Darslar hali qo'shilmagan
-        </p>
-        <p className="text-gray-400 dark:text-gray-500 text-xs mt-1 leading-relaxed">
-          Kurs tayyorlanmoqda.
-          <br />
-          Tez orada darslar joylashtiriladi!
-        </p>
-      </div>
-    </div>
+    <div
+      className={`bg-gray-200 dark:bg-gray-700 rounded animate-pulse ${className}`}
+      style={style}
+    />
   );
 }
 
@@ -101,163 +59,122 @@ function ContentSkeleton() {
   );
 }
 
+function EmptySections() {
+  return (
+    <div className="flex flex-col items-center justify-center py-10 px-4 text-center gap-4">
+      <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      </div>
+      <div>
+        <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm">Darslar hali qo'shilmagan</p>
+        <p className="text-gray-400 dark:text-gray-500 text-xs mt-1 leading-relaxed">Kurs tayyorlanmoqda.<br />Tez orada darslar joylashtiriladi!</p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Kinescope with spinner ─── */
+function KinescopeWithLoader({ videoId, token }) {
+  const [ready, setReady] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    setReady(false);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setReady(true), 4000);
+    return () => clearTimeout(timerRef.current);
+  }, [videoId]);
+
+  const handleReady = useCallback(() => {
+    clearTimeout(timerRef.current);
+    setReady(true);
+  }, []);
+
+  return (
+    <div className="relative w-full h-full bg-[#1E1E1E] rounded-lg overflow-hidden">
+      {!ready && (
+        <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/60">
+          <LoadingOutlined style={{ fontSize: 40, color: "#60a5fa" }} />
+        </div>
+      )}
+      <KinescopePlayer
+        videoId={videoId}
+        token={token}
+        title=""
+        language="ru"
+        onReady={handleReady}
+        onPlay={handleReady}
+      />
+    </div>
+  );
+}
+
+/* ═══════════════════ Main ═══════════════════ */
 const FrontendCourse = () => {
   const { data, fetchCourse } = useData();
   const { slug, courseId: id, topicId: urlTopicId } = useParams();
-
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-
   const { isBought, loading: accessLoading } = useCourseAccess(id);
+  const lastTopicId = localStorage.getItem("last_topic_id");
 
-  useEffect(() => {
-    if (!accessLoading && !isBought && id) {
-      const course = data?.find((c) => String(c.id) === String(id));
-      if (course && slug) {
-        navigate(`/kurslar/${slug}`, { replace: true });
-      } else {
-        navigate("/", { replace: true });
-      }
-    }
-  }, [isBought, accessLoading]);
-
+  /* ── State ── */
   const [courseData, setCourseData] = useState(null);
   const [sections, setSections] = useState([]);
   const [topicsMap, setTopicsMap] = useState({});
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [topicDetail, setTopicDetail] = useState(null);
-  const [expandedSection, setExpandedSection] = useState(null);
+  const [expandedSection, setExpandedSection] = useState(lastTopicId);
   const [pageLoading, setPageLoading] = useState(true);
   const [sectionsLoading, setSectionsLoading] = useState(false);
   const [topicLoading, setTopicLoading] = useState(false);
   const [submitResult, setSubmitResult] = useState(null);
   const [code, setCode] = useState("");
+  const [videoOtp, setVideoOtp] = useState(null);
 
+  /* ── Refs: har doim yangi qiymatni ko'rish uchun (stale closure yechimi) ── */
+  const sectionsRef = useRef(sections);
+  const topicsMapRef = useRef(topicsMap);
+  const selectedTopicRef = useRef(selectedTopic);
+  const topicDetailRef = useRef(topicDetail);
+  const topicLoadingRef = useRef(topicLoading);
+
+  useEffect(() => { sectionsRef.current = sections; }, [sections]);
+  useEffect(() => { topicsMapRef.current = topicsMap; }, [topicsMap]);
+  useEffect(() => { selectedTopicRef.current = selectedTopic; }, [selectedTopic]);
+  useEffect(() => { topicDetailRef.current = topicDetail; }, [topicDetail]);
+  useEffect(() => { topicLoadingRef.current = topicLoading; }, [topicLoading]);
+
+  /* ── Redirect ── */
+  useEffect(() => {
+    if (!accessLoading && !isBought && id) {
+      const course = data?.find((c) => String(c.id) === String(id));
+      if (course && slug) navigate(`/kurslar/${slug}`, { replace: true });
+      else navigate("/", { replace: true });
+    }
+  }, [isBought, accessLoading]);
+
+  /* ── Init ── */
   useEffect(() => {
     const init = async () => {
       setPageLoading(true);
-      try {
-        await fetchCourse();
-      } finally {
-        setPageLoading(false);
-      }
+      try { await fetchCourse(); } finally { setPageLoading(false); }
     };
     init();
   }, []);
 
   useEffect(() => {
-    if (data && data.length > 0 && id) {
+    if (data?.length && id) {
       const found = data.find((item) => item?.id == id);
       if (found) setCourseData(found);
     }
   }, [data, id]);
 
-  useEffect(() => {
-    if (!urlTopicId) return;
-    if (sections.length === 0) return;
-    if (selectedTopic?.id === urlTopicId && topicDetail) return;
-
-    const allTopics = sections.flatMap((sec) => topicsMap[sec.id] || []);
-    const foundTopic = allTopics.find((t) => t.id === urlTopicId);
-
-    if (foundTopic) {
-      setSelectedTopic(foundTopic);
-      fetchTopicDetail(foundTopic.id);
-
-      const parentSection = sections.find((sec) =>
-        (topicsMap[sec.id] || []).some((t) => t.id === foundTopic.id)
-      );
-      if (parentSection) {
-        setExpandedSection(parentSection.id);
-        setSelectedSection(parentSection);
-      }
-    }
-  }, [urlTopicId, sections, topicsMap]);
-
-  useEffect(() => {
-    if (!id) return;
-    const fetchSections = async () => {
-      setSectionsLoading(true);
-      try {
-        const res = await fetch(`${BASE_URL}/courses/courses/${id}/sections/`, {
-          headers: { "Content-Type": "application/json" },
-        });
-        const result = await res.json();
-        setSections(result);
-
-        if (result.length > 0) {
-          setExpandedSection(result[0].id);
-          setSelectedSection(result[0]);
-
-          if (!urlTopicId) {
-            fetchTopicsForSection(result[0].id, true);
-          } else {
-            for (const section of result) {
-              fetchTopicsForSection(section.id, false);
-            }
-          }
-        }
-      } catch (err) {
-      } finally {
-        setSectionsLoading(false);
-      }
-    };
-    fetchSections();
-  }, [id, urlTopicId]);
-
-  const fetchTopicsForSection = useCallback(
-    async (sectionId, autoSelectFirst = false) => {
-      try {
-        const res = await fetch(
-          `${BASE_URL}/courses/sections/${sectionId}/topics/`,
-          { headers: { "Content-Type": "application/json" } }
-        );
-        const topics = await res.json();
-        setTopicsMap((prev) => ({ ...prev, [sectionId]: topics }));
-        if (autoSelectFirst && topics.length > 0) {
-          setTimeout(() => handleTopicClick(topics[0]), 50);
-        }
-      } catch (err) { }
-    },
-    []
-  );
-
-  // Mavzuni tugatilgan deb belgilash funksiyasi
-  const markAsCompleted = async (topicId) => {
-    try {
-      await fetch(`${BASE_URL}/courses/topics/${topicId}/complete/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      // Ro'yxatni yangilash (galka chiqishi uchun)
-      if (selectedSection) {
-        fetchTopicsForSection(selectedSection.id);
-      }
-    } catch (err) {
-      console.error("Progressni saqlashda xatolik:", err);
-    }
-  };
-
-  const [videoOtp, setVideoOtp] = useState(null);
-
-  const fetchVideoOtp = async (topicId) => {
-    try {
-      const res = await fetch(`${BASE_URL}/courses/topics/${topicId}/video-otp/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      setVideoOtp(data);
-    } catch (err) { }
-  };
-
-  const fetchTopicDetail = async (topicId) => {
+  /* ─────────────── fetchTopicDetail ─────────────── */
+  const fetchTopicDetail = useCallback(async (topicId) => {
     setTopicLoading(true);
     setTopicDetail(null);
     setSubmitResult(null);
@@ -270,13 +187,127 @@ const FrontendCourse = () => {
         },
       });
       const detail = await res.json();
-      setTopicDetail(detail);
+      setTopicDetail(detail ?? null);
+
       if (detail?.vdo_video_id) {
-        await fetchVideoOtp(topicId);
+        try {
+          const vRes = await fetch(`${BASE_URL}/courses/topics/${topicId}/video-otp/`, {
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          });
+          const vData = await vRes.json();
+          setVideoOtp(vData ?? null);
+        } catch { setVideoOtp(null); }
       }
-    } catch (err) {
+    } catch {
+      setTopicDetail(null);
     } finally {
       setTopicLoading(false);
+    }
+  }, [token]);
+
+  const handleTopicClickRef = useRef(null);
+
+  const handleTopicClick = useCallback((topic, knownSection = null) => {
+    if (!topic) return;
+    if (
+      selectedTopicRef.current?.id === topic.id &&
+      topicDetailRef.current &&
+      !topicLoadingRef.current
+    ) return;
+
+    setSelectedTopic(topic);
+    fetchTopicDetail(topic.id);
+    setCode("");
+
+    const parentSection =
+      knownSection ??
+      sectionsRef.current.find((sec) =>
+        (topicsMapRef.current[sec.id] || []).some((t) => t.id === topic.id)
+      );
+
+    if (parentSection) {
+      setSelectedSection(parentSection);
+      setExpandedSection(parentSection.id);
+    }
+
+    navigate(`/kurslar/${slug}/${id}/${topic.id}`, { replace: false });
+  }, [fetchTopicDetail, navigate, slug, id]);
+
+  // Ref ni yangilab tur
+  useEffect(() => { handleTopicClickRef.current = handleTopicClick; }, [handleTopicClick]);
+
+  const fetchTopicsForSection = useCallback(async (sectionId, autoSelectFirst = false) => {
+    try {
+      const res = await fetch(`${BASE_URL}/courses/sections/${sectionId}/topics/`, {
+        headers: { "Content-Type": "application/json" },
+      });
+      const topics = await res.json();
+      const safeTopics = Array.isArray(topics) ? topics : [];
+
+      setTopicsMap((prev) => ({ ...prev, [sectionId]: safeTopics }));
+
+      if (autoSelectFirst && safeTopics.length > 0) {
+        // Ref orqali chaqiramiz → hech qachon stale bo'lmaydi
+        const sec = sectionsRef.current.find((s) => s.id === sectionId) ?? null;
+        setTimeout(() => handleTopicClickRef.current?.(safeTopics[0], sec), 50);
+      }
+    } catch { /* silent */ }
+  }, []); // ← bo'sh dependency — ref orqali ishlaydi
+
+  useEffect(() => {
+    if (!id) return;
+    const load = async () => {
+      setSectionsLoading(true);
+      try {
+        const res = await fetch(`${BASE_URL}/courses/courses/${id}/sections/`, {
+          headers: { "Content-Type": "application/json" },
+        });
+        const result = await res.json();
+        const safe = Array.isArray(result) ? result : [];
+        setSections(safe);
+
+        if (safe.length > 0) {
+          setSelectedSection(safe[0]);
+          if (!urlTopicId) {
+            fetchTopicsForSection(safe[0].id, true);
+          } else {
+            safe.forEach((sec) => fetchTopicsForSection(sec.id, false));
+          }
+        }
+      } catch { /* silent */ } finally {
+        setSectionsLoading(false);
+      }
+    };
+    load();
+  }, [id, urlTopicId, fetchTopicsForSection]);
+
+  /* ─────────────── URL topic restore ─────────────── */
+  useEffect(() => {
+    if (!urlTopicId || sections.length === 0) return;
+    if (selectedTopic?.id === urlTopicId && topicDetail) return;
+
+    const allTopics = sections.flatMap((sec) => topicsMap[sec.id] || []);
+    const found = allTopics.find((t) => t.id === urlTopicId);
+    if (!found) return;
+
+    const parentSection = sections.find((sec) =>
+      (topicsMap[sec.id] || []).some((t) => t.id === found.id)
+    );
+    handleTopicClick(found, parentSection ?? null);
+  }, [urlTopicId, sections, topicsMap]);
+
+  /* ─────────────── Helpers ─────────────── */
+  const getAllTopicsFlat = () => sections.flatMap((sec) => topicsMap[sec.id] || []);
+
+  const goToAdjacent = (direction) => {
+    const all = getAllTopicsFlat();
+    const idx = all.findIndex((t) => t.id === selectedTopic?.id);
+    const next = all[idx + direction];
+    if (next) {
+      const parentSection = sections.find((sec) =>
+        (topicsMap[sec.id] || []).some((t) => t.id === next.id)
+      );
+      handleTopicClick(next, parentSection ?? null);
     }
   };
 
@@ -285,34 +316,7 @@ const FrontendCourse = () => {
     setExpandedSection(isOpen ? null : section.id);
     setSelectedSection(section);
     if (!isOpen && !topicsMap[section.id]) {
-      fetchTopicsForSection(section.id);
-    }
-  };
-
-  const handleTopicClick = (topic) => {
-    setSelectedTopic(topic);
-    fetchTopicDetail(topic.id);
-    setCode("");
-    navigate(`/kurslar/${slug}/${id}/${topic.id}`, { replace: false });
-  };
-
-  const getAllTopicsFlat = () =>
-    sections.flatMap((sec) => topicsMap[sec.id] || []);
-
-  const goToAdjacent = (direction) => {
-    const allTopics = getAllTopicsFlat();
-    const currentIndex = allTopics.findIndex((t) => t.id === selectedTopic?.id);
-    const nextIndex = currentIndex + direction;
-    if (nextIndex >= 0 && nextIndex < allTopics.length) {
-      const nextTopic = allTopics[nextIndex];
-      handleTopicClick(nextTopic);
-      const parentSection = sections.find((sec) =>
-        (topicsMap[sec.id] || []).some((t) => t.id === nextTopic.id)
-      );
-      if (parentSection) {
-        setExpandedSection(parentSection.id);
-        setSelectedSection(parentSection);
-      }
+      fetchTopicsForSection(section.id, false);
     }
   };
 
@@ -320,11 +324,13 @@ const FrontendCourse = () => {
   const currentIndex = allTopicsFlat.findIndex((t) => t.id === selectedTopic?.id);
   const isFirst = currentIndex <= 0;
   const isLast = currentIndex >= allTopicsFlat.length - 1;
+  const problem = topicDetail?.problems?.[0] ?? null;
+  const videoId = videoOtp?.video_id ?? null;
+  const videoToken = videoOtp?.token ?? null;
 
-  /* ── Loading ── */
   if (accessLoading || pageLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <LoadingOutlined style={{ fontSize: 36 }} className="text-blue-500" />
       </div>
     );
@@ -333,36 +339,25 @@ const FrontendCourse = () => {
   if (!isBought) return null;
 
   const fullUrl = `https://myrobo.uz/kurslar/${slug}/${id}`;
-  console.log("course", courseData);
-  console.log("section", sections);
+  console.log("expandedSection", expandedSection);
+  console.log("selectedSection", selectedSection);
+  console.log("topicsMap", topicsMap);
   console.log("selectedTopic", selectedTopic);
-  
-  
+  console.log("topicDetail", topicDetail);
+  console.log("videoOtp", videoOtp);
+  console.log("problem", problem);
+  console.log("isFirst", isFirst, "isLast", isLast);
+  console.log(expandedSection === selectedSection?.id);
+
   return (
     <>
       <Helmet>
-        <title>
-          {courseData?.title
-            ? `${courseData.title} - Darslar | MyRobo.uz`
-            : "Kurs - MyRobo.uz"}
-        </title>
+        <title>{courseData?.title ? `${courseData.title} - Darslar | MyRobo.uz` : "Kurs - MyRobo.uz"}</title>
         <meta name="robots" content="noindex, nofollow" />
-        <meta
-          name="description"
-          content={
-            courseData?.about?.slice(0, 155) ||
-            "MyRobo platformasida kursni o'rganing."
-          }
-        />
+        <meta name="description" content={courseData?.about?.slice(0, 155) || "MyRobo platformasida kursni o'rganing."} />
         <meta property="og:title" content={courseData?.title || "Kurs - MyRobo.uz"} />
-        <meta
-          property="og:description"
-          content={
-            courseData?.about?.slice(0, 155) ||
-            "MyRobo platformasida kursni o'rganing."
-          }
-        />
-        <meta property="og:image" content={courseData?.image} />
+        <meta property="og:description" content={courseData?.about?.slice(0, 155) || "MyRobo platformasida kursni o'rganing."} />
+        {courseData?.image && <meta property="og:image" content={courseData.image} />}
         <meta property="og:url" content={fullUrl} />
         <meta property="og:type" content="website" />
       </Helmet>
@@ -378,8 +373,7 @@ const FrontendCourse = () => {
               </div>
             ) : (
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 w-full bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-transparent dark:border-gray-700">
-                {courseData?.title || "Kurs"}
-
+                {courseData.title || "Kurs"}
               </h1>
             )}
           </div>
@@ -394,46 +388,35 @@ const FrontendCourse = () => {
                 <EmptySections />
               ) : (
                 <div className="flex flex-col gap-4">
-
-                  {/* 1. Ixcham Progress Bar (Sidebar tepasida) */}
+                  {/* Progress */}
                   <div className="pb-4 border-b border-gray-100 dark:border-gray-700">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                        O'zlashtirish
-                      </span>
-                      <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
-                        {courseData?.progress_percentage || 0}%
-                      </span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">O'zlashtirish</span>
+                      <span className="text-xs font-bold text-blue-600 dark:text-blue-400">{courseData?.progress_percentage ?? 0}%</span>
                     </div>
-                    {/* Tailwind Progress Bar */}
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
                       <div
                         className="bg-gradient-to-r from-blue-500 to-green-500 h-full transition-all duration-500 ease-out"
-                        style={{ width: `${courseData?.progress_percentage || 0}%` }}
+                        style={{ width: `${courseData?.progress_percentage ?? 0}%` }}
                       />
                     </div>
                   </div>
 
-                  {/* 2. Bo'limlar va Mavzular ro'yxati */}
+                  {/* Sections */}
                   <div className="space-y-1">
                     {sections.map((section) => (
                       <div key={section.id} className="mb-1">
-                        {/* Bo'lim sarlavhasi */}
                         <div
-                          className={`flex items-center p-2.5 rounded-lg cursor-pointer transition-all duration-200
-                ${selectedSection?.id === section.id
+                          className={`flex items-center p-2.5 rounded-lg cursor-pointer transition-all duration-200 ${selectedSection?.id === section.id
                               ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 shadow-sm"
                               : "hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
                             }`}
                           onClick={() => handleSectionClick(section)}
                         >
                           <PlayCircleFilled className={`mr-2.5 flex-shrink-0 ${selectedSection?.id === section.id ? "text-blue-600" : "text-gray-400"}`} />
-                          <span className="text-sm font-medium leading-tight">
-                            {section.title}
-                          </span>
+                          <span className="text-sm font-medium leading-tight">{section.title}</span>
                         </div>
 
-                        {/* Mavzular (Dropdown) */}
                         {expandedSection === section.id && (
                           <div className="ml-4 pl-2 border-l border-gray-100 dark:border-gray-700 mt-1 space-y-1">
                             {!topicsMap[section.id] ? (
@@ -442,21 +425,23 @@ const FrontendCourse = () => {
                                 <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded w-4/5 animate-pulse" />
                               </div>
                             ) : topicsMap[section.id].length === 0 ? (
-                              <p className="text-[11px] text-gray-400 dark:text-gray-500 py-2">
-                                Mavzular yuklanmagan
-                              </p>
+                              <p className="text-[11px] text-gray-400 dark:text-gray-500 py-2">Mavzular yuklanmagan</p>
                             ) : (
                               topicsMap[section.id].map((topic) => (
                                 <div
                                   key={topic.id}
-                                  className={`group flex items-center p-2 rounded-md cursor-pointer transition-all
-                        ${selectedTopic?.id === topic.id
+                                  className={`group flex items-center p-2 rounded-md cursor-pointer transition-all ${selectedTopic?.id === topic.id
                                       ? "bg-white dark:bg-gray-700 shadow-sm ring-1 ring-gray-200 dark:ring-gray-600"
                                       : "hover:bg-gray-50 dark:hover:bg-gray-700/30 text-gray-600 dark:text-gray-400"
                                     }`}
-                                  onClick={() => handleTopicClick(topic)}
+                                  onClick={() => (
+                                    handleTopicClick(topic, section),
+                                    setExpandedSection(section.id),
+                                    localStorage.setItem("last_topic_id", section.id)
+                                   )
+                                  }
+                                // ↑ section to'g'ridan-to'g'ri uzatiladi
                                 >
-                                  {/* Progress Ikonkasi: mantiq to'g'irlandi */}
                                   <div className="mr-2.5 flex-shrink-0">
                                     {topic.is_completed ? (
                                       <CheckCircleFilled className="text-green-500 text-sm" />
@@ -466,7 +451,6 @@ const FrontendCourse = () => {
                                       <PlayCircleFilled className="text-gray-300 group-hover:text-blue-400 text-sm transition-colors" />
                                     )}
                                   </div>
-
                                   <span className={`text-[13px] leading-snug ${selectedTopic?.id === topic.id ? "font-semibold text-gray-900 dark:text-white" : ""}`}>
                                     {topic.title}
                                   </span>
@@ -482,211 +466,118 @@ const FrontendCourse = () => {
               )}
             </div>
 
-            {/* ── Asosiy kontent ── */}
+            {/* ── Main content ── */}
             <div className="w-full lg:w-3/4">
-
-              {/* Bo'sh holat */}
-
               {!sectionsLoading && sections.length === 0 ? (
                 <div className="mb-6 shadow bg-white dark:bg-gray-800 rounded-lg p-6 border border-transparent dark:border-gray-700">
                   <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
                     <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-900/10 flex items-center justify-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-10 h-10 text-blue-300"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.2}
-                          d="M15 10l4.553-2.069A1 1 0 0121 8.87V15.13a1 1 0 01-1.447.9L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"
-                        />
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M15 10l4.553-2.069A1 1 0 0121 8.87V15.13a1 1 0 01-1.447.9L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                        {courseData?.title} kursi tayyorlanmoqda
-                      </h3>
-                      <p className="text-gray-400 dark:text-gray-500 text-sm mt-2 max-w-sm leading-relaxed">
-                        Hozircha bu kursda darslar mavjud emas. O'qituvchi tez
-                        orada video darslar va topshiriqlarni qo'shadi.
-                      </p>
+                      <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">{courseData?.title ?? "Kurs"} kursi tayyorlanmoqda</h3>
+                      <p className="text-gray-400 dark:text-gray-500 text-sm mt-2 max-w-sm leading-relaxed">Hozircha bu kursda darslar mavjud emas.</p>
                     </div>
-                    <div className="flex flex-col gap-2 w-full max-w-xs">
-                      <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 rounded-xl px-4 py-3">
-                        <span className="text-lg">🎬</span>
-                        <div className="text-left">
-                          <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                            Video darslar
-                          </p>
-                          <p className="text-xs text-gray-400 dark:text-gray-500">
-                            Tez orada qo'shiladi
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 rounded-xl px-4 py-3">
-                        <span className="text-lg">💻</span>
-                        <div className="text-left">
-                          <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                            Amaliy topshiriqlar
-                          </p>
-                          <p className="text-xs text-gray-400 dark:text-gray-500">
-                            Tez orada qo'shiladi
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-300 dark:text-gray-600 mt-2">
-                      Yangilanishlarni kuzatib boring 👀
-                    </p>
+                    <p className="text-xs text-gray-300 dark:text-gray-600 mt-2">Yangilanishlarni kuzatib boring 👀</p>
                   </div>
                 </div>
 
-                /* Dars tanlanmagan */
               ) : !selectedTopic ? (
                 <div className="mb-6 shadow bg-white dark:bg-gray-800 rounded-lg border border-transparent dark:border-gray-700 overflow-hidden">
                   <div className="px-5 py-3 border-b border-gray-200 dark:border-gray-700">
-                    <span className="font-semibold text-gray-800 dark:text-gray-100">
-                      Darsni tanlang
-                    </span>
+                    <span className="font-semibold text-gray-800 dark:text-gray-100">Darsni tanlang</span>
                   </div>
                   <div className="text-center py-10 text-gray-500 dark:text-gray-400 text-sm">
                     Iltimos, chap menyudan darsni tanlang
                   </div>
                 </div>
 
-                /* Dars yuklanmoqda */
               ) : topicLoading ? (
                 <ContentSkeleton />
 
-                /* Dars kontenti */
               ) : (
                 <>
-                  {/* Video / sarlavha karti */}
+                  {/* Video card */}
                   <div className="mb-4 shadow bg-white dark:bg-gray-800 rounded-lg border border-transparent dark:border-gray-700 overflow-hidden">
-                    {/* Kart sarlavhasi */}
                     <div className="px-5 py-3 border-b border-gray-200 dark:border-gray-700">
-                      <span className="font-semibold text-gray-800 dark:text-gray-100">
-                        {topicDetail?.title}
-                      </span>
+                      <span className="font-semibold text-gray-800 dark:text-gray-100">{topicDetail?.title ?? ""}</span>
                     </div>
                     <div className="p-4 md:p-5">
-                      {/* Video player */}
-                      {videoOtp?.video_id && (
-                        <div className="w-full aspect-video rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-800">
-                          <Kinoscope
-                            otp={videoOtp.video_id}
-                            token={videoOtp.token}
-                          />
+                      {videoId ? (
+                        <div className="w-full aspect-video rounded-lg overflow-hidden bg-gray-900 mb-4">
+                          <KinescopeWithLoader videoId={videoId} token={videoToken} />
                         </div>
-                      )}
-                      {/* Tavsif */}
-                      {topicDetail?.about && (
-                        <p className="text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed">
-                          {topicDetail.about}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Navigatsiya tugmalari */}
-                  <div className="flex justify-between mb-4">
-                    <Button
-                      type="primary"
-                      icon={<BookFilled />}
-                      onClick={() => goToAdjacent(-1)}
-                      disabled={isFirst}
-                      className="
-                      dark:!bg-gray-800 
-                      dark:!border-gray-700 
-                      dark:!text-white 
-                      dark:hover:!bg-gray-700
-                      dark:disabled:!bg-gray-900
-                      dark:disabled:!text-gray-500"
-                    >
-                      Oldingi dars
-                    </Button>
-
-                    <Button
-                      type="primary"
-                      icon={<CheckCircleFilled />}
-                      onClick={() => goToAdjacent(1)}
-                      disabled={isLast}
-                      className="
-                      dark:!bg-gray-800 
-                      dark:!border-gray-700 
-                      dark:!text-white 
-                      dark:hover:!bg-gray-700
-                      dark:disabled:!bg-gray-900
-                      dark:disabled:!text-gray-500"
-                    >
-                      Keyingi dars
-                    </Button>
-                  </div>
-                  {/* Kod muharriri */}
-                  {topicDetail?.topic_type === "code" && (
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 overflow-hidden">
-                      {topicDetail.problem && (
-                        <div className="mb-2 p-4 border-b border-gray-200 dark:border-gray-700">
-                          <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
-                            {topicDetail.problem.title}
-                          </h2>
-                          <p className="text-gray-700 dark:text-gray-300 mb-3 text-sm">
-                            {topicDetail.problem.statement}
-                          </p>
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700">
-                              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">
-                                Input:
-                              </p>
-                              <pre className="text-sm font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200">
-                                {topicDetail.problem.sample_input}
-                              </pre>
-                            </div>
-                            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700">
-                              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">
-                                Output:
-                              </p>
-                              <pre className="text-sm font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200">
-                                {topicDetail.problem.sample_output}
-                              </pre>
-                            </div>
+                      ) : (
+                        <div className="w-full aspect-video rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
+                          <div className="text-center text-gray-400 dark:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 mx-auto mb-2 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M15 10l4.553-2.069A1 1 0 0121 8.87V15.13a1 1 0 01-1.447.9L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+                            </svg>
+                            <p className="text-sm">Video mavjud emas</p>
                           </div>
                         </div>
                       )}
-                      <div className="p-4">
-                        <CodeEditor
-                          onChange={setCode}
-                          onRun={code}
-                          topicId={topicDetail.id}
-                        />
-                      </div>
+                      {topicDetail?.about && (
+                        <p className="text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed">{topicDetail.about}</p>
+                      )}
+                    </div>
+                  </div>
 
-                      {/* Submit natijasi */}
+                  {/* Navigation */}
+                  <div className="flex justify-between mb-4">
+                    <Button type="primary" icon={<BookFilled />} onClick={() => goToAdjacent(-1)} disabled={isFirst}
+                      className="dark:!bg-gray-800 dark:!border-gray-700 dark:!text-white dark:hover:!bg-gray-700 dark:disabled:!bg-gray-900 dark:disabled:!text-gray-500">
+                      Oldingi dars
+                    </Button>
+                    <Button type="primary" icon={<CheckCircleFilled />} onClick={() => goToAdjacent(1)} disabled={isLast}
+                      className="dark:!bg-gray-800 dark:!border-gray-700 dark:!text-white dark:hover:!bg-gray-700 dark:disabled:!bg-gray-900 dark:disabled:!text-gray-500">
+                      Keyingi dars
+                    </Button>
+                  </div>
+
+                  {/* Code editor */}
+                  {topicDetail?.is_code && (
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700 overflow-hidden">
+                      {problem && (
+                        <div className="mb-2 p-4 border-b border-gray-200 dark:border-gray-700">
+                          {problem.title && (
+                            <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">{problem.title}</h2>
+                          )}
+                          {problem.statement && (
+                            <p className="text-gray-700 dark:text-gray-300 mb-3 text-sm">{problem.statement}</p>
+                          )}
+                          {(problem.sample_input != null || problem.sample_output != null) && (
+                            <div className="grid md:grid-cols-2 gap-4">
+                              {problem.sample_input != null && (
+                                <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700">
+                                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">Input:</p>
+                                  <pre className="text-sm font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200">{problem.sample_input}</pre>
+                                </div>
+                              )}
+                              {problem.sample_output != null && (
+                                <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700">
+                                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">Output:</p>
+                                  <pre className="text-sm font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200">{problem.sample_output}</pre>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <div className="p-4">
+                        <CodeEditor onChange={setCode} onRun={code} topicId={topicDetail?.id} />
+                      </div>
                       {submitResult && (
-                        <div
-                          className={`mx-4 mb-4 p-4 rounded-lg flex items-start gap-3 ${submitResult.status === "accepted"
+                        <div className={`mx-4 mb-4 p-4 rounded-lg flex items-start gap-3 ${submitResult.status === "accepted"
                             ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400"
                             : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400"
-                            }`}
-                        >
-                          <span className="text-lg font-bold">
-                            {submitResult.status === "accepted" ? "✓" : "✗"}
-                          </span>
+                          }`}>
+                          <span className="text-lg font-bold">{submitResult.status === "accepted" ? "✓" : "✗"}</span>
                           <div>
-                            <p className="font-semibold">
-                              {submitResult.status === "accepted"
-                                ? "Qabul qilindi!"
-                                : `Xatolik: ${submitResult.status}`}
-                            </p>
-                            {submitResult.error_message && (
-                              <p className="text-sm mt-1 font-mono">
-                                {submitResult.error_message}
-                              </p>
-                            )}
+                            <p className="font-semibold">{submitResult.status === "accepted" ? "Qabul qilindi!" : `Xatolik: ${submitResult.status}`}</p>
+                            {submitResult.error_message && <p className="text-sm mt-1 font-mono">{submitResult.error_message}</p>}
                           </div>
                         </div>
                       )}
