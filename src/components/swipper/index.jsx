@@ -50,7 +50,6 @@ const SwiperComponent = () => {
     "Node.js",
     "ESP32",
     "IoT Telemetriya",
-    "Matematika",
   ];
 
   return (
