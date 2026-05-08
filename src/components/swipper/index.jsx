@@ -46,8 +46,8 @@ const SwiperComponent = () => {
 
   const tags = [
     "Arduino",
-    "IoT Telemetriya",
     "ESP32",
+    "IoT Telemetriya",
     "React JS",
     "Node.js",
   ];
