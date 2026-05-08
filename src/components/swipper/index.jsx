@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Pagination } from "swiper/modules";
 import { useNavigate } from "react-router-dom";
-
+import "./index.css";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/pagination";
@@ -34,15 +34,15 @@ const SwiperComponent = () => {
     },
     {
       id: 3,
-      title: "Muhandislik Matematikasi",
-      highlight: "Murakkab formulalarni",
+      title: "Kiberxavfsizlik",
+      highlight: "Raqamli xavfsizlikni",
       mentor: "Ekspertlar",
       description:
-        "Differensial tenglamalar va ehtimollar nazariyasini amaliy misollarda tushuning.",
+        "Tarmoq xavfsizligi, parollar himoyasi, zaifliklarni aniqlash va amaliy himoya usullarini o'rganing.",
       image:
-        "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1200",
-      badge: "Akademik yechimlar",
-    },
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200",
+      badge: "IT xavfsizlik",
+    }
   ];
 
   const tags = [
@@ -55,7 +55,7 @@ const SwiperComponent = () => {
   ];
 
   return (
-    <section className="w-full min-h-screen px-6 py-8 md:px-16 lg:px-24 
+    <section className="w-full px-6 py-8 md:px-16 lg:px-24 
     bg-gradient-to-br from-gray-50 via-white to-gray-100 
     dark:bg-gray-900 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
 
@@ -65,14 +65,20 @@ const SwiperComponent = () => {
         fadeEffect={{ crossFade: true }}
         loop
         autoplay={{ delay: 6000, disableOnInteraction: false }}
-        pagination={{ clickable: true }}
+        pagination={{
+          clickable: true,
+          renderBullet: (_, className) => {
+            return `<span class="${className} custom-bullet"></span>`;
+          },
+
+        }}
         modules={[Autoplay, EffectFade, Pagination]}
         className="mySwiper"
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
             <div className="grid min-h-[500px] grid-cols-1 items-center gap-12 lg:grid-cols-2">
-              
+
               {/* TEXT */}
               <div className="space-y-6">
                 <span className="inline-block rounded-md px-3 py-1 text-xs font-bold uppercase
@@ -125,7 +131,7 @@ const SwiperComponent = () => {
               <div className="group relative">
                 <div className="relative aspect-video w-full overflow-hidden rounded-[3rem] shadow-xl
                 bg-gray-200 dark:bg-gray-800">
-                  
+
                   <img
                     src={slide.image}
                     alt={slide.title}
@@ -155,7 +161,7 @@ const SwiperComponent = () => {
       {/* TAGS */}
       <div className="mt-16 pt-8 border-t 
       border-gray-200 dark:border-gray-700">
-        
+
         <p className="mb-6 text-center text-sm font-medium uppercase tracking-widest
         text-gray-400 dark:text-gray-500">
           Asosiy Texnologiyalar

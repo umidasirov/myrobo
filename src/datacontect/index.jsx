@@ -186,7 +186,18 @@ export const DataProvider = ({ children }) => {
       setLoad(false)
     }
   };
-
+ const toPament = async (courseId) => {
+    try {
+      const response = await api.post("/payment/create-checkout-session/", { course_id: courseId });
+      if (response.status == 401 || response.data?.code === "token_not_valid") {
+        handleLogout();
+      }
+      return response.data.url;
+    } catch (err) {
+      console.log("err:", err);
+      return null;
+    }
+  };
   const fetchUserData = async () => {
     try {
       setLoad(true);

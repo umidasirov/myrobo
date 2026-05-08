@@ -339,15 +339,6 @@ const FrontendCourse = () => {
   if (!isBought) return null;
 
   const fullUrl = `https://myrobo.uz/kurslar/${slug}/${id}`;
-  console.log("expandedSection", expandedSection);
-  console.log("selectedSection", selectedSection);
-  console.log("topicsMap", topicsMap);
-  console.log("selectedTopic", selectedTopic);
-  console.log("topicDetail", topicDetail);
-  console.log("videoOtp", videoOtp);
-  console.log("problem", problem);
-  console.log("isFirst", isFirst, "isLast", isLast);
-  console.log(expandedSection === selectedSection?.id);
 
   return (
     <>

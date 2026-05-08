@@ -21,7 +21,6 @@ function getShortIdFromSlug(slug) {
   const parts = slug.split("--");
   return parts[parts.length - 1];
 }
-
 function KirishComponentsID() {
   const { data, fetchCourse } = useData();
   const { slug } = useParams();
@@ -42,6 +41,53 @@ function KirishComponentsID() {
   const courseId = findData?.id;
 
   const { isBought, loading: accessLoading } = useCourseAccess(courseId);
+
+ const addBalance = async (noun) => {
+    if (!localStorage.getItem('token')) {
+      navigate("/login"); 
+    }
+    try {
+      const response = await fetch(
+        "https://api.myrobo.uz/payment/checkout/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            amount:noun,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (response.ok) {
+
+        window.open(data.payment_url, "_blank");
+      } else {
+        notification.error({
+          message: "Xatolik",
+          description:
+            data?.message ||
+            data?.detail ||
+            "Balansni to‘ldirishda xatolik yuz berdi",
+          placement: "topRight",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+
+      notification.error({
+        message: "Server bilan bog‘lanib bo‘lmadi",
+        description: "Internet yoki serverda muammo mavjud",
+        placement: "topRight",
+      });
+    }
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -154,8 +200,10 @@ function KirishComponentsID() {
               errorMessage = responseText;
             }
           }
-        } catch {}
+        } catch {
+        }
         notification.error({ message: errorMessage });
+        addBalance(200000)
         if (response.status === 402) {
           navigate("/subscription", { state: { courseData: findData } });
         }

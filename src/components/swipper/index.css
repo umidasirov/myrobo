@@ -1,0 +1,7 @@
+.custom-bullet {
+  @apply inline-block h-[4px] w-6 rounded-full bg-gray-400 transition-all duration-300 mx-1;
+}
+
+.swiper-pagination-bullet-active.custom-bullet {
+  @apply w-14 bg-blue-500;
+}
