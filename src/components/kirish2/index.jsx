@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   CodeOutlined,
   PlayCircleOutlined,
@@ -21,6 +21,30 @@ function getShortIdFromSlug(slug) {
   const parts = slug.split("--");
   return parts[parts.length - 1];
 }
+
+/* ─── Accordion panel – smooth height animation ─────────── */
+function AccordionPanel({ isOpen, children }) {
+  const ref = useRef(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    setHeight(isOpen ? ref.current.scrollHeight : 0);
+  }, [isOpen, children]);
+
+  return (
+    <div
+      style={{
+        height,
+        overflow: "hidden",
+        transition: "height 0.32s cubic-bezier(0.4, 0, 0.2, 1)",
+      }}
+    >
+      <div ref={ref}>{children}</div>
+    </div>
+  );
+}
+
 function KirishComponentsID() {
   const { data, fetchCourse } = useData();
   const { slug } = useParams();
@@ -35,6 +59,7 @@ function KirishComponentsID() {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showOfertaModal, setShowOfertaModal] = useState(false);
   const [hasReadOferta, setHasReadOferta] = useState(false);
+  const [pickedSection, setPickedSection] = useState(null);
 
   const shortId = getShortIdFromSlug(slug);
   const findData = data?.find((item) => item?.id?.startsWith(shortId));
@@ -42,47 +67,30 @@ function KirishComponentsID() {
 
   const { isBought, loading: accessLoading } = useCourseAccess(courseId);
 
- const addBalance = async (noun) => {
-    if (!localStorage.getItem('token')) {
-      navigate("/login"); 
-    }
+  const addBalance = async (noun) => {
+    if (!localStorage.getItem("token")) { navigate("/login"); }
     try {
-      const response = await fetch(
-        "https://api.myrobo.uz/payment/checkout/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            amount:noun,
-          }),
-        }
-      );
-
+      const response = await fetch("https://api.myrobo.uz/payment/checkout/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ amount: noun }),
+      });
       const data = await response.json();
-
-      console.log(data);
-
       if (response.ok) {
-
         window.open(data.payment_url, "_blank");
       } else {
         notification.error({
           message: "Xatolik",
-          description:
-            data?.message ||
-            data?.detail ||
-            "Balansni to‘ldirishda xatolik yuz berdi",
+          description: data?.message || data?.detail || "Balansni to'ldirishda xatolik yuz berdi",
           placement: "topRight",
         });
       }
-    } catch (error) {
-      console.log(error);
-
+    } catch {
       notification.error({
-        message: "Server bilan bog‘lanib bo‘lmadi",
+        message: "Server bilan bog'lanib bo'lmadi",
         description: "Internet yoki serverda muammo mavjud",
         placement: "topRight",
       });
@@ -92,12 +100,7 @@ function KirishComponentsID() {
   useEffect(() => {
     const load = async () => {
       setPageLoading(true);
-      try {
-        await fetchCourse();
-      } catch (err) {
-      } finally {
-        setPageLoading(false);
-      }
+      try { await fetchCourse(); } catch { } finally { setPageLoading(false); }
     };
     load();
   }, [slug]);
@@ -126,6 +129,7 @@ function KirishComponentsID() {
         );
         const result = await response.json();
         setSections(result);
+        setPickedSection(result[0]?.id || null); // birinchisi default ochiq
         result.forEach(async (section) => {
           try {
             const topicsRes = await fetch(
@@ -134,17 +138,14 @@ function KirishComponentsID() {
             );
             const topics = await topicsRes.json();
             setTopicsMap((prev) => ({ ...prev, [section.id]: topics }));
-          } catch (err) {}
+          } catch { }
         });
-      } catch (err) {
-      } finally {
-        setLoadingSections(false);
-      }
+      } catch { } finally { setLoadingSections(false); }
     };
     fetchSections();
   }, [courseId]);
 
-  const openOfertaModal = () => setShowOfertaModal(true);
+  const openOfertaModal  = () => setShowOfertaModal(true);
   const handleOfertaClose = () => setShowOfertaModal(false);
 
   const handleAgreeTerms = (e) => {
@@ -164,11 +165,7 @@ function KirishComponentsID() {
   };
 
   const buyCourse = async () => {
-    if (!token) {
-      notify({ type: "token" });
-      navigate("/login/");
-      return;
-    }
+    if (!token) { notify({ type: "token" }); navigate("/login/"); return; }
     if (!agreeToTerms || !hasReadOferta) {
       notification.warning({
         message: "Iltimos, ommaviy oferta shartnomasi bilan tanishing va rozilik bering",
@@ -184,7 +181,6 @@ function KirishComponentsID() {
         },
         body: JSON.stringify({ course_id: courseId }),
       });
-
       if (response.ok) {
         notification.success({ message: "Kurs muvaffaqiyatli sotib olindi!" });
         navigate(`/kurslar/${slug}/${courseId}`);
@@ -196,19 +192,16 @@ function KirishComponentsID() {
             try {
               const errorData = JSON.parse(responseText);
               if (errorData.detail) errorMessage = errorData.detail;
-            } catch {
-              errorMessage = responseText;
-            }
+            } catch { errorMessage = responseText; }
           }
-        } catch {
-        }
+        } catch { }
         notification.error({ message: errorMessage });
-        addBalance(200000)
+        addBalance(200000);
         if (response.status === 402) {
           navigate("/subscription", { state: { courseData: findData } });
         }
       }
-    } catch (err) {
+    } catch {
       notification.error({ message: "Soʻrov yuborishda xatolik" });
     }
   };
@@ -266,15 +259,9 @@ function KirishComponentsID() {
     <>
       <Helmet>
         <title>{findData?.title} | MyRobo.uz</title>
-        <meta
-          name="description"
-          content={findData?.about?.slice(0, 155) || "MyRobo platformasidagi kurs haqida ma'lumot."}
-        />
+        <meta name="description" content={findData?.about?.slice(0, 155) || "MyRobo platformasidagi kurs haqida ma'lumot."} />
         <meta property="og:title" content={findData?.title} />
-        <meta
-          property="og:description"
-          content={findData?.about?.slice(0, 155) || "MyRobo platformasidagi kurs haqida ma'lumot."}
-        />
+        <meta property="og:description" content={findData?.about?.slice(0, 155) || "MyRobo platformasidagi kurs haqida ma'lumot."} />
         <meta property="og:image" content={findData?.image} />
         <meta property="og:url" content={fullUrl} />
         <meta property="og:type" content="website" />
@@ -282,49 +269,35 @@ function KirishComponentsID() {
 
       {/* Oferta Modal */}
       <Modal
-  title="Ommaviy Oferta Shartnomasi"
-  className="
-    dark:[&_.ant-modal-content]:!bg-gray-800
-    dark:[&_.ant-modal-header]:!bg-gray-800
-    dark:[&_.ant-modal-title]:!text-white
-    dark:[&_.ant-modal-body]:!bg-gray-800
-    dark:[&_.ant-modal-body]:!text-gray-200
-    dark:[&_.ant-modal-footer]:!bg-gray-800
-  "
-  open={showOfertaModal}
-  width={"100%"}
-  onCancel={handleOfertaClose}
-  style={{ maxHeight: "90vh" }}
-  bodyStyle={{ maxHeight: "calc(90vh - 120px)", overflowY: "auto" }}
-  footer={[
-    <button
-      key="close"
-      onClick={handleOfertaClose}
-      className="
-        bg-gray-400 m-1 hover:bg-gray-500 text-white px-6 py-2 rounded-md
-        w-full sm:w-auto
-        dark:bg-gray-700 dark:hover:bg-gray-600
-      "
-    >
-      Yopish
-    </button>,
-
-    <button
-      key="agree"
-      onClick={handleOfertaRead}
-      className="
-        bg-blue-600 m-1 sm:w-auto hover:bg-blue-700 w-full text-white px-6 py-2 rounded-md
-        dark:bg-blue-500 dark:hover:bg-blue-400
-      "
-    >
-      Men tanishib chiqdim va rozilik beraman
-    </button>,
-  ]}
->
-  <div className="dark:text-gray-200" style={{ maxHeight: "calc(90vh - 200px)", overflowY: "auto" }}>
-    <SubscriptionOferta />
-  </div>
-</Modal>
+        title="Ommaviy Oferta Shartnomasi"
+        className="
+          dark:[&_.ant-modal-content]:!bg-gray-800
+          dark:[&_.ant-modal-header]:!bg-gray-800
+          dark:[&_.ant-modal-title]:!text-white
+          dark:[&_.ant-modal-body]:!bg-gray-800
+          dark:[&_.ant-modal-body]:!text-gray-200
+          dark:[&_.ant-modal-footer]:!bg-gray-800
+        "
+        open={showOfertaModal}
+        width={"100%"}
+        onCancel={handleOfertaClose}
+        style={{ maxHeight: "90vh" }}
+        bodyStyle={{ maxHeight: "calc(90vh - 120px)", overflowY: "auto" }}
+        footer={[
+          <button key="close" onClick={handleOfertaClose}
+            className="bg-gray-400 m-1 hover:bg-gray-500 text-white px-6 py-2 rounded-md w-full sm:w-auto dark:bg-gray-700 dark:hover:bg-gray-600">
+            Yopish
+          </button>,
+          <button key="agree" onClick={handleOfertaRead}
+            className="bg-blue-600 m-1 sm:w-auto hover:bg-blue-700 w-full text-white px-6 py-2 rounded-md dark:bg-blue-500 dark:hover:bg-blue-400">
+            Men tanishib chiqdim va rozilik beraman
+          </button>,
+        ]}
+      >
+        <div className="dark:text-gray-200" style={{ maxHeight: "calc(90vh - 200px)", overflowY: "auto" }}>
+          <SubscriptionOferta />
+        </div>
+      </Modal>
 
       {/* Asosiy sahifa */}
       <div className="bg-gray-100 dark:bg-gray-950 min-h-screen font-sans transition-colors duration-300">
@@ -392,47 +365,76 @@ function KirishComponentsID() {
                     Bo'limlar mavjud emas.
                   </p>
                 ) : (
-                  sections.map((section) => (
-                    <div key={section.id}>
-                      {/* Bo'lim sarlavhasi */}
-                      <div className="bg-blue-900 dark:bg-blue-800 text-white p-3 md:p-4 rounded-t-lg">
-                        <h3 className="font-medium text-sm md:text-base truncate">
-                          {section.title}
-                        </h3>
-                      </div>
+                  sections.map((section) => {
+                    const isOpen = section.id === pickedSection;
+                    const topics = topicsMap[section.id] ?? [];
+                    return (
+                      <div key={section.id}>
+                        {/* Bo'lim sarlavhasi */}
+                        <div
+                          onClick={() => setPickedSection(isOpen ? null : section.id)}
+                          className="bg-blue-900 dark:bg-blue-800 text-white p-3 md:p-4 rounded-t-lg flex items-center justify-between cursor-pointer select-none"
+                        >
+                          <h3 className="font-medium text-sm md:text-base truncate">
+                            {section.title}
+                          </h3>
+                          {/* Chevron – rotate animatsiyasi */}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            style={{
+                              width: 16,
+                              height: 16,
+                              flexShrink: 0,
+                              marginLeft: 8,
+                              transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                              transition: "transform 0.32s cubic-bezier(0.4, 0, 0.2, 1)",
+                            }}
+                          >
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </div>
 
-                      {/* Mavzular */}
-                      <div className="bg-white dark:bg-gray-800 shadow-md rounded-b-lg divide-y divide-gray-100 dark:divide-gray-700">
-                        {topicsMap[section.id] ? (
-                          topicsMap[section.id].map((topic) => (
-                            <div
-                              key={topic.id}
-                              className="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between
-                                         hover:bg-gray-50 dark:hover:bg-gray-700 gap-2 sm:gap-0 transition-colors"
-                            >
-                              <div className="flex items-start sm:items-center gap-2 min-w-0">
-                                {topic.topic_type === "video" ? (
-                                  <PlayCircleOutlined className="text-blue-500 flex-shrink-0 mt-1 sm:mt-0" />
-                                ) : (
-                                  <CodeOutlined className="text-green-500 flex-shrink-0 mt-1 sm:mt-0" />
-                                )}
-                                <span className="text-gray-700 dark:text-gray-300 text-xs md:text-sm truncate">
-                                  {topic.title}
-                                </span>
+                        {/* Mavzular – animatsiyali accordion */}
+                        <AccordionPanel isOpen={isOpen}>
+                          <div className="bg-white dark:bg-gray-800 shadow-md rounded-b-lg divide-y divide-gray-100 dark:divide-gray-700">
+                            {topics.length === 0 ? (
+                              <div className="p-3 md:p-4 text-xs text-gray-400 dark:text-gray-500">
+                                Yuklanmoqda...
                               </div>
-                              <span className="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded whitespace-nowrap">
-                                {topic.topic_type === "video" ? "Video" : "Kod"}
-                              </span>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="p-3 md:p-4 text-gray-400 dark:text-gray-500 text-xs md:text-sm">
-                            <LoadingOutlined className="mr-2" /> Mavzular yuklanmoqda...
+                            ) : (
+                              topics.map((topic) => (
+                                <div
+                                  key={topic.id}
+                                  className="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between
+                                             hover:bg-gray-50 dark:hover:bg-gray-700 gap-2 sm:gap-0 transition-colors"
+                                >
+                                  <div className="flex items-start sm:items-center gap-2 min-w-0">
+                                    {topic.topic_type === "video" ? (
+                                      <PlayCircleOutlined className="text-blue-500 flex-shrink-0 mt-1 sm:mt-0" />
+                                    ) : (
+                                      <CodeOutlined className="text-green-500 flex-shrink-0 mt-1 sm:mt-0" />
+                                    )}
+                                    <span className="text-gray-700 dark:text-gray-300 text-xs md:text-sm truncate">
+                                      {topic.title}
+                                    </span>
+                                  </div>
+                                  <span className="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded whitespace-nowrap">
+                                    {topic.topic_type === "video" ? "Video" : "Kod"}
+                                  </span>
+                                </div>
+                              ))
+                            )}
                           </div>
-                        )}
+                        </AccordionPanel>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -455,9 +457,7 @@ function KirishComponentsID() {
                     <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">Kurs narxi:</p>
                     <div className="flex items-center mt-1 md:mt-2">
                       <span className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
-                        {findData?.price === 0 ||
-                        findData?.price === "0" ||
-                        !findData?.price
+                        {findData?.price === 0 || findData?.price === "0" || !findData?.price
                           ? "Bepul"
                           : `${Number(findData?.price).toLocaleString("uz-UZ")} so'm`}
                       </span>
@@ -474,10 +474,7 @@ function KirishComponentsID() {
                     />
                     <span className="text-gray-700 dark:text-gray-300 text-xs md:text-sm leading-relaxed">
                       Men{" "}
-                      <button
-                        onClick={openOfertaModal}
-                        className="text-blue-600 underline font-semibold hover:text-blue-700"
-                      >
+                      <button onClick={openOfertaModal} className="text-blue-600 underline font-semibold hover:text-blue-700">
                         ommaviy oferta shartnomasi
                       </button>{" "}
                       bilan tanishib chiqdim va rozilik beraman
@@ -499,10 +496,7 @@ function KirishComponentsID() {
                     </label>
                     <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                       Shartnoma bilan tanishish uchun{" "}
-                      <button
-                        onClick={openOfertaModal}
-                        className="text-blue-600 font-medium underline hover:text-blue-700"
-                      >
+                      <button onClick={openOfertaModal} className="text-blue-600 font-medium underline hover:text-blue-700">
                         shu yerni bosing
                       </button>
                     </p>
@@ -523,6 +517,7 @@ function KirishComponentsID() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>

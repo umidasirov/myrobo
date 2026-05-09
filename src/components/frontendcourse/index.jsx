@@ -13,6 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCourseAccess } from "../../hooks/useCourseAccess";
 import { Helmet } from "react-helmet-async";
 import KinescopePlayer from "@kinescope/react-kinescope-player";
+import { BookOpenCheck, ShieldQuestionMark, TestTubeDiagonalIcon } from "lucide-react";
 
 const BASE_URL = "https://myrobo.uz/api";
 
@@ -419,6 +420,7 @@ const FrontendCourse = () => {
                               <p className="text-[11px] text-gray-400 dark:text-gray-500 py-2">Mavzular yuklanmagan</p>
                             ) : (
                               topicsMap[section.id].map((topic) => (
+                                <>
                                 <div
                                   key={topic.id}
                                   className={`group flex items-center p-2 rounded-md cursor-pointer transition-all ${selectedTopic?.id === topic.id
@@ -437,7 +439,7 @@ const FrontendCourse = () => {
                                     {topic.is_completed ? (
                                       <CheckCircleFilled className="text-green-500 text-sm" />
                                     ) : topic.topic_type === "code" ? (
-                                      <CodeOutlined className="text-blue-400 text-sm" />
+                                      <CodeOutlined className="text-blue-400 text-md" />
                                     ) : (
                                       <PlayCircleFilled className="text-gray-300 group-hover:text-blue-400 text-sm transition-colors" />
                                     )}
@@ -446,6 +448,35 @@ const FrontendCourse = () => {
                                     {topic.title}
                                   </span>
                                 </div>
+                                <div
+                                  key={topic.id}
+                                  className={`group flex items-center p-2 rounded-md cursor-pointer transition-all ${selectedTopic?.id === topic.id
+                                      ? "bg-white dark:bg-gray-700 shadow-sm ring-1 ring-gray-200 dark:ring-gray-600"
+                                      : "hover:bg-gray-50 dark:hover:bg-gray-700/30 text-gray-600 dark:text-gray-400"
+                                    }`}
+                                  onClick={() => (
+                                    handleTopicClick(topic, section),
+                                    setExpandedSection(section.id),
+                                    localStorage.setItem("last_topic_id", section.id)
+                                   )
+                                  }
+                                // ↑ section to'g'ridan-to'g'ri uzatiladi
+                                >
+                                  <div className="mr-2.5 flex-shrink-0">
+                                    {topic.is_completed ? (
+                                      <CheckCircleFilled className="text-green-500 text-sm" />
+                                    ) : topic.topic_type === "code" ? (
+                                      <ShieldQuestionMark className="text-blue-400 text-xs" />
+                                    ) : (
+                                      <PlayCircleFilled className="text-gray-300 group-hover:text-blue-400 text-sm transition-colors" />
+                                    )}
+                                  </div>
+                                  <span className={`text-[13px] leading-snug ${selectedTopic?.id === topic.id ? "font-semibold text-gray-900 dark:text-white" : ""}`}>
+                                    Test
+                                  </span>
+                                </div>
+                                </>
+                                
                               ))
                             )}
                           </div>

@@ -47,7 +47,7 @@ const SwiperComponent = () => {
   const tags = [
     "Arduino",
     "ESP32",
-    "IoT Telemetriya",
+    "IoT",
     "React JS",
     "Node.js",
   ];
@@ -156,7 +156,6 @@ const SwiperComponent = () => {
         ))}
       </Swiper>
 
-      {/* TAGS */}
       <div className="mt-16 pt-8 border-t 
       border-gray-200 dark:border-gray-700">
 
