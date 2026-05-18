@@ -12,7 +12,7 @@ export function useCourseAccess(courseId) {
       return;
     }
     // ✅ apiFetch bilan 401 avtomatik logout
-    apiFetch("https://myrobo.uz/api/courses/my-courses/")
+    apiFetch("https://myrobo.adxamov.uz/api/courses/my-courses/")
       .then((r) => r.json())
       .then((list) => {
         const bought =

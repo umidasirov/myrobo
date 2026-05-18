@@ -4,40 +4,43 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const SkeletonCard = () => (
-  <div className="border border-gray-200 dark:border-gray-600 w-full max-w-[310px] p-6 rounded-lg animate-pulse">
-    <div className="overflow-hidden rounded-lg">
-      <div className="w-full h-[280px] bg-gray-200" />
+  <div className="w-full max-w-[310px] rounded-2xl border border-gray-200 bg-white p-5 animate-pulse dark:border-gray-700 dark:bg-gray-900">
+    <div className="overflow-hidden rounded-xl">
+      <div className="h-[220px] w-full rounded-xl bg-gray-200 dark:bg-gray-700 md:h-[280px]" />
     </div>
+
     <div className="flex flex-col items-center gap-4 pt-5">
-      <div className="w-[140px] h-[22px] bg-gray-200 rounded" />
-      <div className="w-full h-[16px] bg-gray-200 rounded" />
-      <div className="w-4/5 h-[16px] bg-gray-200 rounded" />
-      <div className="w-full flex justify-between mt-2">
-        <div className="w-[80px] h-[16px] bg-gray-200 rounded" />
-        <div className="w-[80px] h-[16px] bg-gray-200 rounded" />
-      </div>
-      <div className="w-full h-[36px] bg-gray-200 rounded-lg mt-1" />
+      <div className="h-[22px] w-[140px] rounded bg-gray-200 dark:bg-gray-700" />
+      <div className="h-[16px] w-full rounded bg-gray-200 dark:bg-gray-700" />
+      <div className="h-[16px] w-4/5 rounded bg-gray-200 dark:bg-gray-700" />
+      <div className="mt-1 h-[24px] w-[90px] rounded-full bg-gray-200 dark:bg-gray-700" />
+      <div className="mt-1 h-[40px] w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
     </div>
   </div>
 );
-const truncateText = (text = "", limit = 90) => {
+
+const truncateText = (text = "", limit = 100) => {
   if (!text) return "";
   return text.length <= limit ? text : text.slice(0, limit).trim() + "...";
 };
+
 function TeamComponents() {
   const navigate = useNavigate();
   const { teacherData, fetchTeam, loading } = useData();
 
+  const teachers = Array.isArray(teacherData) ? teacherData : [];
+  const isSmall = teachers.length > 0 && teachers.length < 4;
+
   const itemVariants = {
-    hidden: { 
-      opacity: 0, 
-      x: -60 
+    hidden: {
+      opacity: 0,
+      y: 35,
     },
     visible: {
       opacity: 1,
-      x: 0,
+      y: 0,
       transition: {
-        duration: 0.6,
+        duration: 0.55,
         ease: "easeOut",
       },
     },
@@ -48,71 +51,115 @@ function TeamComponents() {
   }, []);
 
   const postID = (slug) => {
+    if (!slug) return;
     navigate(`/mentorlar/${slug}`);
   };
-  const isSmall = Array.isArray(teacherData) && teacherData?.length < 4 && teacherData?.length > 0;
+
   return (
-    <section className="w-full md:w-[90%] m-auto mt-8 md:mt-[140px] px-4 md:px-0 mb-16">
-      <div className="mb-8 md:mb-12 text-center">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          Professional <span className="text-blue-600">o'qituvchilar</span> jamoasi
+    <section className="relative mx-auto mb-16 mt-8 w-full px-4 md:mt-[140px] md:w-[90%] md:px-0">
+      <div className="mb-8 text-center md:mb-12">
+        <span className="mb-3 inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-xs font-semibold text-blue-600 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300">
+          Bizning mentorlar
+        </span>
+
+        <h1 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white md:text-3xl lg:text-4xl">
+          Professional{" "}
+          <span className="bg-gradient-to-r from-blue-600 to-sky-400 bg-clip-text text-transparent">
+            o'qituvchilar
+          </span>{" "}
+          jamoasi
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 text-sm md:text-base">
+
+        <p className="mx-auto max-w-2xl text-sm leading-relaxed text-gray-600 dark:text-gray-400 md:text-base">
           Tajribali va malakali o'qituvchilardan to'g'ridan-to'g'ri o'rganing
         </p>
       </div>
 
-      <div className={`${isSmall ? "flex flex-wrap justify-center":"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 justify-items-center md:justify-items-start"} `}>
-        {loading
-          ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
-          : Array.isArray(teacherData) && teacherData?.length > 0 ? teacherData.map((value, index) => (
-            <motion.div
-              key={value.slug}
-              variants={itemVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              onClick={() => postID(value?.slug)}
-              className={isSmall? "w-80 shadow-lg p-4 rounded-xl": `w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-4 md:p-6 hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col hover:scale-105 transform duration-300`}
-            >
-              <div className="overflow-hidden rounded-lg mb-4">
-                <img
-                  className="w-full h-[220px] md:h-[280px] object-cover hover:scale-105 transition-transform duration-300"
-                  src={value?.img}
-                  alt={value?.username}
-                  loading="lazy"
-                />
-              </div>
+      <div
+        className={
+          isSmall
+            ? "flex flex-wrap justify-center gap-6"
+            : "grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        }
+      >
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+        ) : teachers.length > 0 ? (
+          teachers.map((value, index) => {
+            const fullName =
+              value?.username ||
+              `${value?.first_name || ""} ${value?.last_name || ""}`.trim() ||
+              "Mentor";
 
-              <div className="flex flex-col gap-3 flex-1">
-                <h2 className="text-[16px] md:text-[18px] lg:text-[20px] font-bold text-center">
-                  {value?.username}
-                </h2>
+            const image = value?.image || value?.img;
+            const about = value?.about || value?.job || "";
+            const courseCount = value?.courses_count || 0;
 
-                <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-xs md:text-sm leading-relaxed text-center line-clamp-3">
-                 {truncateText(value?.about, 100)}
-                </p>
+            return (
+              <motion.div
+                key={value?.slug || value?.id || index}
+                variants={itemVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-80px" }}
+                onClick={() => postID(value?.slug)}
+                className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-blue-400/50 hover:shadow-2xl hover:shadow-blue-500/10 dark:border-gray-700/80 dark:bg-gray-900 dark:hover:border-blue-400/40 dark:hover:shadow-blue-400/10 ${
+                  isSmall ? "w-80" : "w-full max-w-[330px]"
+                }`}
+              >
+                <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-                <div className="flex justify-center mt-1">
-                  <span className="text-xs text-blue-400 bg-blue-100 px-3 py-1 rounded-full">
-                    {value.courses.length} ta kurs
-                  </span>
+                <div className="overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
+                  {image ? (
+                    <img
+                      className="h-[220px] w-full rounded-xl object-cover transition-transform duration-700 ease-out group-hover:scale-110 md:h-[280px]"
+                      src={image}
+                      alt={fullName}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex h-[220px] w-full items-center justify-center rounded-xl bg-gray-100 text-sm text-gray-400 dark:bg-gray-800 dark:text-gray-500 md:h-[280px]">
+                      Rasm yo'q
+                    </div>
+                  )}
                 </div>
 
-                <button
-                  className="w-full mt-auto py-2 rounded-lg border border-blue-500 text-blue-500 text-xs md:text-sm font-medium hover:bg-blue-500 hover:text-white transition-colors duration-200"
-                >
-                  Batafsil ko'rish
-                </button>
-              </div>
-            </motion.div>
-          ))
-          : (
-            // <div className="col-span-full flex flex-col items-center justify-center py-12">
-            //   <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-lg">Ma'lumotlar topilmadi</p>
-            // </div>
-            <div></div>
-          )}
+                <div className="flex flex-1 flex-col gap-3 pt-5">
+                  <h2 className="text-center text-[17px] font-bold text-gray-900 transition-colors duration-300 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 md:text-[20px]">
+                    {fullName}
+                  </h2>
+
+                  {/* <p className="min-h-[54px] text-center text-xs leading-relaxed text-gray-500 dark:text-gray-400 md:text-sm">
+                    {truncateText(about, 100)}
+                  </p> */}
+
+                  <div className="flex justify-center">
+                    <span className="rounded-full border border-blue-200 bg-blue-100 px-3 py-1 text-xs font-medium text-blue-600 transition-all duration-300 group-hover:bg-blue-500 group-hover:text-white dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300">
+                      {courseCount} ta kurs
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      postID(value?.slug);
+                    }}
+                    className="mt-auto w-full rounded-xl border border-blue-500 bg-transparent py-2.5 text-xs font-semibold text-blue-500 transition-all duration-300 hover:bg-blue-500 hover:text-white hover:shadow-lg hover:shadow-blue-500/30 dark:text-blue-400 dark:hover:text-white md:text-sm"
+                  >
+                    Batafsil ko'rish
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })
+        ) : (
+          <div className="col-span-full flex flex-col items-center justify-center py-12">
+            <p className="text-lg text-gray-500 dark:text-gray-400">
+              Ma'lumotlar topilmadi
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

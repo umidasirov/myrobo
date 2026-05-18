@@ -37,100 +37,100 @@ function Navbar() {
     localStorage.removeItem("locate");
     navigate("/");
   };
-const userMenu = (
-  <Menu
-    theme={theme === "dark" ? "dark" : "light"}
-    className="dark:!bg-gray-900 dark:!text-white w-[150px] p-8"
-  >
-    <Menu.Item
-      key="1"
-      icon={<BookOutlined />}
-      onClick={() => navigate("/my-courses")}
-      className="dark:!text-gray-200 dark:hover:!bg-gray-800 text-md"
+  const userMenu = (
+    <Menu
+      theme={theme === "dark" ? "dark" : "light"}
+      className="dark:!bg-gray-900 dark:!text-white w-[150px] p-8"
     >
-      Kurslarim
-    </Menu.Item>
+      <Menu.Item
+        key="1"
+        icon={<BookOutlined />}
+        onClick={() => navigate("/my-courses")}
+        className="dark:!text-gray-200 dark:hover:!bg-gray-800 text-md"
+      >
+        Kurslarim
+      </Menu.Item>
 
-    <Menu.Item
-      key="2"
-      icon={<UserOutlined />}
-      onClick={() => navigate("/profilim")}
-      className="dark:!text-gray-200 dark:hover:!bg-gray-800 text-md"
-    >
-      Profilim
-    </Menu.Item>
+      <Menu.Item
+        key="2"
+        icon={<UserOutlined />}
+        onClick={() => navigate("/profilim")}
+        className="dark:!text-gray-200 dark:hover:!bg-gray-800 text-md"
+      >
+        Profilim
+      </Menu.Item>
 
-    <Menu.Divider className="dark:!bg-gray-700" />
+      <Menu.Divider className="dark:!bg-gray-700" />
 
-    <Menu.Item
-      key="3"
-      icon={<LogoutOutlined />}
-      onClick={handleLogout}
-      className="dark:!text-red-400 dark:hover:!bg-gray-800 text-md"
-    >
-      Chiqish
-    </Menu.Item>
-  </Menu>
-);
+      <Menu.Item
+        key="3"
+        icon={<LogoutOutlined />}
+        onClick={handleLogout}
+        className="dark:!text-red-400 dark:hover:!bg-gray-800 text-md"
+      >
+        Chiqish
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <>
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-[999] transition-colors duration-300">
-        <div className="w-full md:w-[90%] m-auto h-16 md:h-20 flex items-center justify-between px-4 md:px-0">
-          <Link to="/">
-            <img className="w-40 md:w-52 hover:opacity-90 transition-opacity" src={logo} alt="Logo" />
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-[999] transition-colors duration-300">
+      <div className="w-full md:w-[90%] m-auto h-16 md:h-20 flex items-center justify-between px-4 md:px-0 overflow-hidden">
+        <Link to="/">
+          <img className="w-40 md:w-52 hover:opacity-90 transition-opacity" src={logo} alt="Logo" />
+        </Link>
+
+        <nav className="hidden sm:flex items-center gap-8 md:gap-16 text-sm md:text-base lg:text-lg font-medium text-gray-600 dark:text-gray-300">
+          <Link to="/" className={`relative group ${isActive("/") ? "text-blue-500" : ""}`}>
+            Bosh sahifa
+            <span className={`absolute left-0 -bottom-1 h-0.5 bg-blue-500 transition-all duration-300 ${isActive("/") ? "w-full" : "w-0 group-hover:w-full"}`}></span>
           </Link>
+          <Link to="/kurslar" className={`relative group ${isActive("/kurslar") ? "text-blue-500" : ""}`}>
+            Kurslar
+            <span className={`absolute left-0 -bottom-1 h-0.5 bg-blue-500 transition-all duration-300 ${isActive("/kurslar") ? "w-full" : "w-0 group-hover:w-full"}`}></span>
+          </Link>
+          <Link to="/blog" className={`relative group ${isActive("/blog") ? "text-blue-500" : ""}`}>
+            Maqolalar
+            <span className={`absolute left-0 -bottom-1 h-0.5 bg-blue-500 transition-all duration-300 ${isActive("/blog") ? "w-full" : "w-0 group-hover:w-full"}`}></span>
+          </Link>
+        </nav>
 
-          <nav className="hidden sm:flex items-center gap-8 md:gap-16 text-sm md:text-base lg:text-lg font-medium text-gray-600 dark:text-gray-300">
-            <Link to="/" className={`relative group ${isActive("/") ? "text-blue-500" : ""}`}>
-              Bosh sahifa
-              <span className={`absolute left-0 -bottom-1 h-0.5 bg-blue-500 transition-all duration-300 ${isActive("/") ? "w-full" : "w-0 group-hover:w-full"}`}></span>
-            </Link>
-            <Link to="/kurslar" className={`relative group ${isActive("/kurslar") ? "text-blue-500" : ""}`}>
-              Kurslar
-              <span className={`absolute left-0 -bottom-1 h-0.5 bg-blue-500 transition-all duration-300 ${isActive("/kurslar") ? "w-full" : "w-0 group-hover:w-full"}`}></span>
-            </Link>
-            <Link to="/blog" className={`relative group ${isActive("/blog") ? "text-blue-500" : ""}`}>
-              Maqolalar
-              <span className={`absolute left-0 -bottom-1 h-0.5 bg-blue-500 transition-all duration-300 ${isActive("/blog") ? "w-full" : "w-0 group-hover:w-full"}`}></span>
-            </Link>
-          </nav>
+        <div className="flex items-center gap-3">
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300"
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
 
-          <div className="flex items-center gap-3">
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300"
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
-
-            {token ? (
-              <>
-                <Dropdown overlay={userMenu} trigger={["click"]} placement="bottomRight">
-                  <Button className="hidden sm:block w-[60px] h-9 hover:bg-blue-400 hover:border-blue-400 transition-colors" type="primary">
-                    <UserOutlined />
-                  </Button>
-                </Dropdown>
-                <button className="sm:hidden text-2xl text-gray-600 dark:text-gray-300 hover:text-blue-500 transition-colors" onClick={showDrawer} aria-label="Menu">
-                  <MenuOutlined />
-                </button>
-              </>
-            ) : (
-              <Button onClick={() => navigate("/login")} className="hidden sm:block h-9 hover:bg-blue-400 hover:border-blue-400 transition-colors" type="primary">
-                Kirish
-              </Button>
-            )}
-
-            {!token && (
+          {token ? (
+            <>
+              <Dropdown overlay={userMenu} trigger={["click"]} placement="bottomRight">
+                <Button className="hidden sm:block w-[60px] h-9 hover:bg-blue-400 hover:border-blue-400 transition-colors" type="primary">
+                  <UserOutlined />
+                </Button>
+              </Dropdown>
               <button className="sm:hidden text-2xl text-gray-600 dark:text-gray-300 hover:text-blue-500 transition-colors" onClick={showDrawer} aria-label="Menu">
                 <MenuOutlined />
               </button>
-            )}
-          </div>
+            </>
+          ) : (
+            <Button onClick={() => navigate("/login")} className="hidden sm:block h-9 hover:bg-blue-400 hover:border-blue-400 transition-colors" type="primary">
+              Kirish
+            </Button>
+          )}
+
+          {!token && (
+            <button className="sm:hidden text-2xl text-gray-600 dark:text-gray-300 hover:text-blue-500 transition-colors" onClick={showDrawer} aria-label="Menu">
+              <MenuOutlined />
+            </button>
+          )}
         </div>
-      </header>
+      </div>
+    </header >
 
       <Drawer
         title={<Link to="/" onClick={onClose}><img className="w-44 md:w-52 hover:opacity-90 transition-opacity" src={logo} alt="Logo" /></Link>}

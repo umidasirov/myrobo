@@ -41,7 +41,7 @@ function CommentSection({ slug }) {
   const [focused, setFocused] = useState(false);
   const [success, setSuccess] = useState(false);
   const textareaRef = useRef(null);
-  const user = localStorage.getItem('username')
+  const user = localStorage.getItem('username');
   const token = localStorage.getItem("token");
   const notify = notificationApi();
 
@@ -49,15 +49,21 @@ function CommentSection({ slug }) {
     if (!slug) return;
     setLoading(true);
     try {
-      const res = await fetch(`https://myrobo.uz/api/blog/blogs/${slug}/comments/`, {
+      const res = await fetch(`https://myrobo.adxamov.uz/articles/articles/${slug}/`, {
         headers: { "Content-Type": "application/json" },
       });
       if (res.ok) {
         const data = await res.json();
-        setComments(Array.isArray(data) ? data : (data.results ?? []));
+        const list = Array.isArray(data.comments)
+          ? data.comments
+          : Array.isArray(data)
+          ? data
+          : [];
+        setComments(data.comments.results);
+        console.log(data);
       }
     } catch (err) {
-      
+      //
     } finally {
       setLoading(false);
     }
@@ -79,13 +85,14 @@ function CommentSection({ slug }) {
     if (!plainText || !token) return;
     setSubmitting(true);
     try {
-      const res = await fetch(`https://myrobo.uz/api/blog/blogs/${slug}/comments/`, {
+      const res = await fetch(`https://myrobo.adxamov.uz/articles/comment-create/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ text: content }),
+        // article slug + comment text
+        body: JSON.stringify({ article: slug, text: content }),
       });
       if (res.ok) {
         setContent("");
@@ -97,7 +104,7 @@ function CommentSection({ slug }) {
         fetchComments();
       }
     } catch (err) {
-      
+      //
     } finally {
       setSubmitting(false);
     }
@@ -123,7 +130,7 @@ function CommentSection({ slug }) {
       {token ? (
         <div className="flex gap-4 items-start mb-10">
           <div className="w-10 h-10 rounded-full bg-gray-500 dark:bg-gray-600 flex items-center justify-center text-white font-bold text-[15px] flex-shrink-0 select-none">
-            {user && user.length > 0 ? user[0] : 'u'}
+            {user && user.length > 0 ? user[0].toUpperCase() : 'U'}
           </div>
 
           <div className="flex-1 min-w-0">

@@ -10,7 +10,7 @@ function KursToifalariComponents() {
   const fetchCategories = async () => {
     setLoad(true);
     try {
-      const response = await fetch("https://myrobo.uz/api/courses/course-types/");
+      const response = await fetch("https://myrobo.adxamov.uz/api/courses/course-types/");
       const data = await response.json();
       setData(data);
     } catch (error) {

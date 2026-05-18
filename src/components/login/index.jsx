@@ -30,7 +30,7 @@ const LoginPage = () => {
     }
   }, [access, navigate]);
 
-  const telegramLink = `https://t.me/myrobologinbot?start=${uuid}`;
+  const telegramLink = `https://t.me/dev_4o4_bot?start=${uuid}`;
 
   const handleDigitChange = (e, index) => {
     const value = e.target.value.replace(/\D/, "").slice(0, 1);
@@ -71,7 +71,7 @@ const LoginPage = () => {
     }
 
     try {
-      const response = await fetch("https://myrobo.uz/api/user/auth/login/", {
+      const response = await fetch("https://myrobo.adxamov.uz/user/login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

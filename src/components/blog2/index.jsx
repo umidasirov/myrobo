@@ -16,145 +16,145 @@ const formatDate = (iso) => {
   return d.toLocaleDateString("uz-UZ", { year: "numeric", month: "short", day: "numeric" });
 };
 
-const getCategoryTitle = (cat) => {
-  if (!cat) return "";
-  if (typeof cat === "object") return cat.title ?? "";
-  return cat;
+const getTypeTitle = (type) => {
+  if (!type) return "";
+  if (typeof type === "object") return type.title ?? "";
+  return type;
 };
 
-function BlogComponentsId() {
+function ArticleComponentsId() {
   const [loading, setLoading] = useState(false);
-  const [blog, setBlog] = useState(null);
+  const [article, setArticle] = useState(null);
 
   const { slug } = useParams();
   const location = useLocation();
   const name = location?.state?.name ?? slug;
-  
+
   useEffect(() => {
     if (!name) return;
-    const fetchBlog = async () => {
+    const fetchArticle = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`https://myrobo.uz/api/blog/blogs/${name}/`, {
+        const res = await fetch(`https://myrobo.adxamov.uz/articles/articles/${name}/`, {
           headers: { "Content-Type": "application/json" },
         });
         const data = await res.json();
-        setBlog(data);
+        setArticle(data);
       } catch (err) {
-        
+        //
       } finally {
         setLoading(false);
       }
     };
-    fetchBlog();
+    fetchArticle();
   }, [name]);
 
   return (
     <>
       <Helmet>
-        <title>{blog?.title ? `${blog.title} - MyRobo` : 'Maqola - MyRobo'}</title>
-        <meta name="description" content={blog?.description || "MyRobo blogidagi maqolani o'qing."} />
-        <meta name="keywords" content={`maqola, ${blog?.category ? getCategoryTitle(blog.category) : ''}, MyRobo`} />
-        <meta property="og:title" content={blog?.title || 'Maqola - MyRobo'} />
-        <meta property="og:description" content={blog?.description || "MyRobo blogidagi maqolani o'qing."} />
-        <meta property="og:image" content={blog?.img} />
+        <title>{article?.title ? `${article.title} - MyRobo` : 'Maqola - MyRobo'}</title>
+        <meta name="description" content={article?.description || "MyRobo maqolasini o'qing."} />
+        <meta name="keywords" content={`maqola, ${article?.type ? getTypeTitle(article.type) : ''}, MyRobo`} />
+        <meta property="og:title" content={article?.title || 'Maqola - MyRobo'} />
+        <meta property="og:description" content={article?.description || "MyRobo maqolasini o'qing."} />
+        <meta property="og:image" content={article?.image} />
         <meta property="og:type" content="article" />
       </Helmet>
       <section className="w-[95%] md:w-[70%] m-auto mt-4 md:mt-[40px]">
-      <div className="w-full flex flex-col gap-[40px] max-[500px]:gap-[25px]">
+        <div className="w-full flex flex-col gap-[40px] max-[500px]:gap-[25px]">
 
-        <div className="w-full flex flex-col gap-[20px]">
-          {loading ? (
-            <div className="w-full h-[500px] bg-gray-200 dark:bg-gray-700 animate-pulse rounded-2xl" />
-          ) : (
-            <img
-              className="w-full h-[250px] sm:h-[350px] md:h-[450px] xl:h-[550px] object-cover rounded-2xl"
-              src={blog?.img}
-              alt={blog?.title}
-              loading="lazy"
-            />
-          )}
-
-          <div className="gap-[40px] hidden max-[700px]:flex max-[524px]:justify-end">
+          <div className="w-full flex flex-col gap-[20px]">
             {loading ? (
-              <>
-                <MetaSkeleton />
-                <MetaSkeleton />
-              </>
+              <div className="w-full h-[500px] bg-gray-200 dark:bg-gray-700 animate-pulse rounded-2xl" />
             ) : (
-              <>
-                <MetaItem icon={<EyeOutlined />} label={blog?.views} />
-                <MetaItem icon={<CalendarOutlined />} label={formatDate(blog?.created_at)} />
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-[40px] max-[500px]:gap-[20px]">
-
-          <div className="flex items-end justify-between gap-[40px]">
-            {loading ? (
-              <div className="h-8 w-[250px] bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
-            ) : (
-              <div className="flex flex-col gap-1">
-                {getCategoryTitle(blog?.category) && (
-                  <span className="text-[12px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    {getCategoryTitle(blog?.category)}
-                  </span>
-                )}
-                <h1 className="text-[29px] font-bold dark:text-white max-[768px]:text-[22px] max-[590px]:text-[17px]">
-                  {blog?.title}
-                </h1>
-              </div>
-            )}
-
-            <div className="flex gap-[40px] max-[700px]:hidden">
-              {loading ? (
-                <>
-                  <MetaSkeleton />
-                  <MetaSkeleton />
-                </>
-              ) : (
-                <>
-                  <MetaItem icon={<EyeOutlined />} label={blog?.views} />
-                  <MetaItem icon={<CalendarOutlined />} label={formatDate(blog?.created_at)} />
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-[30px]">
-            {loading ? (
-              <div className="h-6 w-[90%] bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
-            ) : (
-              <div
-                className="text-[17px] blog-content text-gray-600 dark:text-gray-300 max-[590px]:text-[15px] max-[490px]:text-[13px] prose dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: blog?.description }}
+              <img
+                className="w-full h-[250px] sm:h-[350px] md:h-[450px] xl:h-[550px] object-cover rounded-2xl"
+                src={article?.image}
+                alt={article?.title}
+                loading="lazy"
               />
             )}
 
-            <div className="flex items-center gap-[20px] max-[524px]:justify-center">
+            <div className="gap-[40px] hidden max-[700px]:flex max-[524px]:justify-end">
               {loading ? (
                 <>
-                  {[...Array(4)].map((_, i) => (
-                    <div key={i} className="w-[45px] h-[45px] bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
-                  ))}
+                  <MetaSkeleton />
+                  <MetaSkeleton />
                 </>
               ) : (
                 <>
-                  <SocialBtn icon={<FaTelegramPlane />} />
-                  <SocialBtn icon={<FaInstagram />} />
-                  <SocialBtn icon={<FaYoutube />} />
-                  <SocialBtn icon={<FaFacebookF />} />
+                  <MetaItem icon={<EyeOutlined />} label={article?.views} />
+                  <MetaItem icon={<CalendarOutlined />} label={formatDate(article?.created_at)} />
                 </>
               )}
             </div>
           </div>
-        </div>
 
-        <CommentSection slug={name} />
-      </div>
-    </section>
+          <div className="flex flex-col gap-[40px] max-[500px]:gap-[20px]">
+
+            <div className="flex items-end justify-between gap-[40px]">
+              {loading ? (
+                <div className="h-8 w-[250px] bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+              ) : (
+                <div className="flex flex-col gap-1">
+                  {getTypeTitle(article?.type) && (
+                    <span className="text-[12px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      {getTypeTitle(article?.type)}
+                    </span>
+                  )}
+                  <h1 className="text-[29px] font-bold dark:text-white max-[768px]:text-[22px] max-[590px]:text-[17px]">
+                    {article?.title}
+                  </h1>
+                </div>
+              )}
+
+              <div className="flex gap-[40px] max-[700px]:hidden">
+                {loading ? (
+                  <>
+                    <MetaSkeleton />
+                    <MetaSkeleton />
+                  </>
+                ) : (
+                  <>
+                    <MetaItem icon={<EyeOutlined />} label={article?.views} />
+                    <MetaItem icon={<CalendarOutlined />} label={formatDate(article?.created_at)} />
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-[30px]">
+              {loading ? (
+                <div className="h-6 w-[90%] bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+              ) : (
+                <div
+                  className="text-[17px] blog-content text-gray-600 dark:text-gray-300 max-[590px]:text-[15px] max-[490px]:text-[13px] prose dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: article?.description }}
+                />
+              )}
+
+              <div className="flex items-center gap-[20px] max-[524px]:justify-center">
+                {loading ? (
+                  <>
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="w-[45px] h-[45px] bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <SocialBtn icon={<FaTelegramPlane />} />
+                    <SocialBtn icon={<FaInstagram />} />
+                    <SocialBtn icon={<FaYoutube />} />
+                    <SocialBtn icon={<FaFacebookF />} />
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <CommentSection slug={name} />
+        </div>
+      </section>
     </>
   );
 }
@@ -187,4 +187,4 @@ function SocialBtn({ icon }) {
   );
 }
 
-export default BlogComponentsId;
+export default ArticleComponentsId;

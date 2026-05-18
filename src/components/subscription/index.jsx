@@ -262,7 +262,7 @@ function SubscriptionOferta() {
             </h2>
             <p className="oferta-p">
               <span className="oferta-term">«Platforma»</span> — «INFINITE CO» MCHJ
-              tomonidan boshqariladigan, https://myrobo.uz domen manzilida joylashgan
+              tomonidan boshqariladigan, http://myrobo.adxamov.uz domen manzilida joylashgan
               veb-sayt hamda tegishli mobil ilovalar majmui.
             </p>
             <p className="oferta-p">
@@ -424,8 +424,8 @@ function SubscriptionOferta() {
             </p>
             <p className="oferta-p">
               <span className="oferta-term">Platforma:</span>{" "}
-              <a href="https://myrobo.uz" style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
-                https://myrobo.uz
+              <a href="http://myrobo.adxamov.uz" style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>
+                http://myrobo.adxamov.uz
               </a>
             </p>
             <p className="oferta-p">

@@ -11,7 +11,8 @@ import {
   CircuitBoard
 } from "lucide-react";
 import logo from "../../../public/logo.svg";
-const BASE_URL = "https://myrobo.uz/api";
+const BASE_URL = "https://myrobo.adxamov.uz/";
+// const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const LANGUAGES = [
   { value: "javascript", label: "JavaScript", apiLang: null, icon: <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 48 48"><path fill="#ffd600" d="M6,42V6h36v36H6z"></path><path fill="#000001" d="M29.538 32.947c.692 1.124 1.444 2.201 3.037 2.201 1.338 0 2.04-.665 2.04-1.585 0-1.101-.726-1.492-2.198-2.133l-.807-.344c-2.329-.988-3.878-2.226-3.878-4.841 0-2.41 1.845-4.244 4.728-4.244 2.053 0 3.528.711 4.592 2.573l-2.514 1.607c-.553-.988-1.151-1.377-2.078-1.377-.946 0-1.545.597-1.545 1.377 0 .964.6 1.354 1.985 1.951l.807.344C36.452 29.645 38 30.839 38 33.523 38 36.415 35.716 38 32.65 38c-2.999 0-4.702-1.505-5.65-3.368L29.538 32.947zM17.952 33.029c.506.906 1.275 1.603 2.381 1.603 1.058 0 1.667-.418 1.667-2.043V22h3.333v11.101c0 3.367-1.953 4.899-4.805 4.899-2.577 0-4.437-1.746-5.195-3.368L17.952 33.029z"></path></svg> },
@@ -32,43 +33,49 @@ const LANGUAGES = [
 
 const THEMES = [
   {
-    value: "vs-dark",
+    value: "my-dark-theme",
     label1: "🌙 Dark",
-    toolbar: "bg-[#1E1E1E] border-[#3c3c3c]",
-    select: "bg-[#2c313a] text-gray-300 border-[#3c3c3c]",
-    label: "text-gray-400",
-    btn: "bg-[#2c313a] text-blue-400 border-[#3c3c3c] hover:bg-[#3a3f4b]",
-    run: "bg-green-700 hover:bg-green-600 text-white",
-    snippet: "bg-[#21252b] border-[#3c3c3c]",
-    snippetItem: "text-gray-400 hover:bg-[#3a3f4b]",
-    output: "bg-[#1E1E1E] border-gray-700 text-white",
-    outputPre: "bg-gray-800",
-  },
-  {
-    value: "light",
-    label1: "☀️ Light",
-    toolbar: "bg-[#f3f3f3] border-[#d4d4d4]",
-    select: "bg-white text-gray-700 border-[#d4d4d4]",
-    label: "text-gray-600",
-    btn: "bg-white text-blue-600 border-[#d4d4d4] hover:bg-gray-100",
-    run: "bg-green-600 hover:bg-green-500 text-white",
-    snippet: "bg-white border-[#d4d4d4]",
-    snippetItem: "text-gray-700 hover:bg-gray-100",
-    output: "bg-gray-100 border-gray-300 text-gray-800",
-    outputPre: "bg-gray-200",
-  },
-  {
-    value: "hc-black",
-    label1: "⚫ High Contrast",
-    toolbar: "bg-black border-yellow-400",
-    select: "bg-black text-yellow-300 border-yellow-400",
-    label: "text-yellow-300",
-    btn: "bg-black text-yellow-300 border-yellow-400 hover:bg-yellow-900",
-    run: "bg-yellow-400 hover:bg-yellow-300 text-black font-bold",
-    snippet: "bg-black border-yellow-400",
-    snippetItem: "text-yellow-300 hover:bg-yellow-900",
-    output: "bg-black border-yellow-400 text-yellow-300",
-    outputPre: "bg-gray-900",
+
+    // dark
+    toolbar:
+      "bg-gray-900/80 border-gray-700 dark:bg-gray-900/80 dark:border-gray-700 " +
+      "bg-white border-gray-200",
+
+    select:
+      "bg-gray-800 text-gray-300 border-gray-700 " +
+      "dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 " +
+      "bg-white text-gray-700 border-gray-300",
+
+    label:
+      "text-gray-400 dark:text-gray-400 text-gray-600",
+
+    btn:
+      "bg-gray-800 text-blue-400 border-gray-700 hover:bg-gray-700 " +
+      "dark:bg-gray-800 dark:text-blue-400 dark:border-gray-700 dark:hover:bg-gray-700 " +
+      "bg-white text-blue-600 border-gray-300 hover:bg-gray-100",
+
+    run:
+      "bg-green-700 hover:bg-green-600 text-white " +
+      "dark:bg-green-700 dark:hover:bg-green-600 " +
+      "bg-green-600 hover:bg-green-500",
+
+    snippet:
+      "bg-gray-900/80 border-gray-700 " +
+      "dark:bg-gray-900/80 dark:border-gray-700 " +
+      "bg-white border-gray-200",
+
+    snippetItem:
+      "text-gray-400 hover:bg-gray-700 " +
+      "dark:text-gray-400 dark:hover:bg-gray-700 " +
+      "text-gray-700 hover:bg-gray-100",
+
+    output:
+      "bg-gray-900/80 border-gray-700 text-gray-100 " +
+      "dark:bg-gray-900/80 dark:border-gray-700 dark:text-gray-100 " +
+      "bg-gray-50 border-gray-200 text-gray-800",
+
+    outputPre:
+      "bg-gray-800/80 dark:bg-gray-800/80 bg-gray-100",
   },
 ];
 
@@ -128,7 +135,6 @@ const KEYWORDS = {
   java: ["public", "private", "protected", "class", "interface", "extends", "implements", "new", "return", "if", "else", "for", "while", "do", "switch", "case", "break", "continue", "try", "catch", "finally", "throw", "throws", "static", "final", "abstract", "void", "int", "double", "float", "char", "boolean", "String", "System", "null", "true", "false", "this", "super", "import", "package", "ArrayList", "HashMap", "List", "Map", "Override"],
   arduino: [],
 };
-
 const CodeEditor = ({ topicId, isCode = true }) => {
   const editorRef = useRef(null);
   const monacoRef = useRef(null);
@@ -136,7 +142,7 @@ const CodeEditor = ({ topicId, isCode = true }) => {
   const containerRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedLang, setSelectedLang] = useState("python");
-  const [selectedTheme, setSelectedTheme] = useState("vs-dark");
+  const [selectedTheme, setSelectedTheme] = useState("my-dark-theme");
   const [showSnippets, setShowSnippets] = useState(false);
   const [load, setLoad] = useState(false);
   const [response, setResponse] = useState(null);
@@ -144,7 +150,7 @@ const CodeEditor = ({ topicId, isCode = true }) => {
 
   const theme = THEMES.find((t) => t.value === selectedTheme);
   const langConfig = LANGUAGES.find((l) => l.value === selectedLang);
- const selectedIcon = langConfig?.icon;
+  const selectedIcon = langConfig?.icon;
 
   // Fullscreen toggle funksiyasi
   const toggleFullscreen = () => {
@@ -168,7 +174,11 @@ const CodeEditor = ({ topicId, isCode = true }) => {
       }
     }
   };
-
+  useEffect(() => {
+    if (monacoRef.current) {
+      monacoRef.current.editor.setTheme(selectedTheme);
+    }
+  }, [selectedTheme]);
   // Fullscreen change event listener
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -223,10 +233,53 @@ const CodeEditor = ({ topicId, isCode = true }) => {
 
     disposablesRef.current.push(disposable);
   };
-
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
+
+    monaco.editor.defineTheme("my-dark-theme", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "6B7280", fontStyle: "italic" },
+        { token: "keyword", foreground: "60A5FA" },
+        { token: "string", foreground: "86EFAC" },
+        { token: "number", foreground: "F9A8D4" },
+        { token: "type", foreground: "FCD34D" },
+        { token: "function", foreground: "C084FC" },
+      ],
+      colors: {
+        "editor.background": "#111827CC", // bg-gray-900/80
+        "editor.foreground": "#E5E7EB",
+        "editorLineNumber.foreground": "#6B7280",
+        "editorCursor.foreground": "#60A5FA",
+        "editor.selectionBackground": "#2563EB55",
+        "editor.inactiveSelectionBackground": "#37415199",
+        "editor.lineHighlightBackground": "#1F293733",
+        "editorIndentGuide.background": "#374151",
+        "editorIndentGuide.activeBackground": "#4B5563",
+
+        // suggest/autocomplete
+        "editorSuggestWidget.background": "#111827",
+        "editorSuggestWidget.border": "#374151",
+        "editorSuggestWidget.foreground": "#E5E7EB",
+        "editorSuggestWidget.selectedBackground": "#1F2937",
+
+        // dropdown hover
+        "list.hoverBackground": "#1F2937",
+        "list.activeSelectionBackground": "#2563EB33",
+
+        // scrollbar
+        "scrollbarSlider.background": "#37415188",
+        "scrollbarSlider.hoverBackground": "#4B5563AA",
+
+        // minimap
+        "minimap.background": "#111827",
+      },
+    });
+
+    monaco.editor.setTheme(selectedTheme);
+
     registerAutocomplete(monaco, selectedLang);
   };
 

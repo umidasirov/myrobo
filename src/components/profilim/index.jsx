@@ -44,7 +44,7 @@ const Profilim = () => {
 const addBalance = async () => {
   try {
     const response = await fetch(
-      "https://api.myrobo.uz/payment/checkout/",
+      "https://myrobo.adxamov.uz/payment/checkout/",
       {
         method: "POST",
         headers: {
@@ -161,17 +161,17 @@ const addBalance = async () => {
             </div>
             <div>
               <h3 className="font-bold text-2xl text-gray-900 dark:text-white">{user?.phone}</h3>
-              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">
-                {user?.first_name || "—"} {user?.last_name || ""}
+              <p className="text-gray-500 dark:text-gray-100 text-xl">
+                {user?.full_name || "—"} {user?.last_name || ""}
               </p>
-              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">Username: {user?.username}</p>
+              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">Username: {user?.telegram_username || "—"}</p>
             </div>
           </div>
 
           {/* Tahrirlash tugmasi */}
           <button
             onClick={openModal}
-            className="flex w-full justify-center mt-5 sm:w-1/4 sm:mt-0 md:w-40 items-center gap-2 border border-gray-200 dark:border-gray-600 hover:border-blue-400 hover:text-blue-600 text-gray-600 dark:text-gray-400 dark:text-gray-500 px-4 py-2 rounded-lg text-sm font-medium transition"
+            className="flex w-full justify-center mt-5 sm:w-1/4 sm:mt-0 md:w-40 items-center gap-2 border border-gray-200 dark:border-gray-100 hover:border-blue-400 hover:text-blue-600 text-gray-600 dark:text-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition"
           >
             <EditOutlined />
             Tahrirlash
@@ -280,7 +280,7 @@ const addBalance = async () => {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="Ismingiz"
-                  className="border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-800 dark:text-gray-200 outline-none focus:border-blue-400 transition"
+                  className="border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-500 rounded-lg px-4 py-2.5 text-gray-800 outline-none focus:border-blue-400 transition"
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -290,7 +290,7 @@ const addBalance = async () => {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Familiyangiz"
-                  className="border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 text-gray-800 dark:text-gray-200 outline-none focus:border-blue-400 transition"
+                  className="border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-500 rounded-lg px-4 py-2.5 text-gray-800 outline-none focus:border-blue-400 transition"
                 />
               </div>
             </div>
@@ -304,7 +304,7 @@ const addBalance = async () => {
             <div className="flex gap-3">
               <button
                 onClick={closeModal}
-                className="flex-1 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 text-gray-600 dark:text-gray-400 dark:text-gray-500 py-2.5 rounded-lg font-medium transition"
+                className="flex-1 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 text-gray-600 dark:text-gray-100 py-2.5 rounded-lg font-medium transition"
               >
                 Bekor qilish
               </button>

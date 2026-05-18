@@ -20,6 +20,9 @@ import AboutMyRobo from "../components/about";
 import ContactSection from "../components/contact";
 import AdminPanel from "../pages/admin";
 import PaymentPage from "../components/obuna";
+import ArticleComponentsId from "../components/blog2";
+import ArticleComponents from "../components/blog";
+import FrontendCourse from "../components/frontendcourse";
 
 const root = createBrowserRouter([
   {
@@ -36,11 +39,11 @@ const root = createBrowserRouter([
       },
       {
         path: "blog",
-        element: <Blog />,
+        element: <ArticleComponents />
       },
       {
-        path: "blog/:slug",
-        element: <BlogComponentsId />,
+        path: "articles/:slug",
+        element: <ArticleComponentsId />
       },
 
       {
@@ -55,20 +58,17 @@ const root = createBrowserRouter([
         path: "kurslar/:slug",
         element: <KirishComponentsID />,
       },
-      { path: "frontend", 
-        element: <Navigate to="/" replace /> 
+      {
+        path: "frontend",
+        element: <Navigate to="/" replace />
       },
       {
         path: "login",
         element: <LoginPage />,
       },
       {
-        path: "kurslar/:slug/:courseId",
-        element: <FrontendProfile />,
-      },
-      {
         path: "kurslar/:slug/:courseId/:topicId",
-        element: <FrontendProfile />,
+        element: <FrontendCourse />,
       },
       {
         path: "check",
@@ -87,8 +87,8 @@ const root = createBrowserRouter([
         element: <Sertificatlarim />,
       },
       {
-        path:"blog-qosh",
-        element:<BlogEditor/>
+        path: "article-qosh",
+        element: <BlogEditor />
       },
       {
         path: "subscription",
@@ -103,12 +103,12 @@ const root = createBrowserRouter([
         element: <ContactSection />
       },
       {
-        path:'admin',
-        element:<AdminPanel/> 
+        path: 'admin',
+        element: <AdminPanel />
       },
       {
         path: "pay",
-        element: <PaymentPage/>
+        element: <PaymentPage />
       }
     ],
   },

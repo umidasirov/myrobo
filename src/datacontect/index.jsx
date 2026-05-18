@@ -6,8 +6,10 @@ import { notification } from "antd";
 
 const DataContext = createContext();
 
+const BASE_URL = "https://myrobo.adxamov.uz/";
+
 const api = axios.create({
-  baseURL: "https://myrobo.uz/api",
+  baseURL: BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
@@ -19,11 +21,12 @@ api.interceptors.request.use((config) => {
 });
 
 export const DataProvider = ({ children }) => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([]);           // courses list (results massivi)
   const [blogData, setBlogData] = useState([]);
   const [teacherData, setTeacherData] = useState([]);
   const [loading, setLoad] = useState(false);
   const [user, setUser] = useState(null);
+  const [mentorData, setMentorData] = useState(null);
 
   // ===== DARK MODE =====
   const [isDark, setIsDark] = useState(() => {
@@ -58,7 +61,7 @@ export const DataProvider = ({ children }) => {
       message: "Siz muvaffaqiyatli tarzda tizimdan chiqdingiz",
     });
   };
-  
+
   const handleLogoutAnother = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("balance");
@@ -78,9 +81,7 @@ export const DataProvider = ({ children }) => {
     }, 2000);
   };
 
-  // ✅ 401 hatolari uchun global logout callback'ni set qil
   setGlobalLogoutCallback(handleLogoutAnother);
-
 
   useEffect(() => {
     const resInterceptor = api.interceptors.response.use(
@@ -106,7 +107,6 @@ export const DataProvider = ({ children }) => {
 
         const hasToken = localStorage.getItem("token");
 
-        // ❗ TOKEN YO‘Q bo‘lsa logout qilma
         if (!hasToken) {
           return Promise.reject(error);
         }
@@ -122,13 +122,11 @@ export const DataProvider = ({ children }) => {
 
           try {
             const res = await axios.post(
-              "https://myrobo.uz/api/user/auth/token/refresh/",
+              `${BASE_URL}user/auth/token/refresh/`,
               { refresh }
             );
-
             const newAccess = res.data.access;
             localStorage.setItem("token", newAccess);
-
             originalRequest.headers.Authorization = `Bearer ${newAccess}`;
             return api(originalRequest);
           } catch {
@@ -150,69 +148,170 @@ export const DataProvider = ({ children }) => {
     };
   }, []);
 
+  // ── O'qituvchilar ──────────────────────────────────────────────────────────
   const fetchTeam = async () => {
     setLoad(true);
     try {
-      const response = await fetch("https://myrobo.uz/api/teacher/teachers/", {
+      const response = await fetch(`${BASE_URL}teachers/teachers/`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
-
       const result = await response.json();
-      setTeacherData(result)
+      setTeacherData(Array.isArray(result) ? result : result.results ?? []);
     } catch (err) {
-
+      console.error("fetchTeam xatosi:", err);
     } finally {
       setLoad(false);
     }
-    []
   };
 
+  // ── Kurslar ro'yxati ───────────────────────────────────────────────────────
+  // GET /courses/courses/
+  // Javob: { count, next, previous, results: [...] }
   const fetchCourse = async () => {
-    setLoad(true)
+    setLoad(true);
     try {
       const response = await api.get("/courses/courses/");
-      if (response.status == 401 || response.data?.code === "token_not_valid") {
+      if (
+        response.status === 401 ||
+        response.data?.code === "token_not_valid"
+      ) {
         handleLogout();
+        return;
       }
-      setData(response.data);
+      setData(response.data.results ?? []);
     } catch (err) {
-      console.log("err:", err);
-
-    }
-    finally {
-      setLoad(false)
+      console.error("fetchCourse xatosi:", err);
+    } finally {
+      setLoad(false);
     }
   };
- const toPament = async (courseId) => {
+  
+
+  // ── Kurs detali ────────────────────────────────────────────────────────────
+  // GET /courses/courses/{slug}/
+  const fetchCourseDetail = async (slug) => {
     try {
-      const response = await api.post("/payment/create-checkout-session/", { course_id: courseId });
-      if (response.status == 401 || response.data?.code === "token_not_valid") {
+      const response = await api.get(`/courses/courses/${slug}/`);
+      if (
+        response.status === 401 ||
+        response.data?.code === "token_not_valid"
+      ) {
         handleLogout();
+        return null;
       }
-      return response.data.url;
+      return response.data;
     } catch (err) {
-      console.log("err:", err);
+      console.error("fetchCourseDetail xatosi:", err);
       return null;
     }
   };
+  
+  // ── Kurs sotib olish ───────────────────────────────────────────────────────
+  // POST /courses/courses/{slug}/purchase/
+  // Body: { purchase_type: "course", plan_id: "..." }
+  const toPament = async (slug, planId, purchaseType = "course") => {
+    try {
+      const response = await api.post(
+        `/courses/courses/${slug}/purchase/`,
+        { purchase_type: purchaseType, plan_id: planId }
+      );
+      if (
+        response.status === 401 ||
+        response.data?.code === "token_not_valid"
+      ) {
+        handleLogout();
+        return null;
+      }
+      notification.error({message:'nma'})
+      console.log(response.data);
+      
+      return response.data;
+    } catch (err) {
+      console.error("toPament xatosi:", err);
+      return null;
+    }
+  };
+
+  // ── Mening obunalarim ──────────────────────────────────────────────────────
+  // GET /courses/my/subscriptions/
+  const fetchMySubscriptions = async () => {
+    try {
+      const response = await api.get("/courses/my/subscriptions/");
+      return response.data.results ?? response.data ?? [];
+    } catch (err) {
+      console.error("fetchMySubscriptions xatosi:", err);
+      return [];
+    }
+  };
+
+  // ── Mening xaridlarim ──────────────────────────────────────────────────────
+  // GET /courses/my/purchases/
+  const fetchMyPurchases = async () => {
+    try {
+      const response = await api.get("/courses/my/purchases/");
+      return response.data.results ?? response.data ?? [];
+    } catch (err) {
+      console.error("fetchMyPurchases xatosi:", err);
+      return [];
+    }
+  };
+
+  // ── Darsni tugallash ───────────────────────────────────────────────────────
+  // POST /courses/lessons/{lesson-slug}/complete/
+  const completeLesson = async (lessonSlug) => {
+    try {
+      const response = await api.post(
+        `/courses/lessons/${lessonSlug}/complete/`
+      );
+      return response.data;
+    } catch (err) {
+      console.error("completeLesson xatosi:", err);
+      return null;
+    }
+  };
+
+  // ── Foydalanuvchi profili ──────────────────────────────────────────────────
+  // GET /user/auth/me/
   const fetchUserData = async () => {
     try {
       setLoad(true);
-      const response = await api.get("/user/auth/me/");
-      if (response.status == 401 || response.data?.code === "token_not_valid") {
+      const response = await api.get("/user/profile/");
+      if (
+        response.status === 401 ||
+        response.data?.code === "token_not_valid"
+      ) {
         handleLogout();
+        return;
       }
       setUser(response.data);
     } catch (error) {
-
+      console.error("fetchUserData xatosi:", error);
     } finally {
       setLoad(false);
     }
   };
+  const fetchTeachers = async (slug) => {
+    setLoad(true);
 
+    try {
+      const response = await fetch(`${BASE_URL}teachers/teachers/${slug}/`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const result = await response.json();
+
+      console.log("mentor detail:", result);
+
+      setMentorData(result);
+    } catch (err) {
+      console.error("fetchTeachers xatosi:", err);
+      setMentorData(null);
+    } finally {
+      setLoad(false);
+    }
+  };
   const updateUser = async (fields) => {
     try {
       const response = await api.patch("/user/auth/me/", fields);
@@ -233,6 +332,11 @@ export const DataProvider = ({ children }) => {
         teacherData,
         setTeacherData,
         fetchCourse,
+        fetchCourseDetail,   // ✅ yangi
+        toPament,
+        fetchMySubscriptions, // ✅ yangi
+        fetchMyPurchases,     // ✅ yangi
+        completeLesson,       // ✅ yangi
         user,
         setUser,
         fetchUserData,
@@ -242,6 +346,8 @@ export const DataProvider = ({ children }) => {
         fetchTeam,
         isDark,
         toggleTheme,
+        fetchTeachers,
+        mentorData,
       }}
     >
       {children}

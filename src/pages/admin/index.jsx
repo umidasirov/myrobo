@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
-const API = "https://myrobo.uz/api";
+const API = "https://myrobo.adxamov.uz/api";
 const TOKEN_KEY = "token";
 const PAGE_SIZE = 12;
 
@@ -839,7 +839,7 @@ function CoursesPage({ courses, courseTypes, dark, toast }) {
       key: "actions", label: "Amallar", width: 70, render: (c) => (
         <div style={{ display: "flex", gap: 4 }}>
           <IconBtn name="eye" onClick={() => setSelected(c)} dark={dark} title="Batafsil" />
-          <IconBtn name="external" onClick={() => window.open(`https://myrobo.uz/courses/${c.slug || c.id}`, "_blank")} dark={dark} title="Saytda ko'rish" />
+          <IconBtn name="external" onClick={() => window.open(`https://myrobo.adxamov.uz/courses/${c.slug || c.id}`, "_blank")} dark={dark} title="Saytda ko'rish" />
         </div>
       )
     },
@@ -982,7 +982,7 @@ function CourseTypesPage({ courseTypes, setCourseTypes, courses, dark, toast }) 
             {
               key: "act", label: "Amallar", width: 80, render: (ct) => (
                 <div style={{ display: "flex", gap: 4 }}>
-                  <IconBtn name="external" onClick={() => window.open(`https://myrobo.uz/courses/course-types/${ct.id}/courses/`, "_blank")} dark={dark} title="API ko'rish" />
+                  <IconBtn name="external" onClick={() => window.open(`https://myrobo.adxamov.uz/courses/course-types/${ct.id}/courses/`, "_blank")} dark={dark} title="API ko'rish" />
                   <IconBtn name="trash" danger onClick={() => setConfirmDel(ct)} dark={dark} title="O'chirish" />
                 </div>
               )
@@ -1076,7 +1076,7 @@ function BlogsPage({ blogs, setBlogs, dark, toast }) {
       key: "actions", label: "Amallar", width: 100, render: (b) => (
         <div style={{ display: "flex", gap: 4 }}>
           <IconBtn name="edit" onClick={() => startEdit(b)} dark={dark} title="Tahrirlash" />
-          <IconBtn name="external" onClick={() => window.open(`https://myrobo.uz/blog/${b.slug}`, "_blank")} dark={dark} title="Saytda ko'rish" />
+          <IconBtn name="external" onClick={() => window.open(`https://myrobo.adxamov.uz/blog/${b.slug}`, "_blank")} dark={dark} title="Saytda ko'rish" />
           <IconBtn name="trash" danger onClick={() => setConfirmDel(b)} dark={dark} title="O'chirish" />
         </div>
       )
